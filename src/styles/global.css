@@ -177,6 +177,11 @@
   .skip-link:focus-visible {
     top: 1rem;
   }
+
+  /* Secciones que reciben el foco por código (mouse del hero): sin contorno */
+  section[tabindex="-1"]:focus {
+    outline: none;
+  }
 }
 
 @layer components {

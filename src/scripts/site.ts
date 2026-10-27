@@ -216,6 +216,20 @@ function initBackTop() {
   });
 }
 
+/* ---------- Mouse del hero: baja con desplazamiento suave (el ancla sola salta de golpe) ---------- */
+function initScrollCue() {
+  const cue = document.querySelector<HTMLAnchorElement>(".scroll-cue");
+  const target = cue && document.querySelector<HTMLElement>(cue.hash);
+  if (!cue || !target) return;
+  listen(cue, "click", (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: target.getBoundingClientRect().top + scrollY, behavior: reducedMotion() ? "auto" : "smooth" });
+    // Como el ancla nativa: el foco pasa a la sección, para que el teclado siga desde ahí
+    target.setAttribute("tabindex", "-1");
+    target.focus({ preventScroll: true });
+  });
+}
+
 /* ---------- Hora local de West Palm Beach en el pie ---------- */
 function initClock() {
   const els = document.querySelectorAll<HTMLElement>("[data-local-time]");
@@ -356,6 +370,7 @@ export function initSite() {
     initReveal();
     initTypewriter();
     initBackTop();
+    initScrollCue();
     markWaSeen();
     initClock();
     initFilters();
