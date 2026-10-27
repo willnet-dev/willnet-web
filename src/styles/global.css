@@ -173,7 +173,8 @@
     font-weight: 600;
   }
 
-  .skip-link:focus {
+  /* Solo con teclado: «Volver arriba» le pasa el foco y con :focus quedaba visible tras un clic o un toque */
+  .skip-link:focus-visible {
     top: 1rem;
   }
 }
