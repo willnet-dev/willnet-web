@@ -1,0 +1,40 @@
+{
+  "name": "willnet-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Web oficial de WillNet (willnet.dev): Astro + React (3D) + GSAP + Tailwind, en Cloudflare Workers",
+  "scripts": {
+    "dev": "astro dev --port 5500",
+    "build": "astro build",
+    "build:prod": "SITE_ENV=production astro build",
+    "deploy": "node scripts/check-form-key.mjs && astro build && npx wrangler deploy",
+    "deploy:prod": "node scripts/check-form-key.mjs && SITE_ENV=production astro build && npx wrangler deploy --env production",
+    "preview": "astro preview --port 5500",
+    "check": "astro check",
+    "images": "node scripts/optimize-images.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^7.1.1",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/geist": "^5.3.0",
+    "@fontsource-variable/geist-mono": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
+    "@react-three/drei": "^10.7.9",
+    "@react-three/fiber": "^9.8.2",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.4.2",
+    "gsap": "^3.15.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tailwindcss": "^4.3.3",
+    "three": "^0.186.1"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@types/three": "^0.186.0",
+    "typescript": "^6.0.3"
+  }
+}

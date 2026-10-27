@@ -1,0 +1,57 @@
+---
+// Política de privacidad. Describe solo lo que la web hace hoy: formulario con Web3Forms y
+// Cloudflare Web Analytics (sin cookies). Si se agrega otra herramienta, actualizar este texto.
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import { r, type Lang } from "../i18n/routes";
+import { site, t } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const p = copy.privacy;
+
+const sections =
+  lang === "es"
+    ? [
+        { h: "Quién es el responsable", t: `WillNet es el negocio de diseño y desarrollo web de ${site.person}, con base en West Palm Beach, Florida. Para cualquier pregunta sobre tus datos, escribe a ${site.email}.` },
+        { h: "Qué datos recojo", t: "Solo los que escribes en el formulario de presupuesto: nombre, correo, teléfono (opcional), el servicio que te interesa, si tienes web y su dirección, tu presupuesto aproximado y tu mensaje. No pido datos de pago ni documentos." },
+        { h: "Para qué los uso", t: "Para responder a tu solicitud, preparar tu presupuesto y, si trabajamos juntos, comunicarme contigo sobre el proyecto. No envío publicidad ni vendo, alquilo o comparto tus datos con terceros para fines comerciales." },
+        { h: "Quién los procesa", t: "El formulario se envía a través de Web3Forms, un servicio que me reenvía tu mensaje por correo. La web se aloja en Cloudflare. Ambos procesan los datos solo para prestar su servicio." },
+        { h: "Medición de visitas", t: "Uso Cloudflare Web Analytics para contar visitas de forma agregada. No usa cookies ni guarda información que te identifique personalmente. La web guarda en tu navegador (localStorage) solo tu preferencia de tema oscuro o claro." },
+        { h: "Cuánto tiempo los guardo", t: "Guardo tus mensajes mientras sean necesarios para atender tu solicitud o el proyecto, y los borro cuando me lo pidas, salvo lo que deba conservar por obligaciones legales o fiscales." },
+        { h: "Tus derechos", t: `Puedes pedir ver, corregir o borrar tus datos en cualquier momento escribiendo a ${site.email}. Te respondo lo antes posible.` },
+      ]
+    : [
+        { h: "Who is responsible", t: `WillNet is the web design and development business of ${site.person}, based in West Palm Beach, Florida. For any question about your data, write to ${site.email}.` },
+        { h: "What I collect", t: "Only what you type in the quote form: name, email, phone (optional), the service you're interested in, whether you have a website and its address, your approximate budget and your message. I don't ask for payment details or documents." },
+        { h: "How I use it", t: "To reply to your request, prepare your quote and, if we work together, contact you about the project. I don't send advertising and I don't sell, rent or share your data with third parties for commercial purposes." },
+        { h: "Who processes it", t: "The form is sent through Web3Forms, a service that forwards your message to me by email. The website is hosted on Cloudflare. Both process data only to provide their service." },
+        { h: "Visit measurement", t: "I use Cloudflare Web Analytics to count visits in aggregate. It doesn't use cookies or store information that identifies you personally. The website only stores your dark or light theme preference in your browser (localStorage)." },
+        { h: "How long I keep it", t: "I keep your messages for as long as needed to handle your request or project, and delete them when you ask, except what I must keep for legal or tax reasons." },
+        { h: "Your rights", t: `You can ask to see, correct or delete your data at any time by writing to ${site.email}. I'll reply as soon as possible.` },
+      ];
+---
+
+<Base lang={lang} title={p.title} description={p.description}>
+  <PageHead
+    eyebrow={`// ${p.updated}`}
+    title={p.h1}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: p.h1, href: r("privacy", lang) },
+    ]}
+  />
+  <section class="wrap max-w-[78ch] pb-[clamp(4rem,10vh,8rem)]">
+    {
+      sections.map((s) => (
+        <div class="border-t border-line py-8">
+          <h2 class="text-[length:var(--text-step-2)] font-semibold tracking-tight">{s.h}</h2>
+          <p class="mt-3 text-muted">{s.t}</p>
+        </div>
+      ))
+    }
+  </section>
+</Base>

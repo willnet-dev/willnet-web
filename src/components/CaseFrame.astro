@@ -1,0 +1,76 @@
+---
+// Marco de navegador del caso (opción B): un wireframe gris que la captura real va «rellenando».
+// --p (0 a 1) controla cuánto de la captura se ve; lo mueve el scroll en escritorio (site.ts).
+interface Props {
+  src: string;
+  alt: string;
+  url: string;
+  p?: number;
+  live?: boolean;
+}
+const { src, alt, url, p, live = false } = Astro.props;
+const host = url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+---
+
+<figure class:list={["cframe browser", { "cframe--live": live }]} style={p !== undefined ? `--p:${p}` : undefined} {...(live ? { "data-case-frame": "" } : {})}>
+  <div class="browser__bar">
+    <span class="browser__dot"></span><span class="browser__dot"></span><span class="browser__dot"></span>
+    <span class="browser__url">{host}</span>
+  </div>
+  <div class="cframe__body">
+    <div class="cframe__wire" aria-hidden="true">
+      <div class="flex items-center justify-between"><span class="wire h-3 w-[16%]"></span><span class="flex gap-2"><span class="wire h-2.5 w-10"></span><span class="wire h-2.5 w-10"></span><span class="wire h-2.5 w-10"></span></span></div>
+      <div class="grid flex-1 grid-cols-[1.2fr_1fr] items-center gap-4">
+        <div class="grid gap-2"><span class="wire h-6 w-[85%]"></span><span class="wire h-6 w-[60%]"></span><span class="wire h-2.5 w-[90%]"></span><span class="wire h-2.5 w-[70%]"></span><span class="wire mt-2 h-7 w-28 rounded-full"></span></div>
+        <span class="wire h-full min-h-20"></span>
+      </div>
+      <div class="grid grid-cols-3 gap-3"><span class="wire h-10"></span><span class="wire h-10"></span><span class="wire h-10"></span></div>
+    </div>
+    <img src={src} alt={alt} width="1600" height="900" loading="lazy" decoding="async" class="cframe__shot" />
+    <span class="cframe__scan" aria-hidden="true"></span>
+  </div>
+</figure>
+
+<style>
+  .cframe {
+    --p: 1;
+  }
+  .cframe__body {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+  .cframe__wire {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.1rem 1.3rem;
+  }
+  .cframe__shot {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    clip-path: inset(0 0 calc((1 - var(--p)) * 100%) 0);
+  }
+  .cframe__scan {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(var(--p) * 100%);
+    height: 2px;
+    background: var(--accent);
+    box-shadow: 0 0 18px 2px color-mix(in oklab, var(--accent) 60%, transparent);
+    opacity: calc(1 - (var(--p) * var(--p) * var(--p)));
+  }
+  /* El marco en vivo empieza vacío solo si hay JavaScript, escritorio y movimiento permitido */
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .cframe--live {
+      --p: 0;
+    }
+  }
+</style>

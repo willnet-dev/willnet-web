@@ -1,0 +1,20 @@
+{
+  "order": 1, "category": "web", "featured": true, "hasCase": true, "year": 2026, "withDopicos": true,
+  "url": "https://pavlovesat.com",
+  "image": { "en": "pavlove-en.jpg", "es": "pavlove.jpg", "mobileEn": "pavlove-movil-en.jpg", "mobileEs": "pavlove-movil.jpg" },
+  "stack": ["WordPress", "WooCommerce", "Stripe", "GTranslate"],
+  "en": {
+    "title": "Pavlove", "type": "Online store",
+    "summary": "Online store for handmade pavlovas in San Antonio, Texas: customizable products, online payments, pickup and delivery.",
+    "challenge": "Pavlove sold handmade pavlovas through messages and needed a way for customers to order and pay on their own, with sizes, flavors and the store's pickup and delivery policies clear before checkout.",
+    "solution": "A WooCommerce store with customizable products and size-based prices, Stripe payments, separate confirmation emails for pickup and delivery, the required policies shown before the payment button, and an English version for customers who don't speak Spanish.",
+    "result": "The store has been taking orders online since February 2026, with card payments, pickup and delivery."
+  },
+  "es": {
+    "title": "Pavlove", "type": "Tienda en línea",
+    "summary": "Tienda de pavlovas artesanales en San Antonio, Texas: productos personalizables, pagos en línea, recogida y entrega.",
+    "challenge": "Pavlove vendía pavlovas artesanales por mensajes y necesitaba que sus clientes pudieran pedir y pagar por su cuenta, con tamaños, sabores y sus políticas de recogida y entrega claras antes de pagar.",
+    "solution": "Una tienda WooCommerce con productos personalizables y precios por tamaño, pagos con Stripe, correos de confirmación distintos para recogida y entrega, las políticas obligatorias antes del botón de pago y una versión en inglés para quienes no hablan español.",
+    "result": "La tienda recibe pedidos en línea desde febrero de 2026, con pago con tarjeta, recogida y entrega."
+  }
+}

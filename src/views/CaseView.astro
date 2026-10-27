@@ -1,0 +1,184 @@
+---
+// Página de un caso del portafolio (opción B): reto, solución y resultado mientras el wireframe
+// se convierte en el sitio real. En móvil se ve como secuencia de 3 marcos.
+import { getCollection, type CollectionEntry } from "astro:content";
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import CaseFrame from "../components/CaseFrame.astro";
+import { r, workPath, type Lang } from "../i18n/routes";
+import { site, t } from "../i18n/ui";
+import { breadcrumbs } from "../lib/schema";
+import { workImg } from "../lib/img";
+
+interface Props {
+  lang: Lang;
+  project: CollectionEntry<"work">;
+}
+const { lang, project } = Astro.props;
+const copy = t(lang);
+const d = project.data;
+const c = d[lang];
+const cases = (await getCollection("work")).filter((x) => x.data.hasCase).sort((a, b) => a.data.order - b.data.order);
+const next = cases[(cases.findIndex((x) => x.id === project.id) + 1) % cases.length];
+const shot = workImg(lang === "es" ? d.image.es : d.image.en);
+const path = workPath(project.id, lang);
+const blocks = [
+  { label: copy.case.challenge, text: c.challenge },
+  { label: copy.case.solution, text: c.solution },
+  { label: copy.case.result, text: c.result },
+];
+const title = `${c.title} — ${c.type} | WillNet`;
+const description = c.summary;
+
+const schema = [
+  breadcrumbs([
+    { name: copy.common.breadcrumbHome, path: r("home", lang) },
+    { name: copy.nav.work, path: r("work", lang) },
+    { name: c.title, path },
+  ]),
+  {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: c.title,
+    description: c.summary,
+    url: new URL(path, site.url).href,
+    dateCreated: String(d.year),
+    creator: { "@id": `${site.url}/#willder` },
+    inLanguage: lang,
+  },
+];
+---
+
+<Base lang={lang} title={title} description={description} schema={schema}>
+  <PageHead
+    eyebrow={`// ${c.type} · ${d.year}`}
+    title={c.title}
+    intro={c.summary}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: copy.nav.work, href: r("work", lang) },
+      { name: c.title, href: path },
+    ]}
+  >
+    <dl class="mt-10 grid gap-6 border-t border-line pt-8 sm:grid-cols-3">
+      <div>
+        <dt class="eyebrow">{copy.case.type}</dt>
+        <dd class="mt-1 font-semibold">{c.type}{d.withDopicos && ` · ${copy.common.withDopicos}`}</dd>
+      </div>
+      <div>
+        <dt class="eyebrow">{copy.case.stack}</dt>
+        <dd class="mt-1 font-semibold">{d.stack.join(" · ")}</dd>
+      </div>
+      <div>
+        <dt class="eyebrow">{copy.common.visitSite}</dt>
+        <dd class="mt-1">
+          <a href={d.url} target="_blank" rel="noopener" class="font-semibold break-all text-link underline underline-offset-4">{d.url.replace(/^https?:\/\//, "").replace(/\/$/, "")} ↗</a>
+        </dd>
+      </div>
+    </dl>
+  </PageHead>
+
+  <section class="wrap case" data-case-build aria-label={copy.case.wireLabel}>
+    <div class="case__text">
+      {
+        blocks.map((b, i) => (
+          <div class="case__block" data-reveal>
+            <p class="eyebrow">// {String(i + 1).padStart(2, "0")}</p>
+            <h2 class="display mt-3 text-[length:var(--text-step-3)]">{b.label}</h2>
+            <p class="mt-4 max-w-[52ch] text-[length:var(--text-step-1)] text-muted">{b.text}</p>
+            <div class="case__mini">
+              <CaseFrame src={shot} alt={i === 2 ? `${c.title} — ${copy.case.result}` : ""} url={d.url} p={[0, 0.5, 1][i]} />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+    <div class="case__stage">
+      <div class="case__sticky">
+        <p class="eyebrow mb-4">{copy.case.wireLabel}</p>
+        <CaseFrame src={shot} alt={`${c.title} — ${c.type}`} url={d.url} live />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap grid gap-6 py-[clamp(4rem,10vh,7rem)] md:grid-cols-2">
+    <a href={r("contact", lang)} class="case-cta case-cta--primary" data-reveal>
+      <span class="eyebrow">// {copy.cta.getInTouch}</span>
+      <span class="display text-[length:var(--text-step-3)]">{copy.case.similar} →</span>
+    </a>
+    <a href={workPath(next.id, lang)} class="case-cta" data-reveal style="--delay:80ms">
+      <span class="eyebrow">// {copy.case.next}</span>
+      <span class="display text-[length:var(--text-step-3)]">{next.data[lang].title} →</span>
+    </a>
+  </section>
+</Base>
+
+<style>
+  .case {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 3rem;
+    padding-bottom: clamp(3rem, 8vh, 6rem);
+  }
+  .case__block {
+    padding-block: 1rem;
+  }
+  .case__mini {
+    margin-top: 1.5rem;
+  }
+  .case__stage {
+    display: none;
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .case {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+      gap: 4rem;
+    }
+    .case__block {
+      min-height: 75vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .case__mini {
+      display: none;
+    }
+    .case__stage {
+      display: block;
+    }
+    .case__sticky {
+      position: sticky;
+      top: calc(50vh - 18vw);
+    }
+  }
+  .case-cta {
+    display: grid;
+    gap: 1rem;
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-radius: 24px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    text-decoration: none;
+    transition:
+      background var(--dur-base) var(--ease-out-expo),
+      color var(--dur-base);
+  }
+  .case-cta--primary {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  .case-cta--primary .eyebrow {
+    color: inherit;
+    opacity: 0.7;
+  }
+  @media (hover: hover) {
+    .case-cta:hover {
+      background: var(--text);
+      color: var(--bg);
+    }
+    .case-cta:hover .eyebrow {
+      color: inherit;
+    }
+  }
+</style>

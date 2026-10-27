@@ -1,0 +1,8 @@
+{
+  "order": 17, "category": "learning", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "https://willnet-dev.github.io/boobstrap-website/",
+  "image": { "en": "bootstrap-website.jpg", "es": "bootstrap-website.jpg", "mobileEn": "bootstrap-website.jpg", "mobileEs": "bootstrap-website.jpg" },
+  "stack": [],
+  "en": { "title": "Move With Joy", "type": "Website", "summary": "Sample website for a moving company, responsive and built with Bootstrap." },
+  "es": { "title": "Move With Joy", "type": "Sitio web", "summary": "Sitio de ejemplo para una empresa de mudanzas, adaptable a celulares y hecho con Bootstrap." }
+}

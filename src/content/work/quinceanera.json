@@ -1,0 +1,20 @@
+{
+  "order": 5, "category": "events", "featured": false, "hasCase": true, "year": 2025,
+  "url": "https://willnet-dev.github.io/invitacion-marcela/",
+  "image": { "en": "invitacion-xv.jpg", "es": "invitacion-xv.jpg", "mobileEn": "invitacion-xv.jpg", "mobileEs": "invitacion-xv.jpg" },
+  "stack": ["HTML", "CSS", "JavaScript", "GitHub Pages"],
+  "en": {
+    "title": "Quinceañera invitation", "type": "Web invitation",
+    "summary": "Web invitation with video, music, countdown, QR RSVP and digital passes for each family.",
+    "challenge": "A family wanted a quinceañera invitation guests could open on their phones, with everything they needed in one link and an easy way to confirm attendance.",
+    "solution": "A mobile web invitation with a video intro, background music, countdown, date, dress code and location, plus RSVP by QR and a digital pass for each family.",
+    "result": "Guests received one link with all the event details and confirmed attendance from their phones."
+  },
+  "es": {
+    "title": "Invitación de XV años", "type": "Invitación web",
+    "summary": "Invitación web con video, música, cuenta regresiva, confirmación por QR y pases digitales para cada familia.",
+    "challenge": "Una familia quería una invitación de XV años que los invitados abrieran en el celular, con todo en un solo enlace y una forma fácil de confirmar asistencia.",
+    "solution": "Una invitación web para celular con video de entrada, música, cuenta regresiva, fecha, vestimenta y ubicación, más confirmación por QR y un pase digital para cada familia.",
+    "result": "Los invitados recibieron un solo enlace con todos los detalles y confirmaron su asistencia desde el celular."
+  }
+}

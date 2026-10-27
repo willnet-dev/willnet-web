@@ -1,0 +1,12 @@
+---
+import { getCollection } from "astro:content";
+import View from "../../views/CaseView.astro";
+
+export async function getStaticPaths() {
+  const projects = (await getCollection("work")).filter((p) => p.data.hasCase);
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+const { project } = Astro.props;
+---
+
+<View lang="en" project={project} />

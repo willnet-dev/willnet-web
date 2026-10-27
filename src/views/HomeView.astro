@@ -1,0 +1,297 @@
+---
+// Página de inicio (EN y ES). Las rutas src/pages/index.astro y src/pages/es/index.astro solo la llaman.
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import HeroW from "../components/three/HeroW.tsx";
+import Process from "../components/Process.astro";
+import PriceList from "../components/PriceList.astro";
+import FaqList from "../components/FaqList.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { r, type Lang } from "../i18n/routes";
+import { t } from "../i18n/ui";
+import { services } from "../data/services";
+import { faqFor } from "../data/faq";
+import { faqPage } from "../lib/schema";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const h = copy.home;
+const featured = (await getCollection("work")).filter((p) => p.data.featured).sort((a, b) => a.data.order - b.data.order);
+const homeFaq = faqFor(lang, true);
+---
+
+<Base lang={lang} title={h.title} description={h.description} schema={[faqPage(homeFaq)]}>
+  <!-- HERO: poco texto, la W 3D como foco y el mouse animado (referencias: tamalsen.dev y willnet.dev) -->
+  <section class="hero" data-hero>
+    <div class="wrap hero__content">
+      <p class="eyebrow hero__in" style="--i:0"><b>&lt;Web Developer&gt;</b> · WillNet</p>
+      <h1 class="display hero__title hero__in" style="--i:1">{h.h1}</h1>
+      <p class="hero__type hero__in" style="--i:2">
+        <span class="text-muted">{h.typePrefix}</span>
+        <span class="hero__word" data-typewriter data-words={JSON.stringify(h.typeWords)}>{h.typeWords[0]}</span><span class="type-caret" aria-hidden="true"></span>
+      </p>
+      <p class="text-muted hero__in" style="--i:3">{h.support}</p>
+      <div class="hero__actions mt-2 flex flex-wrap gap-3 hero__in" style="--i:4">
+        <a href={r("contact", lang)} class="btn btn-primary btn-lg" data-magnetic><span class="btn-label">{copy.cta.quote}</span></a>
+      </div>
+    </div>
+
+    <!-- La escena va después del texto en el HTML para que el botón de pausa no sea el primer foco -->
+    <div class="hero__scene">
+      <div class="hero__fallback" data-hero-fallback aria-hidden="true">
+        <svg viewBox="0 0 416 290" class="hero__w">
+          <defs>
+            <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="var(--text)" stop-opacity="0.95"></stop>
+              <stop offset="0.5" stop-color="var(--muted)"></stop>
+              <stop offset="1" stop-color="var(--text)" stop-opacity="0.8"></stop>
+            </linearGradient>
+          </defs>
+          <path d="M0 0 96 37 156 203 107 290Z" fill="url(#chrome)"></path>
+          <path d="M416 0 320 37 260 203 309 290Z" fill="url(#chrome)"></path>
+          <path d="M160 64 208 83 256 64 208 174Z" fill="var(--accent)"></path>
+        </svg>
+      </div>
+      <HeroW client:idle pauseLabel={copy.common.pauseScene} playLabel={copy.common.playScene} />
+    </div>
+
+    <!-- Mouse animado (referencia: tamalsen.dev): el contorno se dibuja, un trazo lima da la vuelta,
+         cae dentro como flecha que rebota y todo se recoge. Ciclo de 5 s en CSS (global.css) -->
+    <a href="#services" class="scroll-cue" aria-label={copy.common.scroll}>
+      <svg class="mouse" viewBox="0 0 40 64" width="30" height="48" aria-hidden="true">
+        <path class="mouse__outline" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
+        <path class="mouse__chase" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
+        <g class="mouse__arrow">
+          <path class="mouse__stem" pathLength="100" d="M20 18v24"></path>
+          <path class="mouse__head" pathLength="100" d="M13.5 35.5 20 42l6.5-6.5"></path>
+        </g>
+      </svg>
+    </a>
+  </section>
+
+  <!-- MARQUEE de servicios -->
+  <div class="border-y border-line py-5" aria-hidden="true">
+    <div class="marquee">
+      {
+        [0, 1].map(() => (
+          <div class="marquee__track">
+            {services.map((s) => (
+              <span class="flex items-center gap-10 font-display text-[length:var(--text-step-2)] font-semibold tracking-tight whitespace-nowrap">
+                {s[lang].name}
+                <span class="h-3 w-3 rounded-full bg-accent" />
+              </span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- SERVICIOS Y PRECIOS -->
+  <section id="services" class="wrap py-[clamp(5rem,12vh,9rem)]" aria-labelledby="services-title">
+    <div class="mb-12 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
+      <div>
+        <p class="eyebrow mb-4" data-reveal>{h.servicesEyebrow}</p>
+        <h2 id="services-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.servicesTitle}</h2>
+      </div>
+      <p class="max-w-[48ch] text-[length:var(--text-step-1)] text-muted" data-reveal>{h.servicesText}</p>
+    </div>
+    <PriceList lang={lang} />
+  </section>
+
+  <!-- TRABAJO DESTACADO con parallax -->
+  <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="work-title" data-parallax-root>
+    <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="eyebrow mb-4" data-reveal>{h.workEyebrow}</p>
+        <h2 id="work-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.workTitle}</h2>
+      </div>
+      <a href={r("work", lang)} class="btn" data-magnetic><span class="btn-label">{copy.common.allWork} →</span></a>
+    </div>
+    <!-- Móvil: 2 columnas (4 proyectos); escritorio: 2 columnas desfasadas -->
+    <div class="grid grid-cols-2 gap-x-3 gap-y-10 md:gap-x-8 md:gap-y-14">
+      {
+        featured.map((p, i) => (
+          <div class:list={[{ "md:mt-24": i % 2 === 1 }]} data-reveal>
+            <div data-speed={i % 2 === 1 ? "0.12" : "-0.06"}>
+              <ProjectCard project={p} lang={lang} size="lg" mobileCompact />
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- PROCESO (opción B) -->
+  <Process lang={lang} eyebrow={h.processEyebrow} title={h.processTitle} />
+
+  <!-- POR QUÉ WILLNET -->
+  <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="why-title">
+    <p class="eyebrow mb-4" data-reveal>{h.whyEyebrow}</p>
+    <h2 id="why-title" class="display mb-12 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{h.whyTitle}</h2>
+    <div class="grid border-t border-line md:grid-cols-3">
+      {
+        h.why.map((w, i) => (
+          <div class="why" data-reveal style={`--delay:${i * 80}ms`}>
+            <p class="font-display text-[length:var(--text-step-5)] font-semibold leading-none tracking-tighter text-wire">{String(i + 1).padStart(2, "0")}</p>
+            <h3 class="mt-6 text-[length:var(--text-step-2)] font-semibold tracking-tight">{w.title}</h3>
+            <p class="mt-3 text-muted">{w.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- PREGUNTAS -->
+  <section class="wrap grid gap-10 py-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1fr_1.6fr]" aria-labelledby="faq-title">
+    <div>
+      <p class="eyebrow mb-4" data-reveal>{h.faqEyebrow}</p>
+      <h2 id="faq-title" class="display text-[length:var(--text-step-4)]" data-reveal>{h.faqTitle}</h2>
+      <a href={r("faq", lang)} class="btn mt-8" data-magnetic><span class="btn-label">{h.faqMore} →</span></a>
+    </div>
+    <FaqList items={homeFaq} />
+  </section>
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    align-items: end;
+    padding-top: var(--header-h);
+    overflow: hidden;
+  }
+  .hero__scene {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+  .hero__fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    transition: opacity 600ms var(--ease-out-expo);
+  }
+  .hero__fallback.is-hidden {
+    opacity: 0;
+  }
+  .hero__w {
+    width: min(46vw, 520px);
+    transform: translate(18%, -12%);
+    opacity: 0.9;
+  }
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+    padding-bottom: clamp(5.5rem, 14vh, 8rem);
+    pointer-events: none;
+  }
+  .hero__content > * {
+    pointer-events: auto;
+  }
+  .hero__title {
+    font-size: var(--text-step-5);
+    max-width: 14ch;
+  }
+  /* Escritorio: el texto ocupa la columna izquierda y la W 3D la derecha */
+  @media (min-width: 1100px) {
+    .hero__title {
+      max-width: 56vw;
+      font-size: clamp(2.6rem, 0.8rem + 3.9vw, 5.6rem);
+    }
+  }
+  .hero__type {
+    font-family: var(--font-mono);
+    font-size: var(--text-step-1);
+  }
+  .hero__word {
+    color: var(--text);
+  }
+  .scroll-cue {
+    position: absolute;
+    z-index: 2;
+    left: 50%;
+    bottom: clamp(1.25rem, 4vh, 2.5rem);
+    translate: -50% 0;
+    display: grid;
+    place-items: center;
+    padding: 0.5rem;
+  }
+  .why {
+    padding: 2rem 0 0;
+  }
+  @media (min-width: 768px) {
+    .why {
+      padding: 2.5rem 2rem 0 0;
+    }
+    .why + .why {
+      padding-left: 2rem;
+      border-left: 1px solid var(--line);
+    }
+  }
+  /* Menos de 1100 px: la W va arriba y el texto debajo, sin taparse */
+  @media (max-width: 1099px) {
+    .hero__content {
+      padding-top: 46vh;
+    }
+    .hero__fallback {
+      place-items: start center;
+      padding-top: calc(72px + 6vh);
+    }
+    .hero__w {
+      width: min(70vw, 34vh * 1.43);
+      transform: none;
+    }
+  }
+  /* Móvil: la W queda de fondo, grande y tenue, y el texto y los botones van centrados encima */
+  @media (max-width: 767px) {
+    .hero {
+      align-items: center;
+    }
+    .hero__content {
+      padding-top: calc(var(--header-h) + 1.5rem);
+      padding-bottom: 6.5rem;
+      justify-items: center;
+      text-align: center;
+    }
+    .hero__title {
+      max-width: 13ch;
+    }
+    .hero__actions {
+      justify-content: center;
+    }
+    /* El canvas lo crea React: sin :global el estilo con alcance de Astro no le llega */
+    .hero__scene :global(canvas),
+    .hero__fallback {
+      opacity: 0.3;
+    }
+    .hero__fallback {
+      place-items: center;
+      padding-top: 0;
+    }
+    .hero__w {
+      width: min(105vw, 50svh * 1.43);
+    }
+  }
+
+  /* Entrada del hero: solo un desplazamiento corto; el texto nunca está oculto (ni sin JavaScript ni si la animación no corre) */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__in {
+      animation: heroIn 700ms var(--ease-out-expo) both;
+      animation-delay: calc(var(--i) * 60ms);
+    }
+  }
+  @keyframes heroIn {
+    from {
+      transform: translateY(24px);
+    }
+  }
+</style>

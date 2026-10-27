@@ -1,0 +1,123 @@
+---
+// Lista de servicios: título a la izquierda y descripción a la derecha. Cada fila lleva a la página
+// del servicio, que es donde se ven el precio «desde», el plazo y cómo son los pagos
+// (decisiones de Willder, 2026-10-25 y 2026-10-26).
+import { servicePath, type Lang } from "../i18n/routes";
+import { services } from "../data/services";
+
+interface Props {
+  lang: Lang;
+  headingLevel?: "h2" | "h3";
+}
+const { lang, headingLevel = "h3" } = Astro.props;
+const H = headingLevel;
+---
+
+<div>
+  <ul class="price-list border-t border-line">
+    {
+      services.map((s, i) => (
+        <li class="border-b border-line" data-reveal style={`--delay:${i * 60}ms`}>
+          <a href={servicePath(s.key, lang)} class="price-row group">
+            <span class="eyebrow">{String(i + 1).padStart(2, "0")}</span>
+            <H class="display min-w-0 text-[length:var(--text-step-2)]">{s[lang].name}</H>
+            <span class="price-row__desc text-muted">{s[lang].short}</span>
+            <span class="price-row__arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</div>
+
+<style>
+  .price-row {
+    position: relative;
+    display: grid;
+    grid-template-columns: 3rem minmax(0, 1fr) minmax(0, 1fr) 2.5rem;
+    align-items: center;
+    gap: 1.5rem;
+    padding: clamp(1.25rem, 3vw, 2rem) 0.5rem;
+    text-decoration: none;
+    isolation: isolate;
+  }
+  .price-row::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--surface);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  .price-row__desc {
+    max-width: 44ch;
+    font-size: var(--text-step-1);
+    line-height: 1.45;
+  }
+  .price-row__arrow {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition:
+      background var(--dur-base) var(--ease-out-expo),
+      color var(--dur-base),
+      transform var(--dur-base) var(--ease-out-expo);
+  }
+  @media (hover: hover) {
+    .price-row:hover::before {
+      transform: scaleY(1);
+    }
+    .price-row:hover .price-row__arrow {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
+      transform: rotate(-45deg);
+    }
+  }
+  /* Móvil: tarjetas de 2 en 2 con número, título, descripción corta y flecha (decisión de Willder, 2026-10-26) */
+  @media (max-width: 767px) {
+    .price-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.75rem;
+      border-top: 0;
+    }
+    .price-list > li {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .price-row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+      height: 100%;
+      padding: 1rem;
+    }
+    .price-row > :global(h2),
+    .price-row > :global(h3) {
+      font-size: var(--text-step-1);
+      line-height: 1.15;
+      /* Palabras largas en español («Mantenimiento») a media pantalla: cortar con guion */
+      hyphens: auto;
+      overflow-wrap: anywhere;
+    }
+    .price-row__desc {
+      font-size: var(--text-step--1);
+      line-height: 1.4;
+    }
+    .price-row__arrow {
+      margin-top: auto;
+      width: 2.1rem;
+      height: 2.1rem;
+    }
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+// Pie de página. Escritorio: logo, hora local de West Palm Beach, páginas, servicios y redes.
+// Móvil: versión corta como en dennissnellenberg.com (redes, © y hora local) para que, al llegar al final,
+// se vea el bloque «Let's work together» (decisión de Willder, 2026-10-26).
+import Logo from "./Logo.astro";
+import Icon from "./Icon.astro";
+import { r, servicePath, type Lang } from "../i18n/routes";
+import { site, t } from "../i18n/ui";
+import { services } from "../data/services";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const year = new Date().getFullYear();
+const socials = [
+  { name: "LinkedIn", href: site.linkedin, icon: "linkedin" as const },
+  { name: "GitHub", href: site.github, icon: "github" as const },
+];
+---
+
+<footer class="border-t border-line">
+  <!-- Escritorio y tableta -->
+  <div class="wrap grid gap-12 py-14 max-md:hidden md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+    <div class="flex flex-col gap-5">
+      <Logo class="h-7 w-auto self-start" />
+      <p class="max-w-[38ch] text-muted">{copy.footer.tagline}</p>
+      <p class="eyebrow">
+        {copy.footer.localTime}: <b data-local-time>—</b>
+      </p>
+    </div>
+
+    <nav aria-label={copy.footer.pages}>
+      <h2 class="eyebrow mb-4">{copy.footer.pages}</h2>
+      <ul class="footer-list">
+        <li><a href={r("home", lang)}>{copy.common.breadcrumbHome}</a></li>
+        <li><a href={r("services", lang)}>{copy.nav.services}</a></li>
+        <li><a href={r("work", lang)}>{copy.nav.work}</a></li>
+        <li><a href={r("about", lang)}>{copy.nav.about}</a></li>
+        <li><a href={r("faq", lang)}>{copy.nav.faq}</a></li>
+        <li><a href={r("contact", lang)}>{copy.nav.contact}</a></li>
+      </ul>
+    </nav>
+
+    <nav aria-label={copy.footer.services}>
+      <h2 class="eyebrow mb-4">{copy.footer.services}</h2>
+      <ul class="footer-list">
+        {services.map((s) => <li><a href={servicePath(s.key, lang)}>{s[lang].name}</a></li>)}
+      </ul>
+    </nav>
+
+    <nav aria-label={copy.footer.socials}>
+      <h2 class="eyebrow mb-4">{copy.footer.socials}</h2>
+      <ul class="footer-list">
+        {
+          socials.map((s) => (
+            <li>
+              <a href={s.href} target="_blank" rel="noopener" class="inline-flex items-center gap-2">
+                <Icon name={s.icon} size={18} />
+                {s.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+  <div class="wrap flex flex-wrap items-center justify-between gap-3 border-t border-line py-6 pl-20 pr-16 text-sm text-muted max-md:hidden">
+    <p>© {year} WillNet · {site.person}. {copy.footer.rights}</p>
+    <a href={r("privacy", lang)} class="underline underline-offset-4 hover:text-ink">{copy.footer.privacy}</a>
+  </div>
+
+  <!-- Móvil: corto, como en la referencia -->
+  <div class="wrap pt-7 pb-20 md:hidden">
+    <nav aria-label={copy.footer.socials}>
+      <h2 class="eyebrow mb-3 text-center">{copy.footer.socials}</h2>
+      <ul class="flex flex-wrap justify-center gap-x-7 gap-y-2 text-[length:var(--text-step-1)]">
+        {socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener" class="footer-m-link">{s.name}</a></li>)}
+      </ul>
+    </nav>
+    <div class="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-5">
+      <div>
+        <p class="eyebrow mb-1">WillNet</p>
+        <p>© {year}</p>
+      </div>
+      <div class="text-right">
+        <p class="eyebrow mb-1">{copy.footer.localTime}</p>
+        <p data-local-time>—</p>
+      </div>
+    </div>
+    <a href={r("privacy", lang)} class="mt-5 inline-block text-sm text-muted underline underline-offset-4">{copy.footer.privacy}</a>
+  </div>
+</footer>
+
+<style>
+  .footer-list {
+    display: grid;
+    gap: 0.55rem;
+  }
+  .footer-list a,
+  .footer-m-link {
+    text-decoration: none;
+    color: var(--text);
+    background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+    transition: background-size var(--dur-base) var(--ease-out-expo);
+  }
+  .footer-list a:hover,
+  .footer-m-link:hover {
+    background-size: 100% 1px;
+  }
+</style>

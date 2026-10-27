@@ -1,0 +1,8 @@
+{
+  "order": 7, "category": "events", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "",
+  "image": { "en": "invitacion-primer-anito.jpg", "es": "invitacion-primer-anito.jpg", "mobileEn": "invitacion-primer-anito.jpg", "mobileEs": "invitacion-primer-anito.jpg" },
+  "stack": [],
+  "en": { "title": "First birthday invitation", "type": "Digital invitation", "summary": "Racing-themed invitation with a personalized pass for each family." },
+  "es": { "title": "Invitación de primer cumpleaños", "type": "Invitación digital", "summary": "Invitación temática de carreras con pase personalizado para cada familia." }
+}

@@ -1,0 +1,8 @@
+{
+  "order": 14, "category": "learning", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "https://willnet-dev.github.io/drum-kit/",
+  "image": { "en": "drum-kit.jpg", "es": "drum-kit.jpg", "mobileEn": "drum-kit.jpg", "mobileEs": "drum-kit.jpg" },
+  "stack": [],
+  "en": { "title": "Drum Kit", "type": "Web game", "summary": "A drum kit you play with the keyboard, mouse or finger. JavaScript." },
+  "es": { "title": "Drum Kit", "type": "Juego web", "summary": "Batería que suena con el teclado, el mouse o el dedo. JavaScript." }
+}

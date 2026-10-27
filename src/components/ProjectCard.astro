@@ -1,0 +1,159 @@
+---
+// Tarjeta de proyecto para las cuadrículas (inicio y proyectos de diseño o práctica).
+// Si el proyecto tiene página de caso, enlaza a ella; si no, al sitio publicado.
+import type { CollectionEntry } from "astro:content";
+import { workPath, type Lang } from "../i18n/routes";
+import { t } from "../i18n/ui";
+import { workImg } from "../lib/img";
+
+interface Props {
+  project: CollectionEntry<"work">;
+  lang: Lang;
+  size?: "lg" | "md";
+  eager?: boolean;
+  /** «contain»: muestra la pieza entera (logos, tarjetas, invitaciones) sobre un fondo desenfocado de la misma imagen */
+  fit?: "cover" | "contain";
+  /** En móvil va en 2 columnas: título más pequeño y sin resumen */
+  mobileCompact?: boolean;
+}
+const { project, lang, size = "md", eager = false, fit = "cover", mobileCompact = false } = Astro.props;
+const d = project.data;
+const copy = t(lang);
+const img = lang === "es" ? d.image.es : d.image.en;
+const href = d.hasCase ? workPath(project.id, lang) : d.url || undefined;
+const external = !d.hasCase && !!d.url;
+const Tag = href ? "a" : "div";
+// Las piezas en PNG suelen tener fondo transparente: en «contain» van sobre blanco para que se lean en tema oscuro
+const transparent = img.toLowerCase().endsWith(".png");
+---
+
+<Tag
+  href={href}
+  class:list={["pcard group", `pcard--${size}`, mobileCompact && "pcard--compact"]}
+  {...(external ? { target: "_blank", rel: "noopener" } : {})}
+  data-category={d.category}
+>
+  <div class:list={["pcard__media", fit === "contain" && "pcard__media--contain"]}>
+    {fit === "contain" && <img src={workImg(img)} alt="" aria-hidden="true" loading="lazy" decoding="async" class="pcard__backdrop" />}
+    <img
+      src={workImg(img)}
+      alt={`${d[lang].title} — ${d[lang].type}`}
+      width="1600"
+      height="900"
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+      class:list={["pcard__img", fit === "contain" && transparent && "pcard__img--paper"]}
+    />
+  </div>
+  <div class="pcard__body">
+    <div class="flex flex-wrap items-center gap-2">
+      <span class="tag">{d[lang].type}</span>
+      {d.withDopicos && <span class="tag tag--accent">{copy.common.withDopicos}</span>}
+      {d.year > 0 && <span class="eyebrow ml-auto">{d.year}</span>}
+    </div>
+    <h3 class:list={["display mt-3 text-[length:var(--text-step-2)]", mobileCompact && "max-md:mt-2 max-md:text-[length:var(--text-step-0)]"]}>{d[lang].title}</h3>
+    {size === "lg" && <p class:list={["mt-2 text-muted", mobileCompact && "max-md:hidden"]}>{d[lang].summary}</p>}
+    {
+      href && (
+        <span class:list={["pcard__cta", mobileCompact && "max-md:text-xs"]}>
+          {d.hasCase ? copy.common.viewCase : copy.common.visitSite}
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path d={external ? "M7 17 17 7M9 7h8v8" : "M5 12h14M13 6l6 6-6 6"} fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+      )
+    }
+  </div>
+</Tag>
+
+<style>
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    text-decoration: none;
+  }
+  .pcard__media {
+    position: relative;
+    overflow: hidden;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    aspect-ratio: 16 / 10;
+  }
+  .pcard__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    transition: transform var(--dur-slow) var(--ease-out-expo);
+  }
+  .pcard__media--contain {
+    aspect-ratio: 1;
+  }
+  .pcard__media--contain .pcard__img {
+    position: relative;
+    object-fit: contain;
+    object-position: center;
+    padding: 6%;
+  }
+  .pcard__media--contain .pcard__img--paper {
+    padding: 0;
+    width: 88%;
+    height: 88%;
+    margin: 6%;
+    object-fit: contain;
+    background: #fff;
+  }
+  .pcard__backdrop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: blur(28px) saturate(1.2);
+    transform: scale(1.3);
+    opacity: 0.55;
+  }
+  .pcard__body {
+    padding-inline: 0.25rem;
+  }
+  @media (max-width: 767px) {
+    .pcard--compact {
+      gap: 0.7rem;
+    }
+    .pcard--compact .pcard__media {
+      border-radius: 12px;
+    }
+    .pcard--compact .tag {
+      font-size: 0.62rem;
+      padding: 0.15rem 0.45rem;
+    }
+  }
+  .pcard__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.8rem;
+    font-weight: 600;
+    font-size: var(--text-step--1);
+    color: var(--link);
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    color: var(--muted);
+  }
+  .tag--accent {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+  @media (hover: hover) {
+    .pcard:hover .pcard__img {
+      transform: scale(1.04);
+    }
+  }
+</style>

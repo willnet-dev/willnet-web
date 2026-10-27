@@ -1,0 +1,44 @@
+---
+// Preguntas frecuentes: las preguntas reales de la entrevista con respuesta directa primero.
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import FaqList from "../components/FaqList.astro";
+import { r, type Lang } from "../i18n/routes";
+import { t } from "../i18n/ui";
+import { faqFor } from "../data/faq";
+import { breadcrumbs, faqPage } from "../lib/schema";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const p = copy.faqPage;
+const items = faqFor(lang);
+---
+
+<Base
+  lang={lang}
+  title={p.title}
+  description={p.description}
+  schema={[
+    breadcrumbs([
+      { name: copy.common.breadcrumbHome, path: r("home", lang) },
+      { name: copy.nav.faq, path: r("faq", lang) },
+    ]),
+    faqPage(items),
+  ]}
+>
+  <PageHead
+    eyebrow={p.eyebrow}
+    title={p.h1}
+    intro={p.intro}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: copy.nav.faq, href: r("faq", lang) },
+    ]}
+  />
+  <section class="wrap pb-[clamp(4rem,10vh,8rem)]">
+    <FaqList items={items} headingLevel="h2" />
+  </section>
+</Base>

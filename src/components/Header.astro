@@ -1,0 +1,324 @@
+---
+// Cabecera fija: logo, navegación con punto en la página activa, idioma, tema y botón de presupuesto.
+// En móvil y tableta (< 1024 px) la cabecera se queda arriba y solo el botón del menú sigue al visitante;
+// el menú se abre a pantalla completa (referencia: dennissnellenberg.com; decisión de Willder, 2026-10-26).
+import Icon from "./Icon.astro";
+import Logo from "./Logo.astro";
+import { altPath, r, type Lang } from "../i18n/routes";
+import { site, t, whatsappHref } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  path: string;
+}
+const { lang, path } = Astro.props;
+const copy = t(lang);
+const other: Lang = lang === "en" ? "es" : "en";
+
+const links = [
+  { href: r("services", lang), label: copy.nav.services },
+  { href: r("work", lang), label: copy.nav.work },
+  { href: r("about", lang), label: copy.nav.about },
+  { href: r("faq", lang), label: copy.nav.faq },
+  { href: r("contact", lang), label: copy.nav.contact },
+];
+const isActive = (href: string) => path === href || path.startsWith(href + "/");
+---
+
+<header class="site-header" data-header>
+  <div class="wrap flex h-[var(--header-h)] items-center justify-between gap-4">
+    <a href={r("home", lang)} class="relative z-[61] flex items-center" aria-label="WillNet — home">
+      <Logo class="h-6 w-auto sm:h-7" />
+    </a>
+
+    <nav aria-label={copy.nav.primary} class="max-lg:hidden">
+      <ul class="flex items-center gap-1">
+        {
+          links.map((l) => (
+            <li>
+              <a href={l.href} class:list={["nav-link", { "is-active": isActive(l.href) }]} aria-current={isActive(l.href) ? "page" : undefined}>
+                {l.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header-actions relative z-[61] flex items-center gap-2">
+      <a href={altPath(path, other)} hreflang={other} lang={other} class="icon-btn font-mono text-sm" aria-label={`${copy.nav.langShort} · ${copy.nav.langLabel}`}>
+        {copy.nav.langShort}
+      </a>
+      <button type="button" class="icon-btn" data-theme-toggle data-label-dark={copy.nav.themeToDark} data-label-light={copy.nav.themeToLight} aria-label={copy.nav.themeToLight}>
+        <!-- Un solo icono que muestra el tema activo: sol (claro) o luna (oscuro). Cambia con una animación. -->
+        <svg class="theme-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+          <mask id="theme-moon-cut">
+            <rect width="24" height="24" fill="white"></rect>
+            <circle class="theme-icon__cut" cx="17" cy="7" r="7" fill="black"></circle>
+          </mask>
+          <circle class="theme-icon__core" cx="12" cy="12" r="8" fill="currentColor" mask="url(#theme-moon-cut)"></circle>
+          <g class="theme-icon__rays" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <path d="M12 1.5v2.5M12 20v2.5M1.5 12H4M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M4.6 19.4l1.8-1.8M17.6 6.4l1.8-1.8"></path>
+          </g>
+        </svg>
+      </button>
+      <a href={r("contact", lang)} class="btn btn-primary !min-h-11 !px-5 !text-sm max-md:hidden" data-magnetic><span class="btn-label">{copy.nav.quote}</span></a>
+      <button type="button" class="menu-btn lg:hidden" data-menu-toggle aria-expanded="false" aria-controls="mobile-menu">
+        <span class="menu-btn__lines" aria-hidden="true"><span></span><span></span></span>
+        <span class="sr-only" data-menu-label data-open={copy.nav.menu} data-close={copy.nav.close}>{copy.nav.menu}</span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="mobile-menu lg:hidden" data-menu hidden>
+    <div class="wrap flex min-h-full flex-col justify-between pt-[calc(var(--header-h)+2rem)] pb-8">
+      <nav aria-label={copy.nav.primary}>
+        <p class="eyebrow mb-6">// {copy.nav.menu}</p>
+        <ul class="flex flex-col gap-2">
+          <li><a href={r("home", lang)} class="mobile-link">{copy.common.breadcrumbHome}</a></li>
+          {links.map((l) => <li><a href={l.href} class="mobile-link" aria-current={isActive(l.href) ? "page" : undefined}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+      <div class="mt-10 flex flex-col gap-3">
+        <a href={r("contact", lang)} class="btn btn-primary btn-lg w-full"><span class="btn-label">{copy.cta.quote}</span></a>
+        <a href={whatsappHref(lang)} class="btn w-full" target="_blank" rel="noopener"><span class="btn-label">{copy.cta.whatsapp}</span></a>
+        <div class="mt-6">
+          <p class="eyebrow mb-3 text-center">{copy.footer.socials}</p>
+          <ul class="flex justify-center gap-3">
+            <li><a href={site.linkedin} target="_blank" rel="noopener" class="btn social-icon" aria-label="LinkedIn"><span class="btn-label"><Icon name="linkedin" size={22} /></span></a></li>
+            <li><a href={site.github} target="_blank" rel="noopener" class="btn social-icon" aria-label="GitHub"><span class="btn-label"><Icon name="github" size={22} /></span></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 60;
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      background var(--dur-base),
+      border-color var(--dur-base);
+    border-bottom: 1px solid transparent;
+  }
+  .site-header.is-scrolled {
+    background: color-mix(in oklab, var(--bg) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--line);
+  }
+  .site-header.is-hidden {
+    transform: translateY(-100%);
+  }
+  .site-header.menu-open {
+    transform: none;
+    background: transparent;
+    border-bottom-color: transparent;
+    backdrop-filter: none;
+  }
+
+  .nav-link {
+    position: relative;
+    display: inline-flex;
+    padding: 0.6rem 0.9rem;
+    font-weight: 500;
+    font-size: 0.95rem;
+    text-decoration: none;
+    color: var(--muted);
+    transition: color var(--dur-fast);
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 0.15rem;
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    border-radius: 50%;
+    background: var(--accent);
+    transform: scale(0);
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  :global([data-theme="light"]) .nav-link::after {
+    background: var(--text);
+  }
+  .nav-link:hover,
+  .nav-link.is-active {
+    color: var(--text);
+  }
+  .nav-link:hover::after,
+  .nav-link.is-active::after {
+    transform: scale(1);
+  }
+
+  .icon-btn {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background var(--dur-fast),
+      border-color var(--dur-fast);
+  }
+  .icon-btn:hover {
+    border-color: var(--text);
+  }
+  /* Icono del tema: en oscuro es una luna (círculo grande con un mordisco) y en claro un sol
+     (círculo pequeño con rayos). Solo se animan transformaciones, que funcionan en todos los navegadores. */
+  .theme-icon {
+    overflow: visible;
+    transition: transform 600ms var(--ease-out-expo);
+  }
+  .theme-icon__core,
+  .theme-icon__cut,
+  .theme-icon__rays {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition:
+      transform 600ms var(--ease-out-expo),
+      opacity 300ms var(--ease-out-expo);
+  }
+  :global([data-theme="dark"]) .theme-icon {
+    transform: rotate(0deg);
+  }
+  :global([data-theme="dark"]) .theme-icon__rays {
+    opacity: 0;
+    transform: scale(0.4) rotate(-45deg);
+  }
+  :global([data-theme="light"]) .theme-icon {
+    transform: rotate(180deg);
+  }
+  :global([data-theme="light"]) .theme-icon__core {
+    transform: scale(0.6);
+  }
+  :global([data-theme="light"]) .theme-icon__cut {
+    transform: translate(9px, -9px);
+  }
+
+  .menu-btn {
+    display: none;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+    cursor: pointer;
+  }
+  @media (max-width: 1023px) {
+    .menu-btn {
+      display: inline-grid;
+    }
+  }
+  .menu-btn__lines {
+    display: grid;
+    gap: 6px;
+    width: 18px;
+  }
+  .menu-btn__lines span {
+    display: block;
+    height: 2px;
+    background: currentColor;
+    border-radius: 2px;
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  .menu-btn[aria-expanded="true"] .menu-btn__lines span:first-child {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .menu-btn[aria-expanded="true"] .menu-btn__lines span:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
+  /* Móvil y tableta: la cabecera no sigue al visitante; el botón del menú queda fijo en su mismo sitio */
+  @media (max-width: 1023px) {
+    .site-header {
+      position: absolute;
+    }
+    .site-header.is-scrolled {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      border-bottom-color: transparent;
+    }
+    .site-header.is-hidden {
+      transform: none;
+    }
+    /* Con el menú abierto la cabecera vuelve arriba de la pantalla para mostrar logo, idioma y tema */
+    .site-header.menu-open {
+      position: fixed;
+    }
+    .header-actions {
+      margin-right: calc(48px + 0.5rem);
+    }
+    /* Menú abierto después de bajar: logo, idioma y tema entran con el círculo del menú
+       (primero lo que está junto al botón, luego el logo) y salen rápido al cerrarlo */
+    .site-header.menu-reveal > .wrap > a,
+    .site-header.menu-reveal .header-actions > :not(.menu-btn) {
+      opacity: 0;
+      transform: translateY(-10px);
+      transition:
+        opacity 220ms var(--ease-out-expo),
+        transform 220ms var(--ease-out-expo);
+    }
+    .site-header.menu-reveal-start > .wrap > a,
+    .site-header.menu-reveal-start .header-actions > :not(.menu-btn) {
+      transition: none;
+    }
+    .site-header.menu-reveal-in > .wrap > a,
+    .site-header.menu-reveal-in .header-actions > :not(.menu-btn) {
+      opacity: 1;
+      transform: none;
+      transition:
+        opacity 500ms var(--ease-out-expo) var(--reveal-delay, 200ms),
+        transform 500ms var(--ease-out-expo) var(--reveal-delay, 200ms);
+    }
+    .site-header.menu-reveal-in > .wrap > a {
+      --reveal-delay: 380ms;
+    }
+    .menu-btn {
+      position: fixed;
+      top: calc((var(--header-h) - 48px) / 2);
+      right: var(--gutter);
+      z-index: 62;
+      transition: box-shadow var(--dur-base);
+    }
+    .site-header.is-scrolled .menu-btn {
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+    }
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    z-index: 59;
+    overflow-y: auto;
+    background: var(--surface);
+    clip-path: circle(0% at calc(100% - 2.5rem) 2.25rem);
+    transition: clip-path 700ms var(--ease-in-out-quart);
+  }
+  .mobile-menu.is-open {
+    clip-path: circle(150% at calc(100% - 2.5rem) 2.25rem);
+  }
+  .mobile-link {
+    display: block;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-step-4);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    text-decoration: none;
+  }
+  .mobile-link[aria-current="page"] {
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,20 @@
+{
+  "order": 6, "category": "events", "featured": false, "hasCase": true, "year": 2025,
+  "url": "https://willnet-dev.github.io/assignacion_mesas/",
+  "image": { "en": "mesas.jpg", "es": "mesas.jpg", "mobileEn": "mesas-movil.jpg", "mobileEs": "mesas-movil.jpg" },
+  "stack": ["HTML", "CSS", "JavaScript"],
+  "en": {
+    "title": "Table finder", "type": "Web app",
+    "summary": "Each guest scans a QR code, types their name and finds their table instantly.",
+    "challenge": "At the quinceañera, guests needed to find their table without a printed chart or someone directing them at the door.",
+    "solution": "A small web app opened from a QR code: the guest types their name and the app shows their table right away.",
+    "result": "Guests found their tables on their own phones in seconds."
+  },
+  "es": {
+    "title": "Buscador de mesas", "type": "App web",
+    "summary": "Cada invitado escanea un QR, escribe su nombre y encuentra su mesa al instante.",
+    "challenge": "En los XV años, los invitados necesitaban encontrar su mesa sin un plano impreso ni alguien que los guiara en la entrada.",
+    "solution": "Una pequeña app web que se abre con un QR: el invitado escribe su nombre y la app le muestra su mesa al momento.",
+    "result": "Los invitados encontraron su mesa desde su propio celular en segundos."
+  }
+}

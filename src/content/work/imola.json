@@ -1,0 +1,20 @@
+{
+  "order": 3, "category": "web", "featured": true, "hasCase": true, "year": 2025,
+  "url": "https://imolagoldjewelry.com",
+  "image": { "en": "imola.jpg", "es": "imola.jpg", "mobileEn": "imola-movil.jpg", "mobileEs": "imola-movil.jpg" },
+  "stack": ["WordPress", "WooCommerce"],
+  "en": {
+    "title": "Imola Gold Jewelry", "type": "Online store",
+    "summary": "18k gold jewelry store in West Palm Beach: catalog by category, cart and payments.",
+    "challenge": "Imola sells 18k gold jewelry and needed an elegant catalog where customers could browse necklaces, earrings, rings and bracelets and buy online.",
+    "solution": "A WooCommerce store organized by category, with cart and online payments, built around the brand's colors and product photos. It was my first website for a client.",
+    "result": "The store is live at imolagoldjewelry.com with its full catalog by category."
+  },
+  "es": {
+    "title": "Imola Gold Jewelry", "type": "Tienda en línea",
+    "summary": "Tienda de joyería en oro de 18k en West Palm Beach: catálogo por categorías, carrito y pagos.",
+    "challenge": "Imola vende joyería en oro de 18k y necesitaba un catálogo elegante donde sus clientes vieran collares, aretes, anillos y pulseras y compraran en línea.",
+    "solution": "Una tienda WooCommerce organizada por categorías, con carrito y pagos en línea, construida con los colores de la marca y sus fotos de producto. Fue mi primera web para un cliente.",
+    "result": "La tienda está publicada en imolagoldjewelry.com con su catálogo completo por categorías."
+  }
+}

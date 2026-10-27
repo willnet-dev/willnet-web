@@ -1,0 +1,225 @@
+---
+// Portafolio. Arriba, los casos con dispositivos 3D (opción C): en escritorio la laptop y el teléfono
+// quedan fijos a la derecha y cambian de proyecto al bajar. En móvil o sin WebGL, cada caso trae su
+// captura en un teléfono con leve giro (CSS). Abajo, el resto de proyectos con filtros.
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import DeviceShowcase from "../components/three/DeviceShowcase.tsx";
+import { r, workPath, type Lang } from "../i18n/routes";
+import { t } from "../i18n/ui";
+import { breadcrumbs } from "../lib/schema";
+import { workImg } from "../lib/img";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const p = copy.workPage;
+const all = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
+const cases = all.filter((x) => x.data.hasCase);
+const rest = all.filter((x) => !x.data.hasCase);
+const restCats = ["events", "design", "learning"] as const;
+
+const showcaseItems = cases.map((c) => ({
+  slug: c.id,
+  desktop: workImg(lang === "es" ? c.data.image.es : c.data.image.en),
+  mobile: workImg(lang === "es" ? c.data.image.mobileEs : c.data.image.mobileEn),
+}));
+---
+
+<Base
+  lang={lang}
+  title={p.title}
+  description={p.description}
+  schema={[
+    breadcrumbs([
+      { name: copy.common.breadcrumbHome, path: r("home", lang) },
+      { name: copy.nav.work, path: r("work", lang) },
+    ]),
+  ]}
+>
+  <PageHead
+    eyebrow={p.eyebrow}
+    title={p.h1}
+    intro={p.intro}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: copy.nav.work, href: r("work", lang) },
+    ]}
+  >
+    <p class="eyebrow mt-6"><b>{all.length}</b> {p.count}</p>
+  </PageHead>
+
+  <section class="wrap showcase pb-[clamp(4rem,10vh,8rem)]" aria-label={copy.nav.work}>
+    <ol class="showcase__list">
+      {
+        cases.map((c, i) => {
+          const d = c.data;
+          const mobileImg = lang === "es" ? d.image.mobileEs : d.image.mobileEn;
+          return (
+            <li class="showcase__item" data-showcase-item={c.id}>
+              <a href={workPath(c.id, lang)} class="showcase__link group">
+                <span class="showcase__phone" aria-hidden="true">
+                  <img src={workImg(mobileImg)} alt="" width="585" height="1266" loading="lazy" decoding="async" />
+                </span>
+                <span class="showcase__text">
+                  <span class="eyebrow">
+                    {String(i + 1).padStart(2, "0")} · {d[lang].type} · {d.year}
+                  </span>
+                  <span class="display showcase__title">{d[lang].title}</span>
+                  <span class="text-muted">{d[lang].summary}</span>
+                  <span class="showcase__cta">
+                    {copy.common.viewCase}
+                    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })
+      }
+    </ol>
+    <div class="showcase__stage" aria-hidden="true">
+      <div class="showcase__sticky">
+        <DeviceShowcase client:media="(min-width: 1024px) and (prefers-reduced-motion: no-preference)" items={showcaseItems} />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap pb-[clamp(4rem,10vh,8rem)]" aria-labelledby="more-title">
+    <div class="mb-10 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-12">
+      <h2 id="more-title" class="display text-[length:var(--text-step-3)]">{copy.common.allWork}</h2>
+      <div class="flex flex-wrap gap-2" role="group" aria-label={copy.common.allWork} data-filters>
+        <button type="button" class="filter" data-filter="all" aria-pressed="true">{p.filters.all}</button>
+        {restCats.map((cat) => <button type="button" class="filter" data-filter={cat} aria-pressed="false">{p.filters[cat]}</button>)}
+      </div>
+    </div>
+    <div class="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+      {rest.map((x) => <ProjectCard project={x} lang={lang} />)}
+    </div>
+    <p class="eyebrow mt-10" data-learning-note>{p.learningNote}</p>
+  </section>
+</Base>
+
+<style>
+  .showcase__list {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: clamp(3rem, 8vw, 5rem);
+  }
+  .showcase__link {
+    display: grid;
+    grid-template-columns: minmax(96px, 30%) minmax(0, 1fr);
+    gap: clamp(1.25rem, 4vw, 3rem);
+    align-items: center;
+    text-decoration: none;
+  }
+  .showcase__phone {
+    display: block;
+    padding: 6px;
+    border-radius: 28px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    transform: perspective(900px) rotateY(-14deg) rotateX(4deg);
+    transition: transform var(--dur-slow) var(--ease-out-expo);
+    box-shadow: 0 30px 60px -30px rgb(0 0 0 / 0.6);
+  }
+  .showcase__phone img {
+    width: 100%;
+    height: auto;
+    border-radius: 22px;
+  }
+  .showcase__text {
+    display: grid;
+    gap: 0.7rem;
+    justify-items: start;
+  }
+  .showcase__title {
+    font-size: var(--text-step-4);
+    overflow-wrap: anywhere;
+  }
+  @media (max-width: 639px) {
+    .showcase__title {
+      font-size: var(--text-step-2);
+    }
+  }
+  .showcase__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-weight: 600;
+    color: var(--link);
+  }
+  .showcase__stage {
+    display: none;
+  }
+  @media (hover: hover) {
+    .showcase__link:hover .showcase__phone {
+      transform: perspective(900px) rotateY(-4deg) rotateX(0deg) translateY(-6px);
+    }
+  }
+
+  /* Escritorio con movimiento permitido: lista a la izquierda y dispositivos 3D fijos a la derecha.
+     Lo decide el CSS para que no haya salto al cargar; sin WebGL, el script añade .no-showcase. */
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    :global(html:not(.no-showcase)) .showcase {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+      gap: 3rem;
+    }
+    :global(html:not(.no-showcase)) .showcase__stage {
+      display: block;
+    }
+    :global(html:not(.no-showcase)) .showcase__sticky {
+      position: sticky;
+      top: calc(var(--header-h) + 2vh);
+      height: calc(100vh - var(--header-h) - 4vh);
+    }
+    :global(html:not(.no-showcase)) .showcase__list {
+      gap: 0;
+    }
+    :global(html:not(.no-showcase)) .showcase__item {
+      min-height: 70vh;
+      display: flex;
+      align-items: center;
+    }
+    :global(html:not(.no-showcase)) .showcase__link {
+      grid-template-columns: 1fr;
+    }
+    :global(html:not(.no-showcase)) .showcase__phone {
+      display: none;
+    }
+    /* Proyecto que no está en pantalla: título en gris (sin opacidad, para mantener el contraste) */
+    :global(html.js:not(.no-showcase)) .showcase__item .showcase__title {
+      color: var(--muted);
+      transition: color var(--dur-base);
+    }
+    :global(html:not(.no-showcase)) .showcase__item:global(.is-active) .showcase__title {
+      color: var(--text);
+    }
+  }
+
+  .filter {
+    min-height: 44px;
+    padding: 0.5rem 1.1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background var(--dur-fast),
+      color var(--dur-fast),
+      border-color var(--dur-fast);
+  }
+  .filter:hover {
+    border-color: var(--text);
+  }
+  .filter[aria-pressed="true"] {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+</style>

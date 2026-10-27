@@ -1,0 +1,103 @@
+---
+// Preguntas frecuentes con <details> (funcionan sin JavaScript). La respuesta es texto visible
+// para buscadores y asistentes de IA; los datos estructurados FAQPage se arman en cada página.
+interface Props {
+  items: { id?: string; q: string; a: string }[];
+  headingLevel?: "h2" | "h3";
+}
+const { items, headingLevel = "h3" } = Astro.props;
+const H = headingLevel;
+---
+
+<div class="border-t border-line">
+  {
+    items.map((item, i) => (
+      <details class="faq group border-b border-line" id={item.id} data-reveal style={`--delay:${Math.min(i, 5) * 50}ms`}>
+        <summary class="faq__q">
+          <H class="text-[length:var(--text-step-1)] font-semibold tracking-tight">{item.q}</H>
+          <span class="faq__icon" aria-hidden="true" />
+        </summary>
+        <div class="faq__a prose-w max-w-[68ch] text-muted">
+          <p>{item.a}</p>
+        </div>
+      </details>
+    ))
+  }
+</div>
+
+<style>
+  /* Mismo efecto que las filas de Services: un fondo sube desde abajo y el ícono se pone lima y gira */
+  .faq__q {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.4rem 0.75rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  .faq__q::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--surface);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  .faq__q::-webkit-details-marker {
+    display: none;
+  }
+  .faq__icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition:
+      background var(--dur-base) var(--ease-out-expo),
+      transform var(--dur-base) var(--ease-out-expo);
+  }
+  .faq__icon::before,
+  .faq__icon::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    margin: -1px 0 0 -6px;
+    background: currentColor;
+    border-radius: 2px;
+  }
+  .faq__icon::after {
+    transform: rotate(90deg);
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  .faq[open] .faq__icon {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  .faq[open] .faq__icon::after {
+    transform: rotate(0deg);
+  }
+  .faq__a {
+    padding: 0 0.75rem 1.6rem;
+  }
+  @media (hover: hover) {
+    .faq__q:hover::before {
+      transform: scaleY(1);
+    }
+    .faq__q:hover .faq__icon {
+      background: var(--accent);
+      color: var(--accent-ink);
+      border-color: var(--accent);
+      transform: rotate(90deg);
+    }
+  }
+</style>

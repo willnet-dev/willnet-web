@@ -1,0 +1,165 @@
+---
+// Sobre mí: historia de Willder, espacio para su foto, cifras verificables, habilidades y formación.
+// FOTO: cuando esté lista, guárdala como public/img/willder.jpg (vertical, 4:5) y cambia hasPhoto a true.
+import { getCollection } from "astro:content";
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import { r, type Lang } from "../i18n/routes";
+import { site, t } from "../i18n/ui";
+import { breadcrumbs } from "../lib/schema";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const a = copy.about;
+const hasPhoto = false;
+const realProjects = (await getCollection("work")).filter((p) => p.data.category !== "learning").length;
+const tools = ["HTML", "CSS", "JavaScript", "Tailwind CSS", "Astro", "React", "Three.js", "GSAP", "Node.js", "WordPress", "WooCommerce", "Stripe", "Cloudflare", "Git", "GitHub", "Figma", "Canva", "Claude Code"];
+
+const person = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "@id": `${site.url}/#willder`,
+  name: site.person,
+  jobTitle: "Web developer",
+  worksFor: { "@id": `${site.url}/#business` },
+  address: { "@type": "PostalAddress", addressLocality: site.city, addressRegion: site.region, addressCountry: site.country },
+  knowsLanguage: ["en", "es"],
+  sameAs: [site.linkedin, site.github],
+};
+---
+
+<Base
+  lang={lang}
+  title={a.title}
+  description={a.description}
+  schema={[
+    breadcrumbs([
+      { name: copy.common.breadcrumbHome, path: r("home", lang) },
+      { name: copy.nav.about, path: r("about", lang) },
+    ]),
+    person,
+  ]}
+>
+  <PageHead
+    eyebrow={a.eyebrow}
+    title={a.h1}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: copy.nav.about, href: r("about", lang) },
+    ]}
+  />
+
+  <section class="wrap grid gap-12 pb-[clamp(4rem,10vh,7rem)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start" data-parallax-root>
+    <div class="about-photo" data-speed="-0.08">
+      {
+        hasPhoto ? (
+          <img src="/img/willder.jpg" alt={a.photoAlt} width="800" height="1000" class="h-full w-full object-cover" />
+        ) : (
+          <div class="about-photo__empty">
+            <svg viewBox="0 0 416 290" width="96" fill="currentColor" aria-hidden="true"><path d="M0 0 96 37 156 203 107 290Z" /><path d="M416 0 320 37 260 203 309 290Z" /><path d="M160 64 208 83 256 64 208 174Z" /></svg>
+            <span class="eyebrow">{a.photoSoon}</span>
+          </div>
+        )
+      }
+    </div>
+    <div>
+      <div class="prose-w grid gap-5 text-[length:var(--text-step-1)]">
+        {a.intro.map((pp) => <p data-reveal>{pp}</p>)}
+      </div>
+      <dl class="mt-12 grid grid-cols-3 gap-4 border-t border-line pt-8">
+        <div data-reveal>
+          <dt class="sr-only">{a.statProjects}</dt>
+          <dd class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight">{realProjects}</dd>
+          <dd class="mt-1 text-sm text-muted" aria-hidden="true">{a.statProjects}</dd>
+        </div>
+        <div data-reveal style="--delay:80ms">
+          <dt class="sr-only">{a.statLangs}</dt>
+          <dd class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight">2</dd>
+          <dd class="mt-1 text-sm text-muted" aria-hidden="true">{a.statLangs}</dd>
+        </div>
+        <div data-reveal style="--delay:160ms">
+          <dt class="sr-only">{a.statSupport}</dt>
+          <dd class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight">30</dd>
+          <dd class="mt-1 text-sm text-muted" aria-hidden="true">{a.statSupport}</dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="wrap border-t border-line py-[clamp(4rem,10vh,7rem)]" aria-labelledby="skills-title">
+    <h2 id="skills-title" class="display mb-10 text-[length:var(--text-step-3)]" data-reveal>{a.skillsTitle}</h2>
+    <div class="grid gap-10 md:grid-cols-3">
+      {
+        a.skills.map((g, i) => (
+          <div data-reveal style={`--delay:${i * 80}ms`}>
+            <h3 class="eyebrow mb-4">// {g.group}</h3>
+            <ul class="grid gap-2">
+              {g.items.map((it) => (
+                <li class="border-b border-line pb-2">{it}</li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap grid gap-10 border-t border-line py-[clamp(4rem,10vh,7rem)] lg:grid-cols-[1fr_1.4fr]" aria-labelledby="edu-title">
+    <div>
+      <h2 id="edu-title" class="display text-[length:var(--text-step-3)]" data-reveal>{a.eduTitle}</h2>
+      <p class="mt-4 max-w-[44ch] text-muted" data-reveal>{a.eduText}</p>
+    </div>
+    <ol class="border-t border-line">
+      {
+        a.education.map((e) => (
+          <li class="grid grid-cols-[1fr_auto] gap-4 border-b border-line py-5" data-reveal>
+            <span>
+              <span class="block font-semibold">{e.name}</span>
+              <span class="text-muted">{e.org}</span>
+            </span>
+            <span class="eyebrow self-center">{e.date}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="border-y border-line py-6" aria-label={a.toolsTitle}>
+    <p class="wrap eyebrow mb-4">// {a.toolsTitle}</p>
+    <div class="marquee" aria-hidden="true">
+      {
+        [0, 1].map(() => (
+          <div class="marquee__track">
+            {tools.map((tool) => (
+              <span class="font-mono text-[length:var(--text-step-1)] whitespace-nowrap text-muted">{tool}</span>
+            ))}
+          </div>
+        ))
+      }
+    </div>
+    <p class="sr-only">{tools.join(", ")}</p>
+  </section>
+</Base>
+
+<style>
+  .about-photo {
+    aspect-ratio: 4 / 5;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    max-width: 520px;
+  }
+  .about-photo__empty {
+    height: 100%;
+    display: grid;
+    place-content: center;
+    justify-items: center;
+    gap: 1rem;
+    color: var(--wire);
+    background: repeating-linear-gradient(-45deg, transparent 0 14px, color-mix(in oklab, var(--wire) 25%, transparent) 14px 15px);
+  }
+</style>

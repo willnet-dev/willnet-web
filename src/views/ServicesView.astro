@@ -1,0 +1,50 @@
+---
+// Página de servicios: los 5 servicios con precio «desde», el proceso y la forma de pago.
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import PriceList from "../components/PriceList.astro";
+import Process from "../components/Process.astro";
+import { r, servicePath, type Lang } from "../i18n/routes";
+import { t } from "../i18n/ui";
+import { services } from "../data/services";
+import { breadcrumbs, serviceSchema } from "../lib/schema";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const p = copy.servicesPage;
+const schema = [
+  breadcrumbs([
+    { name: copy.common.breadcrumbHome, path: r("home", lang) },
+    { name: copy.nav.services, path: r("services", lang) },
+  ]),
+  ...services.map((s) => serviceSchema({ name: s[lang].name, description: s[lang].short, path: servicePath(s.key, lang), lang })),
+];
+---
+
+<Base lang={lang} title={p.title} description={p.description} schema={schema}>
+  <PageHead
+    eyebrow={p.eyebrow}
+    title={p.h1}
+    intro={p.intro}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: copy.nav.services, href: r("services", lang) },
+    ]}
+  />
+  <section class="wrap pb-[clamp(4rem,10vh,8rem)]" aria-label={copy.nav.services}>
+    <PriceList lang={lang} headingLevel="h2" />
+  </section>
+  <Process lang={lang} eyebrow={copy.home.processEyebrow} title={copy.home.processTitle} />
+  <section class="wrap pb-[clamp(4rem,10vh,8rem)]">
+    <div class="grid gap-6 rounded-3xl border border-line bg-surface p-[clamp(1.5rem,4vw,3.5rem)] md:grid-cols-[1.4fr_auto] md:items-center" data-reveal>
+      <div>
+        <h2 class="display text-[length:var(--text-step-3)]">{p.notSure}</h2>
+        <p class="mt-3 max-w-[52ch] text-muted">{p.notSureText}</p>
+      </div>
+      <a href={r("contact", lang)} class="btn btn-primary btn-lg" data-magnetic><span class="btn-label">{copy.cta.quote}</span></a>
+    </div>
+  </section>
+</Base>

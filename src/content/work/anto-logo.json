@@ -1,0 +1,8 @@
+{
+  "order": 11, "category": "design", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "",
+  "image": { "en": "logo-anto.jpg", "es": "logo-anto.jpg", "mobileEn": "logo-anto.jpg", "mobileEs": "logo-anto.jpg" },
+  "stack": [],
+  "en": { "title": "Anto Perfumes logo", "type": "Logo", "summary": "Elegant logo for a perfume brand." },
+  "es": { "title": "Logo de Anto Perfumes", "type": "Logo", "summary": "Logo elegante para una marca de perfumes." }
+}

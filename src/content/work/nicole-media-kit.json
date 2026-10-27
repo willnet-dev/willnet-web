@@ -1,0 +1,8 @@
+{
+  "order": 8, "category": "design", "featured": false, "hasCase": false, "year": 0, "withDopicos": true,
+  "url": "",
+  "image": { "en": "mediakit-nicole.jpg", "es": "mediakit-nicole.jpg", "mobileEn": "mediakit-nicole.jpg", "mobileEs": "mediakit-nicole.jpg" },
+  "stack": [],
+  "en": { "title": "Nicole Díaz media kit", "type": "Media kit", "summary": "Bilingual media kit for an influencer with millions of followers: audience, metrics and brand pitch." },
+  "es": { "title": "Media kit de Nicole Díaz", "type": "Media kit", "summary": "Media kit bilingüe para una influencer con millones de seguidores: audiencia, métricas y propuesta para marcas." }
+}

@@ -1,0 +1,8 @@
+{
+  "order": 15, "category": "learning", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "https://willnet-dev.github.io/tindog-project/",
+  "image": { "en": "tindog.jpg", "es": "tindog.jpg", "mobileEn": "tindog.jpg", "mobileEs": "tindog.jpg" },
+  "stack": [],
+  "en": { "title": "TinDog", "type": "Website", "summary": "Landing page for a fictional dog app, built with Bootstrap." },
+  "es": { "title": "TinDog", "type": "Sitio web", "summary": "Landing de una app ficticia para perros, hecha con Bootstrap." }
+}

@@ -1,0 +1,31 @@
+---
+// Página 404 bilingüe: inglés primero y español debajo, con enlaces útiles.
+import Base from "../layouts/Base.astro";
+import { r } from "../i18n/routes";
+import { t } from "../i18n/ui";
+const en = t("en");
+const es = t("es");
+---
+
+<Base lang="en" title={en.notFound.title} description={en.notFound.text}>
+  <section class="wrap pt-[calc(var(--header-h)+clamp(4rem,14vh,9rem))] pb-24">
+    <p class="eyebrow mb-4">// 404</p>
+    <h1 class="display max-w-[16ch] text-[length:var(--text-step-5)]">{en.notFound.h1}</h1>
+    <p class="mt-6 text-[length:var(--text-step-1)] text-muted">{en.notFound.text}</p>
+    <ul class="mt-8 flex flex-wrap gap-3">
+      <li><a class="btn btn-primary" href={r("home", "en")}><span class="btn-label">{en.common.breadcrumbHome}</span></a></li>
+      <li><a class="btn" href={r("services", "en")}><span class="btn-label">{en.nav.services}</span></a></li>
+      <li><a class="btn" href={r("work", "en")}><span class="btn-label">{en.nav.work}</span></a></li>
+      <li><a class="btn" href={r("contact", "en")}><span class="btn-label">{en.nav.contact}</span></a></li>
+    </ul>
+    <div lang="es" class="mt-16 border-t border-line pt-10">
+      <h2 class="display text-[length:var(--text-step-3)]">{es.notFound.h1}</h2>
+      <p class="mt-4 text-muted">{es.notFound.text}</p>
+      <ul class="mt-6 flex flex-wrap gap-3">
+        <li><a class="btn" href={r("home", "es")}><span class="btn-label">{es.common.breadcrumbHome}</span></a></li>
+        <li><a class="btn" href={r("services", "es")}><span class="btn-label">{es.nav.services}</span></a></li>
+        <li><a class="btn" href={r("contact", "es")}><span class="btn-label">{es.nav.contact}</span></a></li>
+      </ul>
+    </div>
+  </section>
+</Base>

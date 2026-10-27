@@ -1,0 +1,8 @@
+{
+  "order": 19, "category": "learning", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "https://willnet-dev.github.io/login-form/",
+  "image": { "en": "login-form.jpg", "es": "login-form.jpg", "mobileEn": "login-form.jpg", "mobileEs": "login-form.jpg" },
+  "stack": [],
+  "en": { "title": "Login form", "type": "Form", "summary": "Login form with a glass effect and a show-password button. HTML, CSS and JavaScript." },
+  "es": { "title": "Formulario de inicio de sesión", "type": "Formulario", "summary": "Formulario de inicio de sesión con efecto de vidrio y botón para ver la contraseña. HTML, CSS y JavaScript." }
+}

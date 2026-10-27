@@ -1,0 +1,584 @@
+@import "@fontsource-variable/unbounded";
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "tailwindcss";
+
+/* El tema se elige con data-theme en <html> (script en Base.astro). Oscuro por defecto. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------- Tokens de color: «Señal en la oscuridad» ---------- */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0a0a0b;
+  --surface: #141416;
+  --surface-2: #1c1c1f;
+  --line: #2a2a2e;
+  --text: #f4f4f2;
+  --muted: #9a9a9f;
+  --accent: #d4ff3a;
+  --accent-ink: #0a0a0b;
+  --link: #d4ff3a;
+  --wire: #3a3a40;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f3f2ee;
+  --surface: #ffffff;
+  --surface-2: #e9e8e2;
+  --line: #d6d4cc;
+  --text: #0b0b0c;
+  --muted: #55555b;
+  --accent: #d4ff3a;
+  --accent-ink: #0a0a0b;
+  --link: #4d6b00;
+  --wire: #b9b7ae;
+}
+
+/* inline: las utilidades (text-muted, border-line…) apuntan a la variable, así siguen los colores
+   de cada zona; sin inline se fijarían en <html> y el escenario final no podría cambiarlos */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-line: var(--line);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-link: var(--link);
+  --color-wire: var(--wire);
+}
+
+@theme {
+  --font-display: "Unbounded Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Geist Mono Variable", ui-monospace, monospace;
+
+  /* Escala tipográfica fluida (360 px → 1440 px) */
+  --text-step--1: clamp(0.83rem, 0.8rem + 0.15vw, 0.94rem);
+  --text-step-0: clamp(1rem, 0.96rem + 0.2vw, 1.13rem);
+  --text-step-1: clamp(1.2rem, 1.1rem + 0.45vw, 1.5rem);
+  --text-step-2: clamp(1.44rem, 1.25rem + 0.9vw, 2.1rem);
+  --text-step-3: clamp(1.73rem, 1.4rem + 1.6vw, 3rem);
+  --text-step-4: clamp(2.07rem, 1.5rem + 2.8vw, 4.4rem);
+  --text-step-5: clamp(2.3rem, 1.4rem + 4.4vw, 6.2rem);
+
+  /* Movimiento: un solo juego de duraciones y curvas para toda la web */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
+}
+
+:root {
+  --dur-fast: 180ms;
+  --dur-base: 420ms;
+  --dur-slow: 900ms;
+  --gutter: clamp(1rem, 0.5rem + 2.5vw, 3rem);
+  --header-h: 72px;
+  /* Color de la página fuera del escenario final (el telón lo usa aunque el escenario cambie --bg) */
+  --page-bg: var(--bg);
+}
+
+/* Las reglas propias van en capas para que las utilidades de Tailwind (p. ej. max-md:hidden) les ganen */
+@layer base {
+  /* ---------- Base ---------- */
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: calc(var(--header-h) + 1rem);
+  }
+
+  body {
+    min-height: 100dvh;
+    font-size: var(--text-step-0);
+    line-height: 1.6;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  [data-theme="light"] :focus-visible {
+    outline-color: var(--text);
+  }
+
+  a {
+    color: inherit;
+  }
+
+  .wrap {
+    width: min(100% - 2 * var(--gutter), 1320px);
+    margin-inline: auto;
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-step--1);
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+
+  .eyebrow b {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+  }
+
+  .prose-w p + p {
+    margin-top: 1em;
+  }
+
+  .prose-w a {
+    color: var(--link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .hl {
+    background: var(--accent);
+    color: var(--accent-ink);
+    padding-inline: 0.15em;
+    border-radius: 0.12em;
+    box-decoration-break: clone;
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -100px;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  .skip-link:focus {
+    top: 1rem;
+  }
+}
+
+@layer components {
+  /* ---------- Botones magnéticos con relleno (referencia: dennissnellenberg.com) ---------- */
+  /* Hover: los botones con borde se rellenan de lima; el principal (ya lima) se rellena con el color del texto */
+  .btn {
+    --btn-bg: transparent;
+    --btn-fg: var(--text);
+    --btn-fill: var(--accent);
+    --btn-fill-fg: var(--accent-ink);
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6em;
+    min-height: 48px;
+    padding: 0.85em 1.6em;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--btn-bg);
+    color: var(--btn-fg);
+    font-weight: 600;
+    font-size: var(--text-step-0);
+    line-height: 1;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+    transition:
+      color var(--dur-base) var(--ease-out-expo),
+      border-color var(--dur-base) var(--ease-out-expo);
+  }
+
+  .btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--btn-fill);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    transform: translateY(101%);
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      border-radius var(--dur-base) var(--ease-out-expo);
+  }
+
+  .btn > .btn-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    will-change: transform;
+  }
+
+  @media (hover: hover) {
+    .btn:hover {
+      color: var(--btn-fill-fg);
+      border-color: var(--btn-fill);
+    }
+    .btn:hover::before {
+      transform: translateY(0);
+      border-radius: 0;
+    }
+  }
+
+  .btn-primary {
+    --btn-bg: var(--accent);
+    --btn-fg: var(--accent-ink);
+    --btn-fill: var(--text);
+    --btn-fill-fg: var(--bg);
+    border-color: var(--accent);
+  }
+
+  .btn-lg {
+    min-height: 56px;
+    font-size: var(--text-step-1);
+    padding: 0.9em 1.8em;
+  }
+
+  /* Botón redondo solo con ícono (redes en Contacto y en el menú) */
+  .social-icon {
+    width: 56px;
+    height: 56px;
+    min-height: 56px;
+    padding: 0;
+  }
+
+  /* Botón circular grande del bloque «Let's work together» */
+  .btn-orb {
+    width: clamp(150px, 18vw, 200px);
+    aspect-ratio: 1;
+    padding: 0;
+    border-radius: 50%;
+    text-align: center;
+    font-size: var(--text-step-0);
+  }
+
+  /* ---------- Revelado al entrar en pantalla ---------- */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+
+  .js [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity var(--dur-slow) var(--ease-out-expo),
+      transform var(--dur-slow) var(--ease-out-expo);
+    transition-delay: var(--delay, 0ms);
+  }
+
+  /* ---------- Cortina de transición entre páginas ---------- */
+  .curtain {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transform: translateY(100%);
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  .curtain__label {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: var(--text-step-3);
+    letter-spacing: -0.03em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+
+  .curtain__label::before {
+    content: "";
+    width: 0.35em;
+    height: 0.35em;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  /* ---------- Marquee ---------- */
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    user-select: none;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .marquee__track {
+    display: flex;
+    flex-shrink: 0;
+    gap: 2.5rem;
+    padding-right: 2.5rem;
+    animation: marquee 38s linear infinite;
+  }
+
+  @keyframes marquee {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* ---------- Mouse animado del hero (referencia: tamalsen.dev) ---------- */
+  /* Ciclo de 5 s: 0–12 % se dibuja el contorno con el trazo lima al frente; 12–24 % el trazo da otra
+     vuelta; 24–32 % cae dentro como flecha; 32–54 % la flecha rebota; 58–64 % se recoge;
+     70–82 % el contorno se borra; el resto es pausa. Los trazos usan pathLength="100". */
+  .mouse path {
+    fill: none;
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .mouse__outline {
+    stroke: var(--text);
+    stroke-opacity: 0.8;
+    stroke-dasharray: 100 102;
+    animation: mouseOutline 5s linear infinite;
+  }
+  .mouse__chase,
+  .mouse__stem,
+  .mouse__head {
+    stroke: var(--accent);
+  }
+  [data-theme="light"] .mouse__chase,
+  [data-theme="light"] .mouse__stem,
+  [data-theme="light"] .mouse__head {
+    stroke: var(--link);
+  }
+  .mouse__chase {
+    stroke-dasharray: 14 186;
+    animation: mouseChase 5s linear infinite;
+  }
+  .mouse__stem,
+  .mouse__head {
+    stroke-dasharray: 100 202;
+  }
+  .mouse__stem {
+    animation: mouseStem 5s linear infinite;
+  }
+  .mouse__head {
+    animation: mouseHead 5s linear infinite;
+  }
+  .mouse__arrow {
+    animation: mouseBounce 5s infinite;
+  }
+  .scroll-cue:hover .mouse__outline {
+    stroke-opacity: 1;
+  }
+
+  @keyframes mouseOutline {
+    0% { stroke-dashoffset: 101; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+    12%, 70% { stroke-dashoffset: 0; animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    82%, 100% { stroke-dashoffset: -101; }
+  }
+  @keyframes mouseChase {
+    0% { stroke-dashoffset: 15; opacity: 1; animation-timing-function: cubic-bezier(0.3, 0, 0.2, 1); }
+    12% { stroke-dashoffset: -86; }
+    12.01% { stroke-dashoffset: 15; animation-timing-function: cubic-bezier(0.5, 0, 0.3, 1); }
+    24% { stroke-dashoffset: -86; opacity: 1; }
+    25%, 69.9% { stroke-dashoffset: -86; opacity: 0; }
+    70% { stroke-dashoffset: 0; opacity: 1; animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    82% { stroke-dashoffset: -100; opacity: 1; }
+    82.01%, 100% { opacity: 0; }
+  }
+  @keyframes mouseStem {
+    0%, 23% { stroke-dashoffset: 101; animation-timing-function: cubic-bezier(0.3, 0, 0.1, 1); }
+    31%, 58% { stroke-dashoffset: 0; animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    64%, 100% { stroke-dashoffset: -101; }
+  }
+  @keyframes mouseHead {
+    0%, 28% { stroke-dashoffset: 101; animation-timing-function: cubic-bezier(0.3, 0, 0.1, 1); }
+    33%, 58% { stroke-dashoffset: 0; animation-timing-function: cubic-bezier(0.6, 0, 0.4, 1); }
+    64%, 100% { stroke-dashoffset: -101; }
+  }
+  @keyframes mouseBounce {
+    0%, 33%, 41%, 49%, 57%, 100% { transform: translateY(0); animation-timing-function: cubic-bezier(0.1, 0.9, 0.3, 1); }
+    37%, 45%, 53% { transform: translateY(6px); animation-timing-function: cubic-bezier(0.5, 0, 0.7, 0.4); }
+  }
+  /* Sin movimiento: mouse quieto con la flecha dentro */
+  @media (prefers-reduced-motion: reduce) {
+    .mouse path,
+    .mouse__arrow {
+      animation: none;
+    }
+    .mouse__outline,
+    .mouse__stem,
+    .mouse__head {
+      stroke-dashoffset: 0;
+    }
+    .mouse__chase {
+      opacity: 0;
+    }
+  }
+
+  /* ---------- Máquina de escribir ---------- */
+  .type-caret {
+    display: inline-block;
+    width: 0.08em;
+    height: 1em;
+    margin-left: 0.06em;
+    vertical-align: -0.12em;
+    background: var(--accent);
+    animation: caret 1s steps(1) infinite;
+  }
+
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  /* ---------- Marco de navegador (proceso y casos) ---------- */
+  .browser {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    background: var(--surface);
+    overflow: hidden;
+    box-shadow: 0 40px 80px -40px rgb(0 0 0 / 0.6);
+  }
+
+  .browser__bar {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+
+  .browser__dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--wire);
+  }
+
+  .browser__url {
+    flex: 1;
+    margin-left: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    background: var(--bg);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .wire {
+    border: 1.5px dashed var(--wire);
+    border-radius: 6px;
+  }
+}
+
+/* ---------- Movimiento reducido: sin animaciones continuas ni revelados ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .js [data-reveal] {
+    opacity: 1;
+    transform: none;
+  }
+  .marquee__track {
+    animation: none;
+  }
+}
+
+/* ---------- Escenario final con telón (Base.astro) ---------- */
+@layer components {
+  /* El escenario va en gris carbón en los dos temas para que el telón se vea al levantarse
+     (elegido por Willder entre contrario, lima y gris, 2026-10-26) */
+  .stage {
+    color-scheme: dark;
+    --bg: #222226;
+    --surface: #2a2a2f;
+    --surface-2: #323238;
+    --line: #3a3a41;
+    --text: #f4f4f2;
+    --muted: #a6a6ac;
+    --accent: #d4ff3a;
+    --accent-ink: #0a0a0b;
+    --link: #d4ff3a;
+    --wire: #4a4a52;
+    --lip-h: 10vh;
+    position: relative;
+    overflow: clip;
+    background: var(--bg);
+    color: var(--text);
+  }
+  /* Telón: elipse del color de la página; solo asoma su parte de abajo, que es la curva */
+  .stage__lip {
+    position: absolute;
+    inset: -1px 0 auto;
+    z-index: 2;
+    height: var(--lip-h);
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .stage__lip > span {
+    position: absolute;
+    left: -25%;
+    bottom: 0;
+    width: 150%;
+    height: 750%;
+    border-radius: 50%;
+    background: var(--page-bg);
+  }
+  /* Sombra que deja el telón sobre el escenario; se disipa al terminar de subir */
+  .stage__shade {
+    position: absolute;
+    inset: 0 0 auto;
+    z-index: 1;
+    height: 70vh;
+    background: linear-gradient(rgb(0 0 0 / 0.45), transparent);
+    pointer-events: none;
+    opacity: 0;
+  }
+  .js .stage__shade {
+    opacity: 1;
+  }
+  /* En Contacto no hay bloque «Let's work together»: el pie deja sitio a la curva */
+  .stage [data-stage-inner] > footer:first-child {
+    padding-top: var(--lip-h);
+  }
+  @media (min-width: 1024px) {
+    .stage {
+      --lip-h: 16vh;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .js .stage__shade {
+      opacity: 0;
+    }
+  }
+}

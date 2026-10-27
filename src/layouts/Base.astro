@@ -1,0 +1,191 @@
+---
+// Plantilla común: <head> con SEO (title, description, canonical, hreflang, Open Graph, JSON-LD),
+// tema oscuro/claro, transiciones entre páginas, cabecera, bloque «Let's work together» y pie.
+import { ClientRouter } from "astro:transitions";
+import "../styles/global.css";
+import Header from "../components/Header.astro";
+import Footer from "../components/Footer.astro";
+import WorkTogether from "../components/WorkTogether.astro";
+import WhatsAppFab from "../components/WhatsAppFab.astro";
+import { altPath, type Lang } from "../i18n/routes";
+import { site, t } from "../i18n/ui";
+// Fuentes del primer pantallazo (título y texto): se precargan para que el H1 no cambie de letra al cargar
+import unboundedLatin from "@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2?url";
+import geistLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** JSON-LD propio de la página (se suma al de la organización) */
+  schema?: Record<string, unknown>[];
+  /** Ocultar el bloque «Let's work together» (p. ej. en Contacto) */
+  hideTogether?: boolean;
+  image?: string;
+}
+
+const { lang, title, description, schema = [], hideTogether = false, image } = Astro.props;
+const copy = t(lang);
+const path = Astro.url.pathname.replace(/\.html$/, "").replace(/\/index$/, "").replace(/\/$/, "") || "/";
+const canonical = new URL(path, site.url).href;
+const enHref = new URL(altPath(path, "en"), site.url).href;
+const esHref = new URL(altPath(path, "es"), site.url).href;
+const isProduction = import.meta.env.SITE_IS_PRODUCTION;
+// La imagen para compartir se sirve desde el sitio donde está publicada la web (en la vista previa,
+// willnet.dev todavía es la landing y la imagen daría 404). Es una captura del hero en cada idioma.
+const shareBase = isProduction ? site.url : "https://v2.willnet.dev";
+const ogImage = new URL(image ?? (lang === "es" ? "/og-es.jpg" : "/og-en.jpg"), shareBase).href;
+
+const org = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "@id": `${site.url}/#business`,
+  name: site.name,
+  url: site.url,
+  logo: `${site.url}/icon-512.png`,
+  image: `${site.url}/og-en.jpg`,
+  description: copy.meta.siteDescription,
+  email: site.email,
+  telephone: "+1-786-557-5568",
+  address: { "@type": "PostalAddress", addressLocality: site.city, addressRegion: site.region, addressCountry: site.country },
+  areaServed: [
+    { "@type": "Country", name: "United States" },
+    { "@type": "Place", name: "Latin America" },
+  ],
+  availableLanguage: ["en", "es"],
+  founder: { "@type": "Person", "@id": `${site.url}/#willder`, name: site.person, jobTitle: "Web developer", sameAs: [site.linkedin, site.github] },
+  sameAs: [site.linkedin, site.github],
+};
+---
+
+<!doctype html>
+<html lang={lang} data-theme="dark" transition:animate="none">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!isProduction && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={enHref} />
+    <link rel="alternate" hreflang="es" href={esHref} />
+    <link rel="alternate" hreflang="x-default" href={enHref} />
+    <link rel="preload" href={unboundedLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#0a0a0b" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WillNet" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={copy.meta.ogAlt} />
+    <meta property="og:locale" content={lang === "es" ? "es_US" : "en_US"} />
+    <meta property="og:locale:alternate" content={lang === "es" ? "en_US" : "es_US"} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify([org, ...schema])} />
+
+    {/* Compatibilidad con la landing anterior: willnet.dev/?lang=es llevaba al español */}
+    {path === "/" && <script is:inline>if (new URLSearchParams(location.search).get("lang") === "es") location.replace("/es");</script>}
+
+    {/* Tema antes de pintar: preferencia guardada → preferencia del sistema → oscuro */}
+    <script is:inline>
+      (() => {
+        const apply = (doc) => {
+          let saved = null;
+          try { saved = localStorage.getItem("theme"); } catch {}
+          const theme = saved || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
+          doc.documentElement.dataset.theme = theme;
+          doc.documentElement.classList.add("js");
+          // La entrada del botón de WhatsApp solo se anima la primera vez en la sesión
+          try { if (sessionStorage.getItem("wa-seen")) doc.documentElement.classList.add("wa-seen"); } catch {}
+        };
+        apply(document);
+        // Seguro: si el JavaScript principal no arranca, se quita la clase .js y todo el contenido se ve
+        setTimeout(() => {
+          if (!window.__wnReady) document.documentElement.classList.remove("js");
+        }, 3000);
+        if (!window.__wnTheme) {
+          window.__wnTheme = true;
+          document.addEventListener("astro:before-swap", (e) => apply(e.newDocument));
+        }
+      })();
+    </script>
+    <ClientRouter />
+  </head>
+  <body class="bg-bg text-ink">
+    <a class="skip-link" href="#main">{copy.nav.skip}</a>
+    <Header lang={lang} path={path} />
+    <main id="main">
+      <slot />
+    </main>
+    <!-- Escenario final: la página termina en una curva (el telón) que se aplana al bajar y descubre
+         «Let's work together» y el pie, que van en gris carbón (referencia: dennissnellenberg.com) -->
+    <div class="stage" data-stage>
+      <div class="stage__lip" data-stage-lip aria-hidden="true"><span></span></div>
+      <div class="stage__shade" data-stage-shade aria-hidden="true"></div>
+      <div data-stage-inner>
+        {!hideTogether && <WorkTogether lang={lang} />}
+        <Footer lang={lang} />
+      </div>
+    </div>
+
+    <WhatsAppFab lang={lang} />
+
+    <button type="button" class="back-top" data-back-top aria-label={copy.nav.backToTop} hidden>
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+    </button>
+
+    <div class="curtain" data-curtain aria-hidden="true" transition:persist="curtain">
+      <span class="curtain__label" data-curtain-label>WillNet</span>
+    </div>
+
+    <script>
+      import { initSite } from "../scripts/site";
+      initSite();
+    </script>
+
+    <style>
+      .back-top {
+        position: fixed;
+        right: max(1rem, env(safe-area-inset-right));
+        bottom: max(1rem, env(safe-area-inset-bottom));
+        z-index: 40;
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+        cursor: pointer;
+        transition:
+          transform var(--dur-base) var(--ease-out-expo),
+          opacity var(--dur-base) var(--ease-out-expo),
+          background var(--dur-fast);
+      }
+      .back-top[hidden] {
+        display: grid;
+        opacity: 0;
+        transform: translateY(16px) scale(0.9);
+        pointer-events: none;
+      }
+      @media (hover: hover) {
+        .back-top:hover {
+          background: var(--accent);
+          color: var(--accent-ink);
+          border-color: var(--accent);
+        }
+      }
+    </style>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+{
+  "order": 18, "category": "learning", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "https://willnet-dev.github.io/website-structure/",
+  "image": { "en": "aprendiendo-a-programar.jpg", "es": "aprendiendo-a-programar.jpg", "mobileEn": "aprendiendo-a-programar.jpg", "mobileEs": "aprendiendo-a-programar.jpg" },
+  "stack": [],
+  "en": { "title": "Learning to Code", "type": "Website", "summary": "My first website: a Spanish page about learning to code, with responsive HTML and CSS." },
+  "es": { "title": "Aprendiendo a Programar", "type": "Sitio web", "summary": "Mi primera web: una página en español sobre aprender a programar, con HTML y CSS adaptable." }
+}

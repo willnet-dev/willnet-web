@@ -1,0 +1,8 @@
+{
+  "order": 9, "category": "design", "featured": false, "hasCase": false, "year": 0, "withDopicos": true,
+  "url": "",
+  "image": { "en": "tarjeta-dopicos.jpg", "es": "tarjeta-dopicos.jpg", "mobileEn": "tarjeta-dopicos.jpg", "mobileEs": "tarjeta-dopicos.jpg" },
+  "stack": [],
+  "en": { "title": "Dopicos business card", "type": "Business card", "summary": "Bilingual business card with a QR code and an icon for each service, for a software agency." },
+  "es": { "title": "Tarjeta de Dopicos", "type": "Tarjeta de presentación", "summary": "Tarjeta bilingüe con QR e íconos de cada servicio para una agencia de software." }
+}

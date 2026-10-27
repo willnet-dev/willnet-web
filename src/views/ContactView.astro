@@ -1,0 +1,425 @@
+---
+// Contacto: formulario corto de presupuesto (acción principal) + WhatsApp, correo y teléfono.
+// El formulario envía a Web3Forms con la clave pública PUBLIC_WEB3FORMS_KEY (archivo .env, ver README).
+// Sin clave, muestra el aviso de «formulario sin conectar» y deja correo y WhatsApp como alternativa.
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import Icon from "../components/Icon.astro";
+import { r, type Lang } from "../i18n/routes";
+import { site, t, whatsappHref } from "../i18n/ui";
+import { services } from "../data/services";
+import { breadcrumbs } from "../lib/schema";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const p = copy.contactPage;
+const f = copy.form;
+const key = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+---
+
+<Base
+  lang={lang}
+  title={p.title}
+  description={p.description}
+  hideTogether
+  schema={[
+    breadcrumbs([
+      { name: copy.common.breadcrumbHome, path: r("home", lang) },
+      { name: copy.nav.contact, path: r("contact", lang) },
+    ]),
+  ]}
+>
+  <PageHead
+    eyebrow={p.eyebrow}
+    title={p.h1}
+    intro={p.intro}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: copy.nav.contact, href: r("contact", lang) },
+    ]}
+  />
+
+  <section class="wrap grid gap-12 pb-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1.5fr_1fr]">
+    <form class="qform" data-quote-form data-key={key} data-lang={lang} novalidate>
+      {!key && <p class="qform__notice" role="note">{f.notConnected}</p>}
+
+      <input type="hidden" name="subject" value={lang === "es" ? "Nueva solicitud de presupuesto — willnet.dev" : "New quote request — willnet.dev"} />
+      <input type="hidden" name="from_name" value="willnet.dev" />
+      <input type="hidden" name="language" value={lang} />
+      <div class="sr-only" aria-hidden="true">
+        <label for="botcheck">{f.honeypot}</label>
+        <input type="checkbox" name="botcheck" id="botcheck" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div class="field">
+          <label for="f-name">{f.name} <span aria-hidden="true">*</span></label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="f-name-err" />
+          <p class="field__err" id="f-name-err" data-err-required={f.required}></p>
+        </div>
+        <div class="field">
+          <label for="f-email">{f.email} <span aria-hidden="true">*</span></label>
+          <input id="f-email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="f-email-err" />
+          <p class="field__err" id="f-email-err" data-err-required={f.required} data-err-invalid={f.invalidEmail}></p>
+        </div>
+        <div class="field">
+          <label for="f-phone">{f.phone}</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" />
+        </div>
+        <div class="field">
+          <label for="f-service">{f.service} <span aria-hidden="true">*</span></label>
+          <select id="f-service" name="service" required aria-describedby="f-service-err">
+            <option value="">{f.servicePlaceholder}</option>
+            {services.map((s) => <option value={s[lang].name}>{s[lang].name}</option>)}
+            <option value={f.serviceOther}>{f.serviceOther}</option>
+          </select>
+          <p class="field__err" id="f-service-err" data-err-required={f.required}></p>
+        </div>
+
+        <fieldset class="field sm:col-span-2">
+          <legend>{f.hasSite}</legend>
+          <div class="flex gap-3">
+            <label class="choice"><input type="radio" name="has_website" value={f.yes} data-has-site /> {f.yes}</label>
+            <label class="choice"><input type="radio" name="has_website" value={f.no} checked /> {f.no}</label>
+          </div>
+        </fieldset>
+        <div class="field sm:col-span-2" data-site-url hidden>
+          <label for="f-url">{f.siteUrl}</label>
+          <input id="f-url" name="current_website" type="url" inputmode="url" placeholder="https://" aria-describedby="f-url-err" />
+          <p class="field__err" id="f-url-err" data-err-invalid={f.invalidUrl}></p>
+        </div>
+
+        <div class="field sm:col-span-2">
+          <label for="f-budget">{f.budget}</label>
+          <select id="f-budget" name="budget">
+            <option value="">{f.budgetPlaceholder}</option>
+            {f.budgets.map((b) => <option value={b}>{b}</option>)}
+          </select>
+        </div>
+        <div class="field sm:col-span-2">
+          <label for="f-message">{f.message} <span aria-hidden="true">*</span></label>
+          <textarea id="f-message" name="message" rows="5" required aria-describedby="f-message-hint f-message-err"></textarea>
+          <p class="text-sm text-muted" id="f-message-hint">{f.messageHint}</p>
+          <p class="field__err" id="f-message-err" data-err-required={f.required}></p>
+        </div>
+      </div>
+
+      <div class="mt-8 flex flex-wrap items-center gap-5">
+        <button type="submit" class="btn btn-primary btn-lg" data-submit data-label={f.submit} data-sending={f.sending} disabled={!key}>
+          <span class="btn-label">{f.submit}</span>
+        </button>
+        <p class="text-sm text-muted">
+          {f.privacy} <a href={r("privacy", lang)} class="text-link underline underline-offset-4">{f.privacyLink}</a>
+        </p>
+      </div>
+      <p class="qform__status" data-status role="status" aria-live="polite" data-success={f.success} data-error={f.error}></p>
+    </form>
+
+    <aside class="grid content-start gap-4">
+      <h2 class="eyebrow">// {p.other}</h2>
+      <!-- Tarjetas con ícono y el mismo relleno que los botones al pasar el mouse (pedido de Willder, 2026-10-26) -->
+      <a href={whatsappHref(lang)} target="_blank" rel="noopener" class="contact-card contact-card--accent" data-magnetic data-magnetic-strength="0.12">
+        <span class="contact-card__icon"><Icon name="whatsapp" /></span>
+        <span class="contact-card__text">
+          <span class="eyebrow">WhatsApp</span>
+          <span class="text-[length:var(--text-step-2)] font-semibold">{copy.cta.whatsapp} ↗</span>
+        </span>
+      </a>
+      <a href={`mailto:${site.email}`} class="contact-card" data-magnetic data-magnetic-strength="0.12">
+        <span class="contact-card__icon"><Icon name="email" /></span>
+        <span class="contact-card__text">
+          <span class="eyebrow">Email</span>
+          <span class="text-[length:var(--text-step-1)] font-semibold break-all">{site.email}</span>
+        </span>
+      </a>
+      <a href={site.phoneHref} class="contact-card" data-magnetic data-magnetic-strength="0.12">
+        <span class="contact-card__icon"><Icon name="phone" /></span>
+        <span class="contact-card__text">
+          <span class="eyebrow">{p.phone}</span>
+          <span class="text-[length:var(--text-step-1)] font-semibold">{site.phone}</span>
+        </span>
+      </a>
+
+      <h2 class="eyebrow mt-4 text-center">// {p.social}</h2>
+      <!-- Solo íconos, centrados (decisión de Willder, 2026-10-26) -->
+      <ul class="flex justify-center gap-3">
+        <li><a href={site.linkedin} target="_blank" rel="noopener" class="btn social-icon" aria-label="LinkedIn" data-magnetic><span class="btn-label"><Icon name="linkedin" size={22} /></span></a></li>
+        <li><a href={site.github} target="_blank" rel="noopener" class="btn social-icon" aria-label="GitHub" data-magnetic><span class="btn-label"><Icon name="github" size={22} /></span></a></li>
+      </ul>
+      <p class="mt-2 text-sm text-muted">{copy.footer.tagline}</p>
+    </aside>
+  </section>
+</Base>
+
+<script>
+  // Envío del formulario a Web3Forms. Solo muestra éxito si el servicio responde success: true.
+  document.addEventListener("astro:page-load", () => {
+    const form = document.querySelector<HTMLFormElement>("[data-quote-form]");
+    if (!form) return;
+    const key = form.dataset.key;
+    const status = form.querySelector<HTMLElement>("[data-status]")!;
+    const submit = form.querySelector<HTMLButtonElement>("[data-submit]")!;
+    const label = submit.querySelector<HTMLElement>(".btn-label")!;
+    const siteWrap = form.querySelector<HTMLElement>("[data-site-url]")!;
+
+    form.querySelectorAll<HTMLInputElement>('input[name="has_website"]').forEach((radio) =>
+      radio.addEventListener("change", () => {
+        siteWrap.hidden = !form.querySelector<HTMLInputElement>("[data-has-site]")!.checked;
+      }),
+    );
+
+    const setError = (field: HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement, msg: string) => {
+      const err = form.querySelector<HTMLElement>(`#${field.id}-err`);
+      if (err) err.textContent = msg;
+      field.setAttribute("aria-invalid", msg ? "true" : "false");
+    };
+
+    const validate = () => {
+      let first: HTMLElement | null = null;
+      form.querySelectorAll<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>("input[id], select[id], textarea[id]").forEach((field) => {
+        const err = form.querySelector<HTMLElement>(`#${field.id}-err`);
+        if (!err || (field.closest("[hidden]") && field.id === "f-url")) {
+          if (err) setError(field, "");
+          return;
+        }
+        let msg = "";
+        const value = field.value.trim();
+        if (field.required && !value) msg = err.dataset.errRequired ?? "";
+        else if (value && field instanceof HTMLInputElement && field.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) msg = err.dataset.errInvalid ?? "";
+        else if (value && field instanceof HTMLInputElement && field.type === "url" && !/^https?:\/\/\S+\.\S+/.test(value)) msg = err.dataset.errInvalid ?? "";
+        setError(field, msg);
+        if (msg && !first) first = field;
+      });
+      (first as HTMLElement | null)?.focus();
+      return !first;
+    };
+
+    form.querySelectorAll("input[id], select[id], textarea[id]").forEach((field) =>
+      field.addEventListener("input", () => {
+        if (field.getAttribute("aria-invalid") === "true") setError(field as HTMLInputElement, "");
+      }),
+    );
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      status.textContent = "";
+      status.dataset.state = "";
+      if (!key || !validate()) return;
+
+      submit.disabled = true;
+      label.textContent = submit.dataset.sending!;
+      try {
+        const data = Object.fromEntries(new FormData(form).entries());
+        const res = await fetch("https://api.web3forms.com/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ ...data, access_key: key }),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (res.ok && json.success) {
+          form.reset();
+          siteWrap.hidden = true;
+          status.textContent = status.dataset.success!;
+          status.dataset.state = "success";
+        } else {
+          throw new Error(json.message || res.statusText);
+        }
+      } catch {
+        status.textContent = status.dataset.error!;
+        status.dataset.state = "error";
+      } finally {
+        submit.disabled = false;
+        label.textContent = submit.dataset.label!;
+      }
+    });
+  });
+</script>
+
+<style>
+  .qform {
+    padding: clamp(1.5rem, 4vw, 3rem);
+    border-radius: 24px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .qform__notice {
+    margin-bottom: 1.5rem;
+    padding: 0.9rem 1.1rem;
+    border-radius: 12px;
+    border: 1px dashed var(--accent);
+    font-size: var(--text-step--1);
+  }
+  :global([data-theme="light"]) .qform__notice {
+    border-color: var(--link);
+  }
+  .field {
+    display: grid;
+    gap: 0.45rem;
+    border: 0;
+    padding: 0;
+    margin: 0;
+  }
+  .field label,
+  .field legend {
+    font-weight: 600;
+    font-size: var(--text-step--1);
+    margin-bottom: 0.2rem;
+  }
+  .field input:not([type="radio"]):not([type="checkbox"]),
+  .field select,
+  .field textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 0.9rem;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+    transition: border-color var(--dur-fast);
+  }
+  .field textarea {
+    resize: vertical;
+  }
+  .field input:hover,
+  .field select:hover,
+  .field textarea:hover {
+    border-color: var(--muted);
+  }
+  .field [aria-invalid="true"] {
+    border-color: #ff6b6b;
+  }
+  :global([data-theme="light"]) .field [aria-invalid="true"] {
+    border-color: #b42318;
+  }
+  .field__err {
+    min-height: 0;
+    font-size: var(--text-step--1);
+    color: #ff8a8a;
+  }
+  :global([data-theme="light"]) .field__err {
+    color: #b42318;
+  }
+  .field__err:empty {
+    display: none;
+  }
+  .choice {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    cursor: pointer;
+    font-weight: 500 !important;
+  }
+  .choice input {
+    accent-color: var(--accent);
+    width: 18px;
+    height: 18px;
+  }
+  .choice:has(input:checked) {
+    border-color: var(--text);
+  }
+  .qform__status:not(:empty) {
+    margin-top: 1.5rem;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    font-weight: 600;
+  }
+  .qform__status[data-state="success"] {
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .qform__status[data-state="error"] {
+    border: 1px solid #ff6b6b;
+  }
+  .btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+  }
+  /* Mismo efecto que los botones: un relleno lima con borde curvo sube desde abajo.
+     La tarjeta de WhatsApp (ya lima) se rellena con el color del texto, como el botón principal */
+  .contact-card {
+    --card-fill: var(--accent);
+    --card-fill-fg: var(--accent-ink);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+    padding: 1.2rem 1.4rem;
+    border-radius: 18px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    text-decoration: none;
+    transition:
+      color var(--dur-base) var(--ease-out-expo),
+      border-color var(--dur-base) var(--ease-out-expo);
+  }
+  .contact-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--card-fill);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    transform: translateY(101%);
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      border-radius var(--dur-base) var(--ease-out-expo);
+  }
+  .contact-card__icon {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition:
+      border-color var(--dur-base) var(--ease-out-expo),
+      transform var(--dur-base) var(--ease-out-expo);
+  }
+  .contact-card__text {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+  .contact-card--accent {
+    --card-fill: var(--text);
+    --card-fill-fg: var(--bg);
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  .contact-card--accent .contact-card__icon {
+    border-color: currentColor;
+  }
+  .contact-card--accent .eyebrow {
+    color: inherit;
+  }
+  @media (hover: hover) {
+    .contact-card:hover {
+      color: var(--card-fill-fg);
+      border-color: var(--card-fill);
+    }
+    .contact-card:hover::before {
+      transform: translateY(0);
+      border-radius: 0;
+    }
+    .contact-card:hover .eyebrow {
+      color: inherit;
+    }
+    .contact-card:hover .contact-card__icon {
+      border-color: currentColor;
+      transform: rotate(-8deg);
+    }
+  }
+</style>

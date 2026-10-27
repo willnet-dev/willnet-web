@@ -1,0 +1,8 @@
+{
+  "order": 10, "category": "design", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "",
+  "image": { "en": "logo-alibel.png", "es": "logo-alibel.png", "mobileEn": "logo-alibel.png", "mobileEs": "logo-alibel.png" },
+  "stack": [],
+  "en": { "title": "Alibel Parra Insurance logo", "type": "Logo", "summary": "Identity for a health insurance agent, in Spanish and English versions." },
+  "es": { "title": "Logo de Alibel Parra Insurance", "type": "Logo", "summary": "Identidad para una agente de seguros de salud, en versiones en español e inglés." }
+}

@@ -1,0 +1,53 @@
+---
+// Encabezado de las páginas interiores: migas de pan, etiqueta, H1 e introducción.
+interface Props {
+  eyebrow: string;
+  title: string;
+  intro?: string;
+  crumbs?: { name: string; href: string }[];
+}
+const { eyebrow, title, intro, crumbs = [] } = Astro.props;
+---
+
+<header class="wrap pt-[calc(var(--header-h)+clamp(3rem,10vh,7rem))] pb-[clamp(3rem,8vh,5rem)]">
+  {
+    crumbs.length > 0 && (
+      <nav aria-label="Breadcrumb" class="mb-8">
+        <ol class="flex flex-wrap items-center gap-2 text-sm text-muted">
+          {crumbs.map((c, i) => (
+            <li class="flex items-center gap-2">
+              {i > 0 && <span aria-hidden="true">/</span>}
+              {i < crumbs.length - 1 ? (
+                <a href={c.href} class="underline-offset-4 hover:text-ink hover:underline">
+                  {c.name}
+                </a>
+              ) : (
+                <span aria-current="page" class="text-ink">
+                  {c.name}
+                </span>
+              )}
+            </li>
+          ))}
+        </ol>
+      </nav>
+    )
+  }
+  <p class="eyebrow mb-5 head-in" style="--i:0">{eyebrow}</p>
+  <h1 class="display max-w-[20ch] text-[length:var(--text-step-5)] head-in max-sm:hyphens-auto max-sm:break-words" style="--i:1">{title}</h1>
+  {intro && <p class="mt-8 max-w-[58ch] text-[length:var(--text-step-1)] text-muted head-in" style="--i:2">{intro}</p>}
+  <slot />
+</header>
+
+<style>
+  @media (prefers-reduced-motion: no-preference) {
+    .head-in {
+      animation: headIn 700ms var(--ease-out-expo) both;
+      animation-delay: calc(var(--i) * 60ms + 120ms);
+    }
+  }
+  @keyframes headIn {
+    from {
+      transform: translateY(22px);
+    }
+  }
+</style>

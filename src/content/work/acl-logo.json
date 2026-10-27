@@ -1,0 +1,8 @@
+{
+  "order": 12, "category": "design", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "",
+  "image": { "en": "logo-acl.jpg", "es": "logo-acl.jpg", "mobileEn": "logo-acl.jpg", "mobileEs": "logo-acl.jpg" },
+  "stack": [],
+  "en": { "title": "Ale Creative Lab logo", "type": "Logo", "summary": "Identity with an original illustration for a content creator and marketing brand." },
+  "es": { "title": "Logo de Ale Creative Lab", "type": "Logo", "summary": "Identidad con ilustración propia para una creadora de contenido y marca de marketing." }
+}

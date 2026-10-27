@@ -1,0 +1,277 @@
+---
+// Marco de navegador que muestra el estado del proceso (opción B):
+// 1 conversación · 2 wireframe · 3 diseño · 4 publicado. El estado cambia con data-state.
+interface Props {
+  state?: 1 | 2 | 3 | 4;
+  live?: boolean;
+  lang: "en" | "es";
+}
+const { state = 1, live = false, lang } = Astro.props;
+const es = lang === "es";
+---
+
+<div class="pframe browser" data-state={state} {...(live ? { "data-process-frame": "" } : {})} aria-hidden="true">
+  <div class="browser__bar">
+    <span class="browser__dot"></span><span class="browser__dot"></span><span class="browser__dot"></span>
+    <span class="browser__url">
+      <span class="pframe__url-draft">draft.willnet.dev/{es ? "tu-negocio" : "your-business"}</span>
+      <span class="pframe__url-live">https://{es ? "tunegocio" : "yourbusiness"}.com</span>
+    </span>
+    <span class="pframe__live">LIVE</span>
+  </div>
+  <div class="pframe__body">
+    <!-- 1 · Conversación -->
+    <div class="pframe__chat">
+      <p class="bubble bubble--them">{es ? "Hola Will, necesito una web para mi negocio 👋" : "Hi Will, I need a website for my business 👋"}</p>
+      <p class="bubble bubble--me">{es ? "¡Claro! Cuéntame qué vendes y a quién." : "Sure! Tell me what you sell and to whom."}</p>
+      <p class="bubble bubble--them bubble--typing"><span></span><span></span><span></span></p>
+    </div>
+    <!-- 2 y 3 · Wireframe que se convierte en diseño -->
+    <div class="pframe__page">
+      <div class="pf-nav"><span class="pf-logo"></span><span class="pf-links"><i></i><i></i><i></i></span></div>
+      <div class="pf-hero">
+        <div class="pf-copy">
+          <span class="pf-h">{es ? "Tu negocio, en línea." : "Your business, online."}</span>
+          <span class="pf-line"></span>
+          <span class="pf-line pf-line--short"></span>
+          <span class="pf-btn">{es ? "Pide presupuesto" : "Get a quote"}</span>
+        </div>
+        <div class="pf-img"></div>
+      </div>
+      <div class="pf-cards"><span></span><span></span><span></span></div>
+    </div>
+    <span class="pframe__badge">{es ? "30 días de soporte" : "30 days support"}</span>
+  </div>
+</div>
+
+<style>
+  .pframe__body {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+  }
+  .pframe .browser__url {
+    position: relative;
+  }
+  .pframe__url-live,
+  .pframe__live,
+  .pframe__badge {
+    opacity: 0;
+    transition: opacity var(--dur-base), transform var(--dur-base) var(--ease-out-expo);
+  }
+  .pframe__url-live {
+    position: absolute;
+    left: 0.75rem;
+    top: 0.25rem;
+    color: var(--text);
+  }
+  .pframe__live {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    transform: scale(0.6);
+  }
+  .pframe__badge {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--accent);
+    color: var(--text);
+    background: var(--surface);
+    transform: translateY(10px);
+  }
+
+  .pframe__chat {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 1.2rem 1.4rem;
+    transition: opacity var(--dur-base), transform var(--dur-base) var(--ease-out-expo);
+  }
+  .bubble {
+    max-width: 75%;
+    padding: 0.55rem 0.85rem;
+    border-radius: 14px;
+    font-size: clamp(0.72rem, 0.6rem + 0.4vw, 0.9rem);
+    line-height: 1.35;
+  }
+  .bubble--them {
+    align-self: flex-start;
+    background: var(--surface-2);
+    border-bottom-left-radius: 4px;
+  }
+  .bubble--me {
+    align-self: flex-end;
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-bottom-right-radius: 4px;
+  }
+  .bubble--typing {
+    display: inline-flex;
+    gap: 4px;
+  }
+  .bubble--typing span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: nudge 1.2s infinite;
+  }
+  .bubble--typing span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .bubble--typing span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  .pframe__page {
+    position: absolute;
+    inset: 0;
+    padding: 0.9rem 1.1rem;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 0.8rem;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity var(--dur-base), transform var(--dur-base) var(--ease-out-expo);
+  }
+  .pf-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .pf-logo {
+    width: 18%;
+    height: 10px;
+  }
+  .pf-links {
+    display: flex;
+    gap: 6px;
+  }
+  .pf-links i {
+    width: 28px;
+    height: 7px;
+  }
+  .pf-hero {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0.8rem;
+    align-items: center;
+  }
+  .pf-copy {
+    display: grid;
+    gap: 0.45rem;
+    justify-items: start;
+  }
+  .pf-h {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(0.8rem, 0.5rem + 1vw, 1.35rem);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: transparent;
+    min-height: 2.1em;
+    width: 100%;
+  }
+  .pf-line {
+    width: 90%;
+    height: 7px;
+  }
+  .pf-line--short {
+    width: 60%;
+  }
+  .pf-btn {
+    margin-top: 0.3rem;
+    font-size: clamp(0.6rem, 0.5rem + 0.3vw, 0.75rem);
+    font-weight: 600;
+    padding: 0.4em 0.9em;
+    border-radius: 999px;
+    color: transparent;
+  }
+  .pf-img {
+    aspect-ratio: 4 / 3;
+  }
+  .pf-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+  .pf-cards span {
+    height: clamp(26px, 4vw, 48px);
+  }
+
+  /* Estado 2: wireframe (líneas punteadas) */
+  .pf-logo,
+  .pf-links i,
+  .pf-h,
+  .pf-line,
+  .pf-btn,
+  .pf-img,
+  .pf-cards span {
+    border: 1.5px dashed var(--wire);
+    border-radius: 5px;
+    background: transparent;
+    transition:
+      background var(--dur-slow) var(--ease-out-expo),
+      border-color var(--dur-slow),
+      color var(--dur-slow);
+  }
+
+  [data-state="1"] .pframe__chat {
+    opacity: 1;
+  }
+  [data-state="2"] .pframe__chat,
+  [data-state="3"] .pframe__chat,
+  [data-state="4"] .pframe__chat {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  [data-state="2"] .pframe__page,
+  [data-state="3"] .pframe__page,
+  [data-state="4"] .pframe__page {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Estado 3 y 4: diseño terminado */
+  :is([data-state="3"], [data-state="4"]) :is(.pf-logo, .pf-links i, .pf-line, .pf-cards span) {
+    border-color: transparent;
+    background: var(--surface-2);
+  }
+  :is([data-state="3"], [data-state="4"]) .pf-logo {
+    background: var(--text);
+  }
+  :is([data-state="3"], [data-state="4"]) .pf-h {
+    border-color: transparent;
+    color: var(--text);
+  }
+  :is([data-state="3"], [data-state="4"]) .pf-btn {
+    border-color: transparent;
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  :is([data-state="3"], [data-state="4"]) .pf-img {
+    border-color: transparent;
+    background:
+      radial-gradient(circle at 70% 30%, color-mix(in oklab, var(--accent) 70%, transparent) 0 18%, transparent 19%),
+      linear-gradient(135deg, var(--surface-2), color-mix(in oklab, var(--text) 18%, var(--surface-2)));
+  }
+  [data-state="4"] .pframe__url-draft {
+    opacity: 0;
+  }
+  [data-state="4"] :is(.pframe__url-live, .pframe__live, .pframe__badge) {
+    opacity: 1;
+    transform: none;
+  }
+</style>

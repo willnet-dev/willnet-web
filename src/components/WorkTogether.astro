@@ -1,0 +1,87 @@
+---
+// Bloque final de cada página: «Let's work together» con botón circular a Contacto.
+// Va dentro del escenario de Base.astro, que pone el telón y el tono contrario.
+import { r, type Lang } from "../i18n/routes";
+import { site, t, whatsappHref } from "../i18n/ui";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+---
+
+<section class="together" data-together aria-labelledby="together-title">
+  <div class="wrap together__inner" data-together-inner>
+    <div class="flex items-center gap-4">
+      <span class="together__avatar" aria-hidden="true">
+        <svg viewBox="0 0 416 290" width="30" fill="currentColor"><path d="M0 0 96 37 156 203 107 290Z"></path><path d="M416 0 320 37 260 203 309 290Z"></path><path d="M160 64 208 83 256 64 208 174Z"></path></svg>
+      </span>
+      <h2 id="together-title" class="display text-[length:var(--text-step-5)]">
+        {copy.cta.together}<br />{copy.cta.together2}
+      </h2>
+    </div>
+
+    <div class="together__rule">
+      <span></span>
+      <a href={r("contact", lang)} class="btn btn-primary btn-orb" data-together-orb data-magnetic data-magnetic-strength="0.45">
+        <span class="btn-label">{copy.cta.getInTouch}</span>
+      </a>
+    </div>
+
+    <!-- En móvil se oculta el párrafo y los botones ocupan todo el ancho, como en la referencia -->
+    <div class="grid gap-8 md:grid-cols-[1.2fr_1fr] md:items-end">
+      <p class="max-w-[46ch] text-[length:var(--text-step-1)] text-muted max-md:hidden">{copy.cta.togetherText}</p>
+      <div class="flex flex-wrap gap-3 max-md:flex-col md:justify-end">
+        <a href={`mailto:${site.email}`} class="btn max-md:w-full max-md:!min-h-14"><span class="btn-label">{site.email}</span></a>
+        <a href={whatsappHref(lang)} class="btn max-md:w-full max-md:!min-h-14" target="_blank" rel="noopener"><span class="btn-label">WhatsApp</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .together {
+    position: relative;
+  }
+  .together__inner {
+    position: relative;
+    padding-block: calc(var(--lip-h, 0px) + clamp(3rem, 7vh, 5rem)) clamp(4rem, 8vh, 6rem);
+    display: grid;
+    gap: clamp(2.5rem, 5vw, 4rem);
+  }
+  @media (max-width: 767px) {
+    .together__inner {
+      padding-block: calc(var(--lip-h, 0px) + 1.25rem) 0.25rem;
+      gap: 1.5rem;
+    }
+    .together__inner :global(.btn-orb) {
+      width: 132px;
+    }
+  }
+  .together__avatar {
+    flex-shrink: 0;
+    display: grid;
+    place-items: center;
+    width: clamp(56px, 7vw, 84px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--text);
+    color: var(--bg);
+  }
+  .together__rule {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: clamp(0rem, 6vw, 6rem);
+  }
+  .together__rule > span {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 1px;
+    background: var(--line);
+  }
+</style>

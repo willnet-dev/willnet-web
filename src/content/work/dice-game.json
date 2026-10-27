@@ -1,0 +1,8 @@
+{
+  "order": 16, "category": "learning", "featured": false, "hasCase": false, "year": 0, "withDopicos": false,
+  "url": "https://willnet-dev.github.io/dice-game/",
+  "image": { "en": "dice-game.jpg", "es": "dice-game.jpg", "mobileEn": "dice-game.jpg", "mobileEs": "dice-game.jpg" },
+  "stack": [],
+  "en": { "title": "Dice Game", "type": "Web game", "summary": "Two-player dice game that rolls when you reload the page. JavaScript." },
+  "es": { "title": "Dice Game", "type": "Juego web", "summary": "Juego de dados para dos jugadores que se lanza al recargar la página. JavaScript." }
+}

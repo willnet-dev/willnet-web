@@ -1,0 +1,139 @@
+---
+// Página de un servicio (landing pages, sitios web, tiendas, arreglos web o mantenimiento).
+import { getEntry } from "astro:content";
+import Base from "../layouts/Base.astro";
+import PageHead from "../components/PageHead.astro";
+import FaqList from "../components/FaqList.astro";
+import ProjectCard from "../components/ProjectCard.astro";
+import { r, servicePath, type Lang, type ServiceKey } from "../i18n/routes";
+import { site, t } from "../i18n/ui";
+import { formatPrice, getService, services } from "../data/services";
+import { breadcrumbs, faqPage, serviceSchema } from "../lib/schema";
+
+interface Props {
+  lang: Lang;
+  serviceKey: ServiceKey;
+}
+const { lang, serviceKey } = Astro.props;
+const copy = t(lang);
+const p = copy.servicesPage;
+const s = getService(serviceKey);
+const c = s[lang];
+const related = s.caseSlug ? await getEntry("work", s.caseSlug) : undefined;
+const gallery = (await Promise.all((s.gallery ?? []).map((slug) => getEntry("work", slug)))).filter((g) => g !== undefined);
+const others = services.filter((o) => o.key !== s.key);
+const path = servicePath(s.key, lang);
+
+const schema = [
+  breadcrumbs([
+    { name: copy.common.breadcrumbHome, path: r("home", lang) },
+    { name: copy.nav.services, path: r("services", lang) },
+    { name: c.name, path },
+  ]),
+  serviceSchema({ name: c.name, description: c.description, path, price: s.price, monthly: s.monthly, lang }),
+  faqPage(c.faq),
+];
+---
+
+<Base lang={lang} title={c.title} description={c.description} schema={schema}>
+  <PageHead
+    eyebrow={`// ${c.name}`}
+    title={c.h1}
+    intro={c.intro}
+    crumbs={[
+      { name: copy.common.breadcrumbHome, href: r("home", lang) },
+      { name: copy.nav.services, href: r("services", lang) },
+      { name: c.name, href: path },
+    ]}
+  >
+    <div class="mt-10 flex flex-wrap items-center gap-x-10 gap-y-6">
+      <p>
+        <span class="eyebrow block">{copy.common.from}</span>
+        <span class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight">
+          {formatPrice(s.price)}{s.monthly && <span class="text-[length:var(--text-step-1)] text-muted">{copy.common.perMonth}</span>}
+        </span>
+      </p>
+      <p>
+        <span class="eyebrow block">{copy.common.timeline}</span>
+        <span class="font-display text-[length:var(--text-step-2)] font-semibold tracking-tight">{c.timeline}</span>
+      </p>
+      <a href={r("contact", lang)} class="btn btn-primary btn-lg" data-magnetic><span class="btn-label">{c.cta}</span></a>
+    </div>
+  </PageHead>
+
+  <section class="wrap grid gap-12 border-t border-line py-[clamp(4rem,10vh,7rem)] md:grid-cols-2">
+    <div data-reveal>
+      <h2 class="eyebrow mb-6">// {p.included}</h2>
+      <ul class="grid gap-4">
+        {
+          c.included.map((item) => (
+            <li class="flex gap-3 text-[length:var(--text-step-1)]">
+              <svg class="mt-1.5 shrink-0 text-link" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M5 12.5 10 17 19 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+    <div data-reveal style="--delay:100ms">
+      <h2 class="eyebrow mb-6">// {p.forWho}</h2>
+      <ul class="grid gap-4">
+        {c.forWho.map((item) => <li class="border-b border-line pb-4 text-[length:var(--text-step-1)]">{item}</li>)}
+      </ul>
+      <div class="mt-10 rounded-2xl border border-line bg-surface p-6">
+        <p class="eyebrow mb-3">// {copy.payment.title}</p>
+        <p class="text-muted">{s.price >= 1000 ? copy.payment.over : copy.payment.under}</p>
+        <p class="mt-2"><span class="hl">{copy.payment.support}</span></p>
+      </div>
+      {
+        s.key === "maintenance" && (
+          <p class="mt-6 text-muted">
+            {copy.common.clientSupport} <a href={`mailto:${site.supportEmail}`} class="text-link underline underline-offset-4">{site.supportEmail}</a> {copy.common.clientSupportEnd}
+          </p>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    related && (
+      <section class="wrap py-[clamp(3rem,8vh,6rem)]" aria-labelledby="related-title">
+        <h2 id="related-title" class="eyebrow mb-6">
+          // {p.caseTitle}
+        </h2>
+        <div class="max-w-3xl" data-reveal>
+          <ProjectCard project={related} lang={lang} size="lg" />
+        </div>
+      </section>
+    )
+  }
+
+  {
+    gallery.length > 0 && (
+      <section class="wrap py-[clamp(3rem,8vh,6rem)]" aria-labelledby="gallery-title">
+        <h2 id="gallery-title" class="eyebrow mb-6">
+          // {p.galleryTitle}
+        </h2>
+        <div class="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
+          {gallery.map((g, i) => (
+            <div data-reveal style={`--delay:${(i % 3) * 80}ms`}>
+              <ProjectCard project={g} lang={lang} fit="contain" />
+            </div>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <section class="wrap grid gap-10 py-[clamp(3rem,8vh,6rem)] lg:grid-cols-[1fr_1.6fr]" aria-labelledby="sfaq-title">
+    <h2 id="sfaq-title" class="display text-[length:var(--text-step-3)]" data-reveal>{p.faqTitle}</h2>
+    <FaqList items={c.faq} />
+  </section>
+
+  <nav class="wrap pb-[clamp(3rem,8vh,6rem)]" aria-label={copy.common.allServices}>
+    <p class="eyebrow mb-4">// {copy.common.allServices}</p>
+    <ul class="flex flex-wrap gap-3">
+      {others.map((o) => <li><a href={servicePath(o.key, lang)} class="btn"><span class="btn-label">{o[lang].name}</span></a></li>)}
+    </ul>
+  </nav>
+</Base>

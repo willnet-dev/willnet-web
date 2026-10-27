@@ -1,0 +1,20 @@
+{
+  "order": 2, "category": "web", "featured": true, "hasCase": true, "year": 2026,
+  "url": "https://alecreativelab.com",
+  "image": { "en": "acl-en.jpg", "es": "acl.jpg", "mobileEn": "acl-movil-en.jpg", "mobileEs": "acl-movil.jpg" },
+  "stack": ["HTML", "Tailwind CSS", "JavaScript"],
+  "en": {
+    "title": "Ale Creative Lab", "type": "Bilingual landing page",
+    "summary": "Bilingual landing page for a content creator and digital marketing brand in West Palm Beach: TikTok gallery, services, packages and contact form.",
+    "challenge": "Ale Creative Lab creates content for beauty and wellness brands and needed one place to show her work, explain her packages and receive new clients, in English and Spanish.",
+    "solution": "A coded landing page with a gallery of her TikToks, services and packages, a contact form and a language switch. It also uses the brand identity and logo I designed for her.",
+    "result": "The landing page has been live at alecreativelab.com since October 2026, in English and Spanish."
+  },
+  "es": {
+    "title": "Ale Creative Lab", "type": "Landing page bilingüe",
+    "summary": "Landing bilingüe para una creadora de contenido y marca de marketing digital en West Palm Beach: galería de TikToks, servicios, paquetes y formulario de contacto.",
+    "challenge": "Ale Creative Lab crea contenido para marcas de belleza y bienestar, y necesitaba un solo lugar para mostrar su trabajo, explicar sus paquetes y recibir clientes nuevos, en inglés y español.",
+    "solution": "Una landing en código con galería de sus TikToks, servicios y paquetes, formulario de contacto y selector de idioma. Además usa la identidad y el logo que diseñé para ella.",
+    "result": "La landing está publicada en alecreativelab.com desde octubre de 2026, en inglés y español."
+  }
+}

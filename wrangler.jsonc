@@ -1,0 +1,30 @@
+// Configuración de Cloudflare (Workers con archivos estáticos) de la web de WillNet: vista previa y producción.
+// Astro genera HTML estático en dist/, así que no hay código de servidor: Cloudflare sirve esos archivos.
+// Vista previa: npm run deploy (compila con noindex). Producción: npm run deploy:prod (sin noindex, con sitemap).
+{
+  "$schema": "https://unpkg.com/wrangler@4/config-schema.json",
+  "name": "willnet-v2",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    // /about sirve about.html (build.format: "file") y las rutas que no existen muestran 404.html
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  },
+  // Vista previa en el subdominio de prueba aprobado por Willder (2026-10-26). "custom_domain" crea el
+  // registro DNS y el certificado HTTPS automáticamente.
+  "routes": [{ "pattern": "v2.willnet.dev", "custom_domain": true }],
+  "workers_dev": false,
+  // Producción: la web oficial en willnet.dev y www (lanzada el 2026-10-26; reemplaza al Worker «willdev-landing»,
+  // que se conserva en su dirección workers.dev como respaldo). Publicar: npm run deploy:prod
+  "env": {
+    "production": {
+      "name": "willnet-web",
+      "routes": [
+        { "pattern": "willnet.dev", "custom_domain": true },
+        { "pattern": "www.willnet.dev", "custom_domain": true }
+      ],
+      "workers_dev": false
+    }
+  }
+}

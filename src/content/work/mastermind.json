@@ -1,0 +1,20 @@
+{
+  "order": 4, "category": "web", "featured": true, "hasCase": true, "year": 2025,
+  "url": "https://mastermind-team.com",
+  "image": { "en": "mastermind-en.jpg", "es": "mastermind.jpg", "mobileEn": "mastermind-movil-en.jpg", "mobileEs": "mastermind-movil.jpg" },
+  "stack": ["HTML", "Tailwind CSS", "JavaScript", "Calendly", "Web3Forms", "Meta Pixel"],
+  "en": {
+    "title": "Mastermind Hierarchy", "type": "Bilingual landing page",
+    "summary": "Bilingual landing page for an insurance agency in Doral, FL: videos, Calendly bookings, forms and Meta Pixel.",
+    "challenge": "The agency recruits and trains insurance agents and needed a page that explained its program with video and turned visitors into booked calls, for Spanish and English speakers.",
+    "solution": "A coded landing page in Spanish and English with a vertical video, interview testimonials, two short forms and a Calendly popup for a 30-minute call. Meta Pixel events track form leads and booking clicks.",
+    "result": "The page receives requests through its forms and 30-minute call bookings through Calendly, in Spanish and English."
+  },
+  "es": {
+    "title": "Mastermind Hierarchy", "type": "Landing page bilingüe",
+    "summary": "Landing bilingüe para una agencia de seguros en Doral, FL: videos, citas con Calendly, formularios y Meta Pixel.",
+    "challenge": "La agencia recluta y forma agentes de seguros y necesitaba una página que explicara su programa con video y convirtiera las visitas en llamadas agendadas, para hispanohablantes y angloparlantes.",
+    "solution": "Una landing en código en español e inglés con video vertical, entrevistas como testimonios, dos formularios cortos y un popup de Calendly para una llamada de 30 minutos. Eventos de Meta Pixel miden los formularios y los clics para agendar.",
+    "result": "La página recibe solicitudes por sus formularios y reservas de llamadas de 30 minutos por Calendly, en español e inglés."
+  }
+}
