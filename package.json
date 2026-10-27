@@ -8,8 +8,8 @@
     "dev": "astro dev --port 5500",
     "build": "astro build",
     "build:prod": "SITE_ENV=production astro build",
-    "deploy": "node scripts/check-form-key.mjs && astro build && npx wrangler deploy",
-    "deploy:prod": "node scripts/check-form-key.mjs && SITE_ENV=production astro build && npx wrangler deploy --env production",
+    "deploy": "node scripts/check-form-key.mjs && rm -rf dist && astro build && npx wrangler deploy",
+    "deploy:prod": "node scripts/check-form-key.mjs && rm -rf dist && SITE_ENV=production astro build && npx wrangler deploy --env production",
     "preview": "astro preview --port 5500",
     "check": "astro check",
     "images": "node scripts/optimize-images.mjs"
