@@ -2,12 +2,13 @@
 // (las transiciones de Astro no recargan la página completa).
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Lenis from "lenis";
+import "lenis/dist/lenis.css";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const reducedMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const finePointer = () => matchMedia("(hover: hover) and (pointer: fine)").matches;
-const desktop = () => matchMedia("(min-width: 1024px)").matches;
 
 // Todo lo que se crea en una página se limpia antes de la siguiente
 let cleanups: Array<() => void> = [];
@@ -18,6 +19,27 @@ function listen(target: EventTarget, type: string, fn: EventListener, opts?: Add
 function listen(target: EventTarget, type: string, fn: EventListener, opts?: AddEventListenerOptions) {
   target.addEventListener(type, fn, opts);
   onCleanup(() => target.removeEventListener(type, fn, opts));
+}
+
+/* ---------- Scroll suave (Lenis), solo con mouse o trackpad ---------- */
+// En Mac el scroll nativo corre en otro hilo y las animaciones con scroll (parallax, telón, W 3D)
+// llegaban un fotograma tarde: temblaban aunque la página fuera a 60 fps. Lenis mueve la página dentro
+// del mismo requestAnimationFrame que GSAP (gsap.ticker), así todo se dibuja en el mismo fotograma.
+// En pantallas táctiles y con movimiento reducido se queda el scroll nativo.
+let lenis: Lenis | null = null;
+function bindSmoothScroll() {
+  if (lenis || reducedMotion() || !finePointer()) return;
+  lenis = new Lenis({ autoRaf: false, stopInertiaOnNavigate: true });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis?.raf(time * 1000));
+  // Sin esto, tras un fotograma lento GSAP «frena» el tiempo y el scroll daría un tirón
+  gsap.ticker.lagSmoothing(0);
+}
+
+// Desplazamiento animado: con Lenis si está activo; si no, el nativo del navegador
+function scrollToY(top: number) {
+  if (lenis) lenis.scrollTo(top);
+  else window.scrollTo({ top, behavior: reducedMotion() ? "auto" : "smooth" });
 }
 
 /* ---------- Cabecera: fondo al bajar, se oculta al bajar y aparece al subir ---------- */
@@ -71,6 +93,8 @@ function initMenu() {
     }
     if (label) label.textContent = open ? label.dataset.close! : label.dataset.open!;
     document.documentElement.style.overflow = open ? "hidden" : "";
+    if (open) lenis?.stop();
+    else lenis?.start();
     if (open) {
       menu.hidden = false;
       requestAnimationFrame(() => menu.classList.add("is-open"));
@@ -89,7 +113,10 @@ function initMenu() {
       btn.focus();
     }
   }) as EventListener);
-  onCleanup(() => (document.documentElement.style.overflow = ""));
+  onCleanup(() => {
+    document.documentElement.style.overflow = "";
+    lenis?.start();
+  });
 }
 
 /* ---------- Tema oscuro / claro ---------- */
@@ -211,7 +238,7 @@ function initBackTop() {
   update();
   listen(window, "scroll", update, { passive: true });
   listen(btn, "click", () => {
-    window.scrollTo({ top: 0, behavior: reducedMotion() ? "auto" : "smooth" });
+    scrollToY(0);
     document.querySelector<HTMLElement>(".skip-link")?.focus({ preventScroll: true });
   });
 }
@@ -223,7 +250,7 @@ function initScrollCue() {
   if (!cue || !target) return;
   listen(cue, "click", (e) => {
     e.preventDefault();
-    window.scrollTo({ top: target.getBoundingClientRect().top + scrollY, behavior: reducedMotion() ? "auto" : "smooth" });
+    scrollToY(target.getBoundingClientRect().top + scrollY);
     // Como el ancla nativa: el foco pasa a la sección, para que el teclado siga desde ahí
     target.setAttribute("tabindex", "-1");
     target.focus({ preventScroll: true });
@@ -260,9 +287,6 @@ function initFilters() {
 }
 
 /* ---------- Animaciones con scroll (GSAP) ---------- */
-// Altura inicial del telón: la misma que en CSS (--lip-h), más baja en móvil
-const lipHeight = () => innerHeight * (desktop() ? 0.16 : 0.1);
-
 function initScroll() {
   if (reducedMotion()) return;
   const ctx = gsap.context(() => {
@@ -276,9 +300,9 @@ function initScroll() {
       );
     });
 
-    // Proceso (B): el wireframe se construye paso a paso mientras se leen los pasos
+    // Proceso (B): el wireframe se construye paso a paso mientras se leen los pasos (también en móvil)
     const process = document.querySelector<HTMLElement>("[data-process]");
-    if (process && desktop()) {
+    if (process) {
       const frame = process.querySelector<HTMLElement>("[data-process-frame]");
       const steps = process.querySelectorAll<HTMLElement>("[data-process-step]");
       const activate = (step: HTMLElement) => {
@@ -311,7 +335,8 @@ function initScroll() {
       const reveal = { trigger: stage, start: "top bottom", end: "bottom bottom", scrub: true, invalidateOnRefresh: true };
       // Termina cuando el escenario llega a esa altura de la pantalla o al final de la página (en Contacto es corto)
       const until = (ratio: number) => () => Math.min(stage.offsetTop - innerHeight * ratio, ScrollTrigger.maxScroll(window));
-      gsap.fromTo("[data-stage-lip]", { height: () => lipHeight() }, { height: 0, ease: "none", scrollTrigger: { ...reveal, end: until(0.15) } });
+      // La curva se aplana con scaleY (no con height): no obliga a recalcular la página en cada fotograma
+      gsap.fromTo("[data-stage-lip]", { scaleY: 1 }, { scaleY: 0, ease: "none", scrollTrigger: { ...reveal, end: until(0.15) } });
       gsap.fromTo("[data-stage-shade]", { opacity: 1 }, { opacity: 0, ease: "none", scrollTrigger: { ...reveal, end: until(0) } });
       gsap.fromTo("[data-stage-inner]", { y: () => -innerHeight * 0.35 }, { y: 0, ease: "none", scrollTrigger: reveal });
       gsap.fromTo("[data-together-orb]", { x: () => innerWidth * 0.12 }, { x: 0, ease: "none", scrollTrigger: reveal });
@@ -362,7 +387,11 @@ function bindCurtain() {
 export function initSite() {
   (window as Window & { __wnReady?: boolean }).__wnReady = true;
   bindCurtain();
+  bindSmoothScroll();
   document.addEventListener("astro:page-load", () => {
+    // Astro ya movió el scroll de la página nueva: Lenis toma esa posición y las nuevas medidas
+    lenis?.resize();
+    lenis?.scrollTo(scrollY, { immediate: true, force: true });
     initHeader();
     initMenu();
     initTheme();

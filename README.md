@@ -58,6 +58,7 @@ Revisa los tipos de TypeScript y Astro.
 | **React 19** (solo en «islas») | Solo donde hay 3D. El resto de la web no carga React. |
 | **Three.js + React Three Fiber** | Las escenas 3D. Se cargan aparte, cuando el navegador está libre, para no frenar la primera pantalla. |
 | **GSAP + ScrollTrigger** | Parallax, el proceso que se construye y el bloque «Let's work together». |
+| **Lenis** | Scroll suave con mouse o trackpad, sincronizado con GSAP para que las animaciones no tiemblen (en táctil, scroll nativo). |
 | **Tailwind CSS 4** | Estilos. Los colores y tipografías son variables en `src/styles/global.css`. |
 | **Fontsource** | Fuentes Unbounded, Geist y Geist Mono alojadas en la propia web (sin Google Fonts). |
 

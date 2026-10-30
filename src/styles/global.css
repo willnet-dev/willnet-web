@@ -550,6 +550,8 @@
     height: var(--lip-h);
     overflow: hidden;
     pointer-events: none;
+    /* GSAP lo aplana con scaleY desde arriba: la elipse se escala con él y la curva queda igual */
+    transform-origin: top;
   }
   .stage__lip > span {
     position: absolute;

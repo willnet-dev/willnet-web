@@ -1,6 +1,7 @@
 ---
 // Proceso de trabajo (opción B). En escritorio, el marco queda fijo a la derecha y se construye
-// mientras se leen los 4 pasos. En móvil (o con movimiento reducido), cada paso trae su propio marco.
+// mientras se leen los 4 pasos; en móvil y tableta queda fijo arriba y los pasos pasan por debajo.
+// Con movimiento reducido (o sin JavaScript en móvil), cada paso trae su propio marco.
 import ProcessFrame from "./ProcessFrame.astro";
 import type { Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
@@ -19,8 +20,8 @@ const copy = t(lang);
   <h2 id="process-title" class="display mb-14 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{title}</h2>
 
   <div class="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-16">
-    <!-- Móvil y tableta: tarjetas de 2 en 2 con el mini wireframe arriba (decisión de Willder, 2026-10-26) -->
-    <ol class="grid grid-cols-2 gap-3 md:gap-6 lg:flex lg:flex-col lg:gap-0">
+    <!-- Móvil y tableta con movimiento reducido o sin JS: tarjetas de 2 en 2 con el mini wireframe arriba -->
+    <ol class="process-list grid grid-cols-2 gap-3 md:gap-6 lg:flex lg:flex-col lg:gap-0">
       {
         copy.process.map((step, i) => (
           <li data-process-step={i + 1} class:list={["process-step", { "is-active": i === 0 }]}>
@@ -128,6 +129,72 @@ const copy = t(lang);
     }
     .step-frame {
       display: none;
+    }
+  }
+  /* Móvil y tableta con animación: como en escritorio, el marco queda fijo arriba (debajo del botón
+     del menú) y se construye mientras los pasos pasan por debajo (decisión de Willder, 2026-10-29;
+     reemplaza las tarjetas de 2 en 2 del 2026-10-26, que se quedan para movimiento reducido) */
+  @media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .process-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    :global(.js) .process-step {
+      height: auto;
+      min-height: 40vh;
+      display: flex;
+      align-items: center;
+    }
+    :global(.js) .process-step__inner {
+      height: auto;
+      padding: 0 0 0 1.1rem;
+      border: 0;
+      border-left: 2px solid var(--line);
+      border-radius: 0;
+      background: transparent;
+      transition: border-color var(--dur-base);
+    }
+    :global(.js) .process-step__inner h3 {
+      margin-top: 0.6rem;
+      font-size: var(--text-step-2);
+      color: var(--muted);
+      transition: color var(--dur-base);
+    }
+    :global(.js) .process-step__inner p:not(.eyebrow) {
+      font-size: var(--text-step-0);
+    }
+    :global(.js) .process-step__inner .eyebrow b {
+      color: var(--muted);
+      transition: color var(--dur-base);
+    }
+    :global(.js) .process-step.is-active .process-step__inner {
+      border-left-color: var(--accent);
+    }
+    :global([data-theme="light"]) .process-step.is-active .process-step__inner {
+      border-left-color: var(--text);
+    }
+    :global(.js) .process-step.is-active .process-step__inner h3,
+    :global(.js) .process-step.is-active .process-step__inner .eyebrow b {
+      color: var(--text);
+    }
+    :global(.js) .step-frame {
+      display: none;
+    }
+    /* Pegado arriba del todo con el fondo de la página: tapa los pasos cuando pasan por detrás del
+       marco y por la franja del botón del menú */
+    :global(.js) .sticky-col {
+      display: block;
+      order: -1;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding-block: calc(var(--header-h) + 0.75rem) 1.25rem;
+      background: var(--bg);
+    }
+    :global(.js) .sticky-col > div {
+      margin-inline: auto;
+      max-width: 34rem;
     }
   }
   @media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
