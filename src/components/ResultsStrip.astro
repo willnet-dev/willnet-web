@@ -1,0 +1,133 @@
+---
+// Portada: franja «Resultados medidos». Cifras reales de los casos (src/data/results.ts → «metrics» del
+// JSON de cada caso), cada una enlazada a su proyecto, más la puntuación de Lighthouse de esta web.
+// Los números cuentan al entrar en pantalla (site.ts → data-count); el HTML ya trae el valor final.
+import { getEntry } from "astro:content";
+import { workPath, type Lang } from "../i18n/routes";
+import { t } from "../i18n/ui";
+import { homeResults, selfScore } from "../data/results";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const h = t(lang).home;
+const items = (
+  await Promise.all(
+    homeResults.map(async ({ work, metric }) => {
+      const entry = await getEntry("work", work);
+      const m = entry?.data.metrics.find((x) => x.id === metric);
+      return entry && m ? { entry, m } : undefined;
+    }),
+  )
+).filter((x) => x !== undefined);
+---
+
+<section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="results-title">
+  <div class="mb-12 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
+    <div>
+      <p class="eyebrow mb-4" data-reveal>{h.resultsEyebrow}</p>
+      <h2 id="results-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.resultsTitle}</h2>
+    </div>
+    <p class="max-w-[46ch] text-[length:var(--text-step-1)] text-muted" data-reveal>{h.resultsText}</p>
+  </div>
+  <ul class="results">
+    {
+      items.map(({ entry, m }, i) => (
+        <li data-reveal style={`--delay:${i * 80}ms`}>
+          <a href={workPath(entry.id, lang)} class="result">
+            <span class="sr-only">
+              {entry.data[lang].title}: {m[lang]}
+              {m.before !== undefined ? `, ${h.resultsFrom} ${m.before} ${h.resultsTo} ${m.after}` : `: ${m.after}`}.
+            </span>
+            <span class="result__num" aria-hidden="true">
+              {m.before !== undefined && <span class="result__before">{m.before}</span>}
+              {m.before !== undefined && <span class="result__arrow">→</span>}
+              <span data-count={m.after} data-count-from={m.before}>{m.after}</span>
+            </span>
+            <span class="result__label" aria-hidden="true">{m[lang]}</span>
+            <span class="result__src eyebrow" aria-hidden="true">
+              {entry.data[lang].title} · {entry.data.year} →
+            </span>
+          </a>
+        </li>
+      ))
+    }
+    <li data-reveal style={`--delay:${items.length * 80}ms`}>
+      <div class="result">
+        <span class="sr-only">{selfScore}/100 {h.resultsSelf}.</span>
+        <span class="result__num" aria-hidden="true">
+          <span data-count={selfScore}>{selfScore}</span><span class="result__unit">/100</span>
+        </span>
+        <span class="result__label" aria-hidden="true">{h.resultsSelf}</span>
+        <span class="result__src eyebrow" aria-hidden="true">willnet.dev · Lighthouse</span>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<style>
+  .results {
+    display: grid;
+    border-top: 1px solid var(--line);
+  }
+  @media (min-width: 640px) {
+    .results {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .results {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  .result {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 2rem 1.5rem 2rem 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+  }
+  .result__num {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35em;
+    font-family: var(--font-display);
+    font-size: var(--text-step-4);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+  }
+  .result__before,
+  .result__arrow,
+  .result__unit {
+    /* Gris de texto (no el de los wireframes) para que también cumpla el contraste mínimo */
+    color: var(--muted);
+  }
+  .result__before {
+    font-size: 0.6em;
+    text-decoration: line-through;
+    text-decoration-thickness: 0.06em;
+  }
+  .result__arrow,
+  .result__unit {
+    font-size: 0.45em;
+  }
+  .result__label {
+    margin-top: 1rem;
+    max-width: 24ch;
+    color: var(--muted);
+  }
+  .result__src {
+    margin-top: auto;
+    padding-top: 1.5rem;
+    transition: color var(--dur-base);
+  }
+  @media (hover: hover) {
+    a.result:hover .result__src {
+      color: var(--text);
+    }
+  }
+</style>

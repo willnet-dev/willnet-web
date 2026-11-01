@@ -5,6 +5,7 @@ import { getCollection, type CollectionEntry } from "astro:content";
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import CaseFrame from "../components/CaseFrame.astro";
+import MetricBars from "../components/MetricBars.astro";
 import { r, workPath, type Lang } from "../i18n/routes";
 import { site, t } from "../i18n/ui";
 import { breadcrumbs } from "../lib/schema";
@@ -102,6 +103,17 @@ const schema = [
       </div>
     </div>
   </section>
+
+  {
+    d.metrics.length > 0 && (
+      <section class="wrap border-t border-line py-[clamp(4rem,10vh,7rem)]" aria-labelledby="metrics-title">
+        <p class="eyebrow mb-4" data-reveal>{copy.case.metricsEyebrow}</p>
+        <h2 id="metrics-title" class="display max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{copy.case.metricsTitle}</h2>
+        <p class="mt-4 mb-12 max-w-[52ch] text-[length:var(--text-step-1)] text-muted" data-reveal>{copy.case.metricsText}</p>
+        <MetricBars metrics={d.metrics} lang={lang} />
+      </section>
+    )
+  }
 
   <section class="wrap grid gap-6 py-[clamp(4rem,10vh,7rem)] md:grid-cols-2">
     <a href={r("contact", lang)} class="case-cta case-cta--primary" data-reveal>

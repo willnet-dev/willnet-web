@@ -14,6 +14,16 @@ const copy = z.object({
   result: z.string().optional(),
 });
 
+// Cifra medida en un proyecto: antes y después, o solo después (p. ej. 0 enlaces rotos). La usan la
+// página del caso, la franja de la portada (src/data/results.ts) y la página del servicio relacionado
+const metric = z.object({
+  id: z.string(),
+  before: z.number().optional(),
+  after: z.number(),
+  en: z.string(),
+  es: z.string(),
+});
+
 const work = defineCollection({
   loader: glob({ pattern: "*.json", base: "./src/content/work" }),
   schema: z.object({
@@ -28,6 +38,7 @@ const work = defineCollection({
     url: z.string(),
     image: z.object({ en: z.string(), es: z.string(), mobileEn: z.string(), mobileEs: z.string() }),
     stack: z.array(z.string()),
+    metrics: z.array(metric).default([]),
     en: copy,
     es: copy,
   }),

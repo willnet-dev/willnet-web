@@ -100,8 +100,9 @@ const copy = t(lang);
     :global(.js) .tl__fill {
       transform: scaleX(0);
     }
+    /* Atenuado suave: con menos de 0.85 el texto gris no llega al contraste mínimo (4.5:1) en ningún tema */
     :global(.js) .tl__step > :not(.tl__dot) {
-      opacity: 0.25;
+      opacity: 0.85;
       translate: 0 14px;
       transition:
         opacity var(--dur-slow) var(--ease-out-expo),

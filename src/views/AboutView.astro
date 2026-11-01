@@ -1,5 +1,5 @@
 ---
-// Sobre mí: historia de Willder, espacio para su foto, cifras verificables, habilidades y formación.
+// Sobre mí: historia de Willder, su foto (entra con un telón lima y se inclina en 3D con el mouse), cifras verificables que cuentan al aparecer, habilidades y formación.
 // FOTO: public/img/willder-{720,1136}.{avif,webp} + willder.jpg de respaldo, generadas con `npm run about-photo`
 // desde el original de Canva (1136×1408). Original y alternativas en originales/about/ (fuera del repo).
 import { getCollection } from "astro:content";
@@ -8,6 +8,7 @@ import PageHead from "../components/PageHead.astro";
 import { r, type Lang } from "../i18n/routes";
 import { site, t } from "../i18n/ui";
 import { breadcrumbs } from "../lib/schema";
+import { selfScore } from "../data/results";
 
 interface Props {
   lang: Lang;
@@ -17,6 +18,13 @@ const copy = t(lang);
 const a = copy.about;
 const hasPhoto = true;
 const realProjects = (await getCollection("work")).filter((p) => p.data.category !== "learning").length;
+// Cifras verificables; cuentan desde 0 al entrar en pantalla (site.ts → data-count)
+const stats = [
+  { value: realProjects, label: a.statProjects },
+  { value: 2, label: a.statLangs },
+  { value: 30, label: a.statSupport },
+  { value: selfScore, unit: "/100", label: a.statScore },
+];
 const tools = ["HTML", "CSS", "JavaScript", "Tailwind CSS", "Astro", "React", "Three.js", "GSAP", "Node.js", "WordPress", "WooCommerce", "Stripe", "Cloudflare", "Git", "GitHub", "Figma", "Canva", "Claude Code"];
 
 const person = {
@@ -55,41 +63,44 @@ const person = {
 
   <section class="wrap grid gap-12 pb-[clamp(4rem,10vh,7rem)] lg:grid-cols-[0.9fr_1.1fr] lg:items-start" data-parallax-root>
     <div class="about-photo" data-speed="-0.08">
-      {
-        hasPhoto ? (
-          <picture class="block h-full w-full">
-            <source type="image/avif" srcset="/img/willder-720.avif 720w, /img/willder-1136.avif 1136w" sizes="(min-width: 768px) 520px, 92vw" />
-            <source type="image/webp" srcset="/img/willder-720.webp 720w, /img/willder-1136.webp 1136w" sizes="(min-width: 768px) 520px, 92vw" />
-            <img src="/img/willder.jpg" alt={a.photoAlt} width="1136" height="1408" class="h-full w-full object-cover" />
-          </picture>
-        ) : (
-          <div class="about-photo__empty">
-            <svg viewBox="0 0 416 290" width="96" fill="currentColor" aria-hidden="true"><path d="M0 0 96 37 156 203 107 290Z" /><path d="M416 0 320 37 260 203 309 290Z" /><path d="M160 64 208 83 256 64 208 174Z" /></svg>
-            <span class="eyebrow">{a.photoSoon}</span>
-          </div>
-        )
-      }
+      <!-- La inclinación 3D va en un elemento propio: el parallax ya mueve .about-photo con transform -->
+      <div class="about-photo__tilt" data-tilt>
+        <div class="about-photo__frame" data-reveal>
+          {
+            hasPhoto ? (
+              <picture class="block h-full w-full">
+                <source type="image/avif" srcset="/img/willder-720.avif 720w, /img/willder-1136.avif 1136w" sizes="(min-width: 768px) 520px, 92vw" />
+                <source type="image/webp" srcset="/img/willder-720.webp 720w, /img/willder-1136.webp 1136w" sizes="(min-width: 768px) 520px, 92vw" />
+                <img src="/img/willder.jpg" alt={a.photoAlt} width="1136" height="1408" class="h-full w-full object-cover" />
+              </picture>
+            ) : (
+              <div class="about-photo__empty">
+                <svg viewBox="0 0 416 290" width="96" fill="currentColor" aria-hidden="true"><path d="M0 0 96 37 156 203 107 290Z" /><path d="M416 0 320 37 260 203 309 290Z" /><path d="M160 64 208 83 256 64 208 174Z" /></svg>
+                <span class="eyebrow">{a.photoSoon}</span>
+              </div>
+            )
+          }
+          <span class="about-photo__glare" aria-hidden="true" />
+        </div>
+      </div>
     </div>
     <div>
       <div class="prose-w grid gap-5 text-[length:var(--text-step-1)]">
         {a.intro.map((pp) => <p data-reveal>{pp}</p>)}
       </div>
-      <dl class="mt-12 grid grid-cols-3 gap-4 border-t border-line pt-8">
-        <div data-reveal>
-          <dt class="sr-only">{a.statProjects}</dt>
-          <dd class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight">{realProjects}</dd>
-          <dd class="mt-1 text-sm text-muted" aria-hidden="true">{a.statProjects}</dd>
-        </div>
-        <div data-reveal style="--delay:80ms">
-          <dt class="sr-only">{a.statLangs}</dt>
-          <dd class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight">2</dd>
-          <dd class="mt-1 text-sm text-muted" aria-hidden="true">{a.statLangs}</dd>
-        </div>
-        <div data-reveal style="--delay:160ms">
-          <dt class="sr-only">{a.statSupport}</dt>
-          <dd class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight">30</dd>
-          <dd class="mt-1 text-sm text-muted" aria-hidden="true">{a.statSupport}</dd>
-        </div>
+      <dl class="mt-12 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-line pt-8">
+        {
+          stats.map((st, i) => (
+            <div data-reveal style={`--delay:${i * 80}ms`}>
+              <dt class="sr-only">{st.label}</dt>
+              <dd class="font-display text-[length:var(--text-step-4)] font-semibold tracking-tight whitespace-nowrap tabular-nums">
+                <span data-count={st.value}>{st.value}</span>
+                {st.unit && <span class="text-[0.45em] text-muted">{st.unit}</span>}
+              </dd>
+              <dd class="mt-1 text-sm text-muted" aria-hidden="true">{st.label}</dd>
+            </div>
+          ))
+        }
       </dl>
     </div>
   </section>
@@ -151,12 +162,65 @@ const person = {
 
 <style>
   .about-photo {
-    aspect-ratio: 4 / 5;
-    border-radius: 24px;
-    overflow: hidden;
-    border: 1px solid var(--line);
-    background: var(--surface);
     max-width: 520px;
+  }
+  /* Borde de 1 px con brillo que sigue al mouse, como los mosaicos de Servicios (--mx, --my: site.ts → initTilt) */
+  .about-photo__tilt {
+    padding: 1px;
+    border-radius: 24px;
+    background:
+      radial-gradient(280px circle at var(--mx, -999px) var(--my, -999px), var(--accent), transparent 70%),
+      var(--line);
+  }
+  .about-photo__frame {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    border-radius: 23px;
+    overflow: hidden;
+    background: var(--surface);
+  }
+  /* Reflejo de luz que acompaña al mouse sobre la foto */
+  .about-photo__glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 0%), rgb(255 255 255 / 0.16), transparent 60%);
+    opacity: 0;
+    transition: opacity var(--dur-base);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .about-photo__tilt:hover .about-photo__glare {
+      opacity: 1;
+    }
+  }
+  /* Entrada: un telón lima con la curva de los botones sube y descubre la foto, que se asienta (escala 1.15 → 1).
+     Solo con JavaScript y sin «reducir movimiento»; si no, la foto se ve desde el principio */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .about-photo__frame[data-reveal] {
+      opacity: 1;
+      transform: none;
+    }
+    :global(.js) .about-photo__frame::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      z-index: 2;
+      background: var(--accent);
+      transition:
+        transform 1.2s var(--ease-out-expo) 0.15s,
+        border-radius 1.2s var(--ease-out-expo) 0.15s;
+    }
+    :global(.js) .about-photo__frame.is-in::after {
+      transform: translateY(-101%);
+      border-radius: 0 0 50% 50% / 0 0 35% 35%;
+    }
+    :global(.js) .about-photo__frame picture {
+      scale: 1.15;
+      transition: scale 1.8s var(--ease-out-expo) 0.15s;
+    }
+    :global(.js) .about-photo__frame.is-in picture {
+      scale: 1;
+    }
   }
   .about-photo__empty {
     height: 100%;

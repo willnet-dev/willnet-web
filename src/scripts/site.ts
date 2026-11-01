@@ -242,6 +242,58 @@ function initBento() {
   });
 }
 
+/* ---------- Foto de About: se inclina en 3D siguiendo al mouse, con brillo en el borde (como el bento) ---------- */
+function initTilt() {
+  if (!finePointer() || reducedMotion()) return;
+  document.querySelectorAll<HTMLElement>("[data-tilt]").forEach((el) => {
+    // Se mide el contenedor, que no gira: si se midiera la foto inclinada, el giro cambiaría la medida y temblaría
+    const box = el.parentElement ?? el;
+    gsap.set(el, { transformPerspective: 900 });
+    const rotX = gsap.quickTo(el, "rotationX", { duration: 0.6, ease: "power3.out" });
+    const rotY = gsap.quickTo(el, "rotationY", { duration: 0.6, ease: "power3.out" });
+    listen(el, "pointermove", ((e: PointerEvent) => {
+      const r = box.getBoundingClientRect();
+      const x = e.clientX - r.left;
+      const y = e.clientY - r.top;
+      rotX((0.5 - y / r.height) * 8);
+      rotY((x / r.width - 0.5) * 10);
+      el.style.setProperty("--mx", `${x}px`);
+      el.style.setProperty("--my", `${y}px`);
+    }) as EventListener);
+    listen(el, "pointerleave", () => {
+      rotX(0);
+      rotY(0);
+      el.style.removeProperty("--mx");
+      el.style.removeProperty("--my");
+    });
+    onCleanup(() => gsap.killTweensOf(el));
+  });
+}
+
+/* ---------- Cifras que cuentan al entrar en pantalla: data-count="6" (y data-count-from="36" para bajar) ---------- */
+// El HTML ya trae el número final: sin JavaScript o con movimiento reducido se ve tal cual
+function initCounters() {
+  const els = document.querySelectorAll<HTMLElement>("[data-count]");
+  if (!els.length || reducedMotion() || !("IntersectionObserver" in window)) return;
+  const io = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const el = entry.target as HTMLElement;
+        io.unobserve(el);
+        const v = { n: Number(el.dataset.countFrom ?? 0) };
+        gsap.to(v, { n: Number(el.dataset.count), duration: 1.6, delay: 0.2, ease: "power3.out", onUpdate: () => (el.textContent = String(Math.round(v.n))) });
+      }
+    },
+    { rootMargin: "0px 0px -10% 0px" },
+  );
+  els.forEach((el) => {
+    el.textContent = el.dataset.countFrom ?? "0";
+    io.observe(el);
+  });
+  onCleanup(() => io.disconnect());
+}
+
 /* ---------- Revelado al entrar en pantalla ---------- */
 function initReveal() {
   const items = document.querySelectorAll<HTMLElement>("[data-reveal]");
@@ -527,6 +579,8 @@ export function initSite() {
     initMagnetic();
     initServicePreview();
     initBento();
+    initTilt();
+    initCounters();
     initReveal();
     initTypewriter();
     initBackTop();

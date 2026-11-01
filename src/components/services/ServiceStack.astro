@@ -25,7 +25,7 @@ const cards = await serviceCards(lang);
             <h2 class="display mt-3 text-[length:var(--text-step-3)]">{c.name}</h2>
             <p class="mt-3 max-w-[40ch] text-muted">{c.short}</p>
             <a href={c.href} class="btn btn-primary mt-5 self-start">
-              <span class="btn-label">{copy.common.readMore}</span>
+              <span class="btn-label">{copy.common.readMore}<span class="sr-only">: {c.name}</span></span>
             </a>
           </div>
           <div class="stack__media" aria-hidden="true">

@@ -3,6 +3,12 @@
   "url": "https://aeternaartwellness.com",
   "image": { "en": "aeterna.jpg", "es": "aeterna.jpg", "mobileEn": "aeterna-movil.jpg", "mobileEs": "aeterna-movil.jpg" },
   "stack": ["WordPress", "Elementor", "Yoast SEO"],
+  "metrics": [
+    { "id": "images", "before": 36, "after": 6, "en": "images loaded up front on the home page", "es": "imágenes que cargan de entrada en la portada" },
+    { "id": "fonts", "before": 15, "after": 3, "en": "font families loaded on the home page", "es": "familias de letras que carga la portada" },
+    { "id": "webp", "after": 338, "en": "images converted to WebP", "es": "imágenes pasadas a WebP" },
+    { "id": "links", "after": 0, "en": "broken links across 16 pages", "es": "enlaces rotos en 16 páginas" }
+  ],
   "en": {
     "title": "AETERNA Art Wellness & Spa", "type": "Website fixes",
     "summary": "Med spa in West Palm Beach: I fixed, updated and sped up the WordPress site it already had, without starting over.",

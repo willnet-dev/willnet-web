@@ -1,0 +1,160 @@
+---
+// Cifras de un proyecto («metrics» del JSON del caso). Las de antes y después van en barras: al entrar en
+// pantalla la de «después» pasa del largo de «antes» al suyo y su número cuenta (site.ts → data-count).
+// Las que solo tienen resultado (0 enlaces rotos) van como número grande. Se usa en el caso y en Servicios.
+import type { CollectionEntry } from "astro:content";
+import type { Lang } from "../i18n/routes";
+import { t } from "../i18n/ui";
+
+interface Props {
+  metrics: CollectionEntry<"work">["data"]["metrics"];
+  lang: Lang;
+  // En una columna estrecha (página del servicio) barras y números van uno debajo del otro
+  stacked?: boolean;
+}
+const { metrics, lang, stacked = false } = Astro.props;
+const copy = t(lang).case;
+const compared = metrics.filter((m) => m.before !== undefined);
+const totals = metrics.filter((m) => m.before === undefined);
+---
+
+<div class:list={["metrics", { "metrics--stacked": stacked }]}>
+  {
+    compared.length > 0 && (
+      <ul class="metrics__bars">
+        {compared.map((m, i) => {
+          const before = m.before!;
+          const max = Math.max(before, m.after) || 1;
+          return (
+            <li class="bar" data-reveal style={`--delay:${i * 100}ms;--from:${before / max};--to:${m.after / max}`}>
+              <p class="bar__label">{m[lang]}</p>
+              <p class="sr-only">
+                {copy.before}: {before}. {copy.after}: {m.after}.
+              </p>
+              <div class="bar__row" aria-hidden="true">
+                <span class="bar__name">{copy.before}</span>
+                <span class="bar__track">
+                  <span class="bar__fill bar__fill--before" />
+                </span>
+                <span class="bar__num">{before}</span>
+              </div>
+              <div class="bar__row" aria-hidden="true">
+                <span class="bar__name">{copy.after}</span>
+                <span class="bar__track">
+                  <span class="bar__fill bar__fill--after" />
+                </span>
+                <span class="bar__num bar__num--after" data-count={m.after} data-count-from={before}>
+                  {m.after}
+                </span>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    )
+  }
+  {
+    totals.length > 0 && (
+      <dl class="metrics__totals">
+        {totals.map((m, i) => (
+          <div class="total" data-reveal style={`--delay:${(compared.length + i) * 100}ms`}>
+            <dt class="sr-only">{m[lang]}</dt>
+            <dd class="font-display text-[length:var(--text-step-5)] leading-none font-semibold tracking-tighter tabular-nums" data-count={m.after}>
+              {m.after}
+            </dd>
+            <dd class="mt-3 text-muted" aria-hidden="true">{m[lang]}</dd>
+          </div>
+        ))}
+      </dl>
+    )
+  }
+</div>
+
+<style>
+  .metrics {
+    display: grid;
+    gap: 3rem;
+  }
+  @media (min-width: 1024px) {
+    .metrics:not(.metrics--stacked) {
+      grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+      gap: 4rem;
+    }
+  }
+  .metrics__bars {
+    display: grid;
+    gap: 2.25rem;
+  }
+  .bar__label {
+    margin-bottom: 0.9rem;
+    font-size: var(--text-step-1);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .bar__row {
+    display: grid;
+    grid-template-columns: 4.5rem minmax(0, 1fr) 3.5ch;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .bar__row + .bar__row {
+    margin-top: 0.6rem;
+  }
+  .bar__name {
+    font-size: var(--text-step--1);
+    color: var(--muted);
+  }
+  .bar__track {
+    height: 12px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--line) 60%, transparent);
+    overflow: hidden;
+  }
+  /* Las barras se escalan (transform) en vez de cambiar el ancho: no recalculan el layout al animarse */
+  .bar__fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    transform-origin: left;
+  }
+  .bar__fill--before {
+    background: var(--wire);
+    transform: scaleX(var(--from));
+  }
+  .bar__fill--after {
+    background: var(--accent);
+    transform: scaleX(var(--to));
+  }
+  .bar__num {
+    text-align: right;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+  }
+  .bar__num--after {
+    color: var(--text);
+    font-size: var(--text-step-1);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .bar[data-reveal] .bar__fill--after {
+      transform: scaleX(var(--from));
+    }
+    :global(.js) .bar[data-reveal].is-in .bar__fill--after {
+      transform: scaleX(var(--to));
+      transition: transform 1.6s var(--ease-out-expo) calc(var(--delay, 0ms) + 200ms);
+    }
+  }
+  .metrics__totals {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-content: start;
+  }
+  .total {
+    padding: 1.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+</style>

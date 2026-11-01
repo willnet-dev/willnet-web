@@ -7,6 +7,7 @@ import Process from "../components/Process.astro";
 import PriceList from "../components/PriceList.astro";
 import FaqList from "../components/FaqList.astro";
 import ProjectCard from "../components/ProjectCard.astro";
+import ResultsStrip from "../components/ResultsStrip.astro";
 import { r, type Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
 import { services } from "../data/services";
@@ -104,6 +105,9 @@ const homeFaq = faqFor(lang, true);
 
   <!-- PROCESO (opción B) -->
   <Process lang={lang} eyebrow={h.processEyebrow} title={h.processTitle} />
+
+  <!-- RESULTADOS MEDIDOS (cifras reales de los casos) -->
+  <ResultsStrip lang={lang} />
 
   <!-- POR QUÉ WILLNET -->
   <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="why-title">
