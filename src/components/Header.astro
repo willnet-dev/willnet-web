@@ -2,6 +2,8 @@
 // Cabecera fija: logo, navegación con punto en la página activa, idioma, tema y botón de presupuesto.
 // En móvil y tableta (< 1024 px) la cabecera se queda arriba y solo el botón del menú sigue al visitante;
 // el menú se abre a pantalla completa (referencia: dennissnellenberg.com; decisión de Willder, 2026-10-26).
+// Idioma y tema (Willder, 2026-10-31): al pasar el mouse los dos círculos se rellenan de lima. El de idioma
+// muestra el idioma actual y el texto rueda hacia el otro (sube en inglés, baja en español).
 import Icon from "./Icon.astro";
 import Logo from "./Logo.astro";
 import { altPath, r, type Lang } from "../i18n/routes";
@@ -14,6 +16,9 @@ interface Props {
 const { lang, path } = Astro.props;
 const copy = t(lang);
 const other: Lang = lang === "en" ? "es" : "en";
+// Orden de las dos etiquetas que ruedan: la visible en reposo primero al subir, segunda al bajar
+const current = lang.toUpperCase();
+const langRoll = lang === "en" ? [current, copy.nav.langShort] : [copy.nav.langShort, current];
 
 const links = [
   { href: r("services", lang), label: copy.nav.services },
@@ -46,10 +51,18 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
     </nav>
 
     <div class="header-actions relative z-[61] flex items-center gap-2">
-      <a href={altPath(path, other)} hreflang={other} lang={other} class="icon-btn font-mono text-sm" aria-label={`${copy.nav.langShort} · ${copy.nav.langLabel}`}>
-        {copy.nav.langShort}
+      <a
+        href={altPath(path, other)}
+        hreflang={other}
+        lang={other}
+        class="icon-btn icon-fill lang-btn font-mono text-sm"
+        data-roll={lang === "en" ? "up" : "down"}
+        data-magnetic
+        aria-label={`${copy.nav.langShort} · ${copy.nav.langLabel}`}
+      >
+        <span class="btn-label lang-btn__roll" aria-hidden="true">{langRoll.map((l) => <span>{l}</span>)}</span>
       </a>
-      <button type="button" class="icon-btn" data-theme-toggle data-label-dark={copy.nav.themeToDark} data-label-light={copy.nav.themeToLight} aria-label={copy.nav.themeToLight}>
+      <button type="button" class="icon-btn icon-fill" data-theme-toggle data-label-dark={copy.nav.themeToDark} data-label-light={copy.nav.themeToLight} aria-label={copy.nav.themeToLight}>
         <!-- Un solo icono que muestra el tema activo: sol (claro) o luna (oscuro). Cambia con una animación. -->
         <svg class="theme-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
           <mask id="theme-moon-cut">
@@ -172,6 +185,56 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
   }
   .icon-btn:hover {
     border-color: var(--text);
+  }
+  /* Idioma y tema: mismo relleno lima con curva que los botones .btn */
+  .icon-fill {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    transition:
+      color var(--dur-base) var(--ease-out-expo),
+      border-color var(--dur-base) var(--ease-out-expo);
+  }
+  .icon-fill::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--accent);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    transform: translateY(101%);
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      border-radius var(--dur-base) var(--ease-out-expo);
+  }
+  /* Idioma: dos etiquetas que ruedan */
+  .lang-btn__roll {
+    display: grid;
+    height: 1.25em;
+    overflow: hidden;
+    line-height: 1.25;
+  }
+  .lang-btn__roll > span {
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  .lang-btn[data-roll="down"] .lang-btn__roll > span {
+    transform: translateY(-100%);
+  }
+  @media (hover: hover) {
+    .icon-fill:hover {
+      color: var(--accent-ink);
+      border-color: var(--accent);
+    }
+    .icon-fill:hover::before {
+      transform: translateY(0);
+      border-radius: 0;
+    }
+    .lang-btn[data-roll="up"]:hover .lang-btn__roll > span {
+      transform: translateY(-100%);
+    }
+    .lang-btn[data-roll="down"]:hover .lang-btn__roll > span {
+      transform: none;
+    }
   }
   /* Icono del tema: en oscuro es una luna (círculo grande con un mordisco) y en claro un sol
      (círculo pequeño con rayos). Solo se animan transformaciones, que funcionan en todos los navegadores. */

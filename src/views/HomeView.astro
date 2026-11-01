@@ -102,6 +102,26 @@ const homeFaq = faqFor(lang, true);
     <PriceList lang={lang} />
   </section>
 
+  <!-- PROCESO (opción B) -->
+  <Process lang={lang} eyebrow={h.processEyebrow} title={h.processTitle} />
+
+  <!-- POR QUÉ WILLNET -->
+  <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="why-title">
+    <p class="eyebrow mb-4" data-reveal>{h.whyEyebrow}</p>
+    <h2 id="why-title" class="display mb-12 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{h.whyTitle}</h2>
+    <div class="grid border-t border-line md:grid-cols-3">
+      {
+        h.why.map((w, i) => (
+          <div class="why" data-reveal style={`--delay:${i * 80}ms`}>
+            <p class="font-display text-[length:var(--text-step-5)] font-semibold leading-none tracking-tighter text-wire">{String(i + 1).padStart(2, "0")}</p>
+            <h3 class="mt-6 text-[length:var(--text-step-2)] font-semibold tracking-tight">{w.title}</h3>
+            <p class="mt-3 text-muted">{w.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
   <!-- TRABAJO DESTACADO con parallax -->
   <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="work-title" data-parallax-root>
     <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
@@ -119,26 +139,6 @@ const homeFaq = faqFor(lang, true);
             <div data-speed={i % 2 === 1 ? "0.12" : "-0.06"}>
               <ProjectCard project={p} lang={lang} size="lg" mobileCompact />
             </div>
-          </div>
-        ))
-      }
-    </div>
-  </section>
-
-  <!-- PROCESO (opción B) -->
-  <Process lang={lang} eyebrow={h.processEyebrow} title={h.processTitle} />
-
-  <!-- POR QUÉ WILLNET -->
-  <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="why-title">
-    <p class="eyebrow mb-4" data-reveal>{h.whyEyebrow}</p>
-    <h2 id="why-title" class="display mb-12 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{h.whyTitle}</h2>
-    <div class="grid border-t border-line md:grid-cols-3">
-      {
-        h.why.map((w, i) => (
-          <div class="why" data-reveal style={`--delay:${i * 80}ms`}>
-            <p class="font-display text-[length:var(--text-step-5)] font-semibold leading-none tracking-tighter text-wire">{String(i + 1).padStart(2, "0")}</p>
-            <h3 class="mt-6 text-[length:var(--text-step-2)] font-semibold tracking-tight">{w.title}</h3>
-            <p class="mt-3 text-muted">{w.text}</p>
           </div>
         ))
       }
