@@ -4,6 +4,7 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "lenis/dist/lenis.css";
+import { decimalsOf, formatNumber } from "../lib/format";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -275,6 +276,9 @@ function initTilt() {
 function initCounters() {
   const els = document.querySelectorAll<HTMLElement>("[data-count]");
   if (!els.length || reducedMotion() || !("IntersectionObserver" in window)) return;
+  // Formato del idioma de la página (1.3 / 1,3) con los mismos decimales que el valor final
+  const lang = document.documentElement.lang || "en";
+  const show = (el: HTMLElement, n: number) => (el.textContent = formatNumber(n, lang, decimalsOf(el.dataset.count!)));
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -282,13 +286,13 @@ function initCounters() {
         const el = entry.target as HTMLElement;
         io.unobserve(el);
         const v = { n: Number(el.dataset.countFrom ?? 0) };
-        gsap.to(v, { n: Number(el.dataset.count), duration: 1.6, delay: 0.2, ease: "power3.out", onUpdate: () => (el.textContent = String(Math.round(v.n))) });
+        gsap.to(v, { n: Number(el.dataset.count), duration: 1.6, delay: 0.2, ease: "power3.out", onUpdate: () => show(el, v.n) });
       }
     },
     { rootMargin: "0px 0px -10% 0px" },
   );
   els.forEach((el) => {
-    el.textContent = el.dataset.countFrom ?? "0";
+    show(el, Number(el.dataset.countFrom ?? 0));
     io.observe(el);
   });
   onCleanup(() => io.disconnect());

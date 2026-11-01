@@ -24,6 +24,8 @@ const next = cases[(cases.findIndex((x) => x.id === project.id) + 1) % cases.len
 const shot = workImg(lang === "es" ? d.image.es : d.image.en);
 // En un arreglo no se parte de un wireframe: el rótulo dice que es el sitio actualizado
 const frameLabel = d.kind === "fix" ? copy.case.fixLabel : copy.case.wireLabel;
+// Con cifras de antes y después el título dice «antes y después»; con solo resultados (Lighthouse), «en vivo»
+const compared = d.metrics.some((m) => m.before !== undefined);
 const path = workPath(project.id, lang);
 const blocks = [
   { label: copy.case.challenge, text: c.challenge },
@@ -108,8 +110,8 @@ const schema = [
     d.metrics.length > 0 && (
       <section class="wrap border-t border-line py-[clamp(4rem,10vh,7rem)]" aria-labelledby="metrics-title">
         <p class="eyebrow mb-4" data-reveal>{copy.case.metricsEyebrow}</p>
-        <h2 id="metrics-title" class="display max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{copy.case.metricsTitle}</h2>
-        <p class="mt-4 mb-12 max-w-[52ch] text-[length:var(--text-step-1)] text-muted" data-reveal>{copy.case.metricsText}</p>
+        <h2 id="metrics-title" class="display max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{compared ? copy.case.metricsTitle : copy.case.metricsTitleLive}</h2>
+        <p class="mt-4 mb-12 max-w-[52ch] text-[length:var(--text-step-1)] text-muted" data-reveal>{compared ? copy.case.metricsText : copy.case.metricsTextLive}</p>
         <MetricBars metrics={d.metrics} lang={lang} />
       </section>
     )

@@ -3,6 +3,12 @@
   "url": "https://alecreativelab.com",
   "image": { "en": "acl-en.jpg", "es": "acl.jpg", "mobileEn": "acl-movil-en.jpg", "mobileEs": "acl-movil.jpg" },
   "stack": ["HTML", "Tailwind CSS", "JavaScript"],
+  "metrics": [
+    { "id": "performance-desktop", "after": 97, "unit": "/100", "en": "speed on desktop", "es": "de velocidad en computadora" },
+    { "id": "accessibility", "after": 100, "unit": "/100", "en": "accessibility", "es": "de accesibilidad" },
+    { "id": "best-practices", "after": 100, "unit": "/100", "en": "best practices", "es": "de buenas prácticas" },
+    { "id": "seo", "after": 100, "unit": "/100", "en": "SEO", "es": "de SEO" }
+  ],
   "en": {
     "title": "Ale Creative Lab", "type": "Bilingual landing page",
     "summary": "Bilingual landing page for a content creator and digital marketing brand in West Palm Beach: TikTok gallery, services, packages and contact form.",

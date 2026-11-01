@@ -23,7 +23,8 @@ const stats = [
   { value: realProjects, label: a.statProjects },
   { value: 2, label: a.statLangs },
   { value: 30, label: a.statSupport },
-  { value: selfScore, unit: "/100", label: a.statScore },
+  // 100 solo si accesibilidad y SEO están los dos en 100 (src/data/results.ts)
+  { value: Math.min(selfScore("accessibility"), selfScore("seo")), unit: "/100", label: a.statScore },
 ];
 const tools = ["HTML", "CSS", "JavaScript", "Tailwind CSS", "Astro", "React", "Three.js", "GSAP", "Node.js", "WordPress", "WooCommerce", "Stripe", "Cloudflare", "Git", "GitHub", "Figma", "Canva", "Claude Code"];
 

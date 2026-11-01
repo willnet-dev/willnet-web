@@ -1,26 +1,17 @@
 ---
-// Portada: franja «Resultados medidos». Cifras reales de los casos (src/data/results.ts → «metrics» del
-// JSON de cada caso), cada una enlazada a su proyecto, más la puntuación de Lighthouse de esta web.
+// Portada: franja «Resultados medidos» con las cifras de esta misma web (Lighthouse en celular), de
+// src/data/results.ts. Las cifras de los clientes van en la página de cada caso («metrics» de su JSON).
 // Los números cuentan al entrar en pantalla (site.ts → data-count); el HTML ya trae el valor final.
-import { getEntry } from "astro:content";
-import { workPath, type Lang } from "../i18n/routes";
+import type { Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
-import { homeResults, selfScore } from "../data/results";
+import { selfResults } from "../data/results";
+import { formatNumber } from "../lib/format";
 
 interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
 const h = t(lang).home;
-const items = (
-  await Promise.all(
-    homeResults.map(async ({ work, metric }) => {
-      const entry = await getEntry("work", work);
-      const m = entry?.data.metrics.find((x) => x.id === metric);
-      return entry && m ? { entry, m } : undefined;
-    }),
-  )
-).filter((x) => x !== undefined);
 ---
 
 <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="results-title">
@@ -31,39 +22,25 @@ const items = (
     </div>
     <p class="max-w-[46ch] text-[length:var(--text-step-1)] text-muted" data-reveal>{h.resultsText}</p>
   </div>
-  <ul class="results">
+  <dl class="results">
     {
-      items.map(({ entry, m }, i) => (
-        <li data-reveal style={`--delay:${i * 80}ms`}>
-          <a href={workPath(entry.id, lang)} class="result">
-            <span class="sr-only">
-              {entry.data[lang].title}: {m[lang]}
-              {m.before !== undefined ? `, ${h.resultsFrom} ${m.before} ${h.resultsTo} ${m.after}` : `: ${m.after}`}.
-            </span>
-            <span class="result__num" aria-hidden="true">
-              {m.before !== undefined && <span class="result__before">{m.before}</span>}
-              {m.before !== undefined && <span class="result__arrow">→</span>}
-              <span data-count={m.after} data-count-from={m.before}>{m.after}</span>
-            </span>
-            <span class="result__label" aria-hidden="true">{m[lang]}</span>
-            <span class="result__src eyebrow" aria-hidden="true">
-              {entry.data[lang].title} · {entry.data.year} →
-            </span>
-          </a>
-        </li>
+      selfResults.map((r, i) => (
+        <div class="result" data-reveal style={`--delay:${i * 80}ms`}>
+          <dt class="sr-only">{h.resultsLabels[r.id]}</dt>
+          <dd class="result__num">
+            <span data-count={r.value}>{formatNumber(r.value, lang)}</span>
+            <span class="result__unit">{r.unit}</span>
+          </dd>
+          <dd class="result__label" aria-hidden="true">
+            {h.resultsLabels[r.id]}
+          </dd>
+          <dd class="result__src eyebrow" aria-hidden="true">
+            willnet.dev · Lighthouse
+          </dd>
+        </div>
       ))
     }
-    <li data-reveal style={`--delay:${items.length * 80}ms`}>
-      <div class="result">
-        <span class="sr-only">{selfScore}/100 {h.resultsSelf}.</span>
-        <span class="result__num" aria-hidden="true">
-          <span data-count={selfScore}>{selfScore}</span><span class="result__unit">/100</span>
-        </span>
-        <span class="result__label" aria-hidden="true">{h.resultsSelf}</span>
-        <span class="result__src eyebrow" aria-hidden="true">willnet.dev · Lighthouse</span>
-      </div>
-    </li>
-  </ul>
+  </dl>
 </section>
 
 <style>
@@ -84,36 +61,25 @@ const items = (
   .result {
     display: flex;
     flex-direction: column;
-    height: 100%;
     padding: 2rem 1.5rem 2rem 0;
     border-bottom: 1px solid var(--line);
-    text-decoration: none;
   }
   .result__num {
     display: flex;
     align-items: baseline;
-    gap: 0.35em;
+    gap: 0.2em;
     font-family: var(--font-display);
-    font-size: var(--text-step-4);
+    font-size: var(--text-step-5);
     font-weight: 600;
     line-height: 1;
     letter-spacing: -0.04em;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
   }
-  .result__before,
-  .result__arrow,
   .result__unit {
+    font-size: 0.4em;
     /* Gris de texto (no el de los wireframes) para que también cumpla el contraste mínimo */
     color: var(--muted);
-  }
-  .result__before {
-    font-size: 0.6em;
-    text-decoration: line-through;
-    text-decoration-thickness: 0.06em;
-  }
-  .result__arrow,
-  .result__unit {
-    font-size: 0.45em;
   }
   .result__label {
     margin-top: 1rem;
@@ -123,11 +89,12 @@ const items = (
   .result__src {
     margin-top: auto;
     padding-top: 1.5rem;
-    transition: color var(--dur-base);
   }
-  @media (hover: hover) {
-    a.result:hover .result__src {
-      color: var(--text);
+  /* En 4 columnas «100/100» llenaba la columna entera: el número escala con el ancho y deja aire
+     (va al final para ganarle a la regla base de .result__num) */
+  @media (min-width: 1024px) {
+    .result__num {
+      font-size: min(var(--text-step-5), 5.4vw);
     }
   }
 </style>

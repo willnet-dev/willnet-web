@@ -15,11 +15,13 @@ const copy = z.object({
 });
 
 // Cifra medida en un proyecto: antes y después, o solo después (p. ej. 0 enlaces rotos). La usan la
-// página del caso, la franja de la portada (src/data/results.ts) y la página del servicio relacionado
+// página del caso y la página del servicio relacionado. Solo cifras medidas de verdad
 const metric = z.object({
   id: z.string(),
   before: z.number().optional(),
   after: z.number(),
+  // Unidad que va pequeña junto al número («/100» en las puntuaciones de Lighthouse)
+  unit: z.string().optional(),
   en: z.string(),
   es: z.string(),
 });
