@@ -12,7 +12,8 @@
     "deploy:prod": "node scripts/check-form-key.mjs && rm -rf dist && SITE_ENV=production astro build && npx wrangler deploy --env production",
     "preview": "astro preview --port 5500",
     "check": "astro check",
-    "images": "node scripts/optimize-images.mjs"
+    "images": "node scripts/optimize-images.mjs",
+    "about-photo": "node scripts/about-photo.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.1",

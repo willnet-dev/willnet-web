@@ -79,7 +79,7 @@ Revisa los tipos de TypeScript y Astro.
 | Ícono del navegador | `public/favicon.svg`; los PNG (`favicon-32x32.png`, `apple-touch-icon.png`, `icon-512.png`) se generan a partir de él con sharp. |
 | Redirecciones (páginas que se quitaron) | `public/_redirects`: una por línea, `origen destino 301`, con y sin barra final. Cloudflare la aplica al publicar; `npm run dev` no (para probarla: `npm run build` y `npx wrangler dev`). |
 | Política de privacidad | `src/views/PrivacyView.astro`. |
-| **Tu foto** (página Sobre mí) | Guárdala como `public/img/willder.jpg` (vertical 4:5, unos 800×1000 px) y cambia `hasPhoto` a `true` en `src/views/AboutView.astro`. |
+| **Tu foto** (página Sobre mí) | Guarda el original a tamaño completo en `originales/about/` (vertical 4:5; los retratos de Canva AI miden 1136×1408, su resolución nativa) y ejecuta `npm run about-photo <ruta>`: crea AVIF y WebP de 720 y 1136 px y un JPEG de respaldo en `public/img/`, y cada pantalla recibe el tamaño que necesita. `hasPhoto` en `src/views/AboutView.astro`. |
 
 ## Formulario de presupuesto (Web3Forms)
 

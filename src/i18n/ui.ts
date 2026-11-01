@@ -17,6 +17,7 @@ export const site = {
   country: "US",
   linkedin: "https://www.linkedin.com/in/will-net/",
   github: "https://github.com/willnet-dev",
+  instagram: "https://www.instagram.com/willnet.dev/",
   url: "https://willnet.dev",
 };
 

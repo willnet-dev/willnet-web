@@ -1,6 +1,7 @@
 ---
 // Sobre mí: historia de Willder, espacio para su foto, cifras verificables, habilidades y formación.
-// FOTO: public/img/willder.jpg (vertical 4:5, 1120×1400). Original y alternativas en originales/about/ (fuera del repo).
+// FOTO: public/img/willder-{720,1136}.{avif,webp} + willder.jpg de respaldo, generadas con `npm run about-photo`
+// desde el original de Canva (1136×1408). Original y alternativas en originales/about/ (fuera del repo).
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
@@ -27,7 +28,7 @@ const person = {
   worksFor: { "@id": `${site.url}/#business` },
   address: { "@type": "PostalAddress", addressLocality: site.city, addressRegion: site.region, addressCountry: site.country },
   knowsLanguage: ["en", "es"],
-  sameAs: [site.linkedin, site.github],
+  sameAs: [site.linkedin, site.github, site.instagram],
 };
 ---
 
@@ -56,7 +57,11 @@ const person = {
     <div class="about-photo" data-speed="-0.08">
       {
         hasPhoto ? (
-          <img src="/img/willder.jpg" alt={a.photoAlt} width="1120" height="1400" class="h-full w-full object-cover" />
+          <picture class="block h-full w-full">
+            <source type="image/avif" srcset="/img/willder-720.avif 720w, /img/willder-1136.avif 1136w" sizes="(min-width: 768px) 520px, 92vw" />
+            <source type="image/webp" srcset="/img/willder-720.webp 720w, /img/willder-1136.webp 1136w" sizes="(min-width: 768px) 520px, 92vw" />
+            <img src="/img/willder.jpg" alt={a.photoAlt} width="1136" height="1408" class="h-full w-full object-cover" />
+          </picture>
         ) : (
           <div class="about-photo__empty">
             <svg viewBox="0 0 416 290" width="96" fill="currentColor" aria-hidden="true"><path d="M0 0 96 37 156 203 107 290Z" /><path d="M416 0 320 37 260 203 309 290Z" /><path d="M160 64 208 83 256 64 208 174Z" /></svg>
