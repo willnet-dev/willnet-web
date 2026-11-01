@@ -77,6 +77,7 @@ Revisa los tipos de TypeScript y Astro.
 | Rutas en español (`/es/servicios`, etc.) | `src/i18n/routes.ts`. |
 | Imagen al compartir el enlace | `public/og-en.jpg` y `public/og-es.jpg` (1200×630, captura del hero). Si cambia el hero, hay que volver a capturarlas. |
 | Ícono del navegador | `public/favicon.svg`; los PNG (`favicon-32x32.png`, `apple-touch-icon.png`, `icon-512.png`) se generan a partir de él con sharp. |
+| Redirecciones (páginas que se quitaron) | `public/_redirects`: una por línea, `origen destino 301`, con y sin barra final. Cloudflare la aplica al publicar; `npm run dev` no (para probarla: `npm run build` y `npx wrangler dev`). |
 | Política de privacidad | `src/views/PrivacyView.astro`. |
 | **Tu foto** (página Sobre mí) | Guárdala como `public/img/willder.jpg` (vertical 4:5, unos 800×1000 px) y cambia `hasPhoto` a `true` en `src/views/AboutView.astro`. |
 

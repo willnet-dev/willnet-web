@@ -1,0 +1,271 @@
+---
+// Servicios en escritorio y tableta: bento. Mosaicos de distintos tamaños que entran «abriéndose»
+// (clip-path); al pasar el mouse se rellenan de lima con la curva de los botones, se ve qué incluye y un
+// brillo sigue al cursor por el borde (site.ts → data-bento). En móvil se usa ServiceStack.astro.
+import type { Lang } from "../../i18n/routes";
+import { serviceCards } from "../../lib/serviceCards";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+// Las webs y las tiendas van primero y en grande porque son lo que más se pide. Las tarjetas se
+// ordenan como se ven, así la numeración y el orden de lectura coinciden con la cuadrícula
+const areas: Record<string, string> = {
+  websites: "web",
+  "online-stores": "store",
+  "landing-pages": "land",
+  branding: "brand",
+  "website-fixes": "fix",
+  maintenance: "maint",
+};
+const order = Object.keys(areas);
+const cards = (await serviceCards(lang)).sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+// Los mosaicos anchos llevan la captura de fondo (Arreglos: AETERNA). En los pequeños de fondo tapaba el texto: ahí va una
+// miniatura inclinada arriba a la derecha (Landing: ACL; Branding: el sistema de logos de Macias)
+const big = new Set(["websites", "online-stores", "website-fixes"]);
+const peek = new Set(["landing-pages", "branding"]);
+---
+
+<ul class="bento" data-bento>
+  {
+    cards.map((c, i) => (
+      <li class="bento__tile" style={`grid-area:${areas[c.key]};--delay:${i * 80}ms`} data-reveal>
+        <a href={c.href} class="bento__link">
+          {c.img && big.has(c.key) && (
+            <span class="bento__img" aria-hidden="true">
+              <img src={c.img} alt="" loading="lazy" decoding="async" class:list={{ "is-contain": c.contain }} />
+            </span>
+          )}
+          {c.img && peek.has(c.key) && (
+            <span class="bento__peek" aria-hidden="true">
+              <img src={c.img} alt="" loading="lazy" decoding="async" />
+            </span>
+          )}
+          <span class="bento__top">
+            <span class="eyebrow">{String(i + 1).padStart(2, "0")}</span>
+            <span class="bento__arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20"><path d="M7 17 17 7M8 7h9v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </span>
+          </span>
+          <span class="bento__text">
+            <h2 class="display text-[length:var(--text-step-2)]">{c.name}</h2>
+            <span class="bento__short">{c.short}</span>
+            <span class="bento__more">
+              {c.items.map((item) => <span>{item}</span>)}
+            </span>
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .bento {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-areas:
+      "web web store store"
+      "web web land brand"
+      "fix fix maint maint";
+    /* La fila del medio es más alta: ahí van las miniaturas de Landing y Branding */
+    grid-template-rows: minmax(240px, auto) minmax(400px, auto) minmax(240px, auto);
+    gap: 1rem;
+  }
+  .bento__tile {
+    position: relative;
+    border-radius: 24px;
+    /* Borde con brillo que sigue al mouse (--mx, --my los pone site.ts) */
+    padding: 1px;
+    background:
+      radial-gradient(260px circle at var(--mx, -999px) var(--my, -999px), var(--accent), transparent 70%),
+      var(--line);
+  }
+  .bento__link {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    height: 100%;
+    padding: 1.5rem;
+    border-radius: 23px;
+    background: var(--surface);
+    overflow: hidden;
+    text-decoration: none;
+    transition: color var(--dur-base) var(--ease-out-expo);
+  }
+  /* Relleno lima con curva, como los botones */
+  .bento__link::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: var(--accent);
+    border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+    transform: translateY(101%);
+    transition:
+      transform var(--dur-slow) var(--ease-out-expo),
+      border-radius var(--dur-slow) var(--ease-out-expo);
+  }
+  /* Captura a la derecha, desvanecida hacia el texto */
+  .bento__img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 62%;
+    z-index: -2;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to left, #000 45%, transparent);
+    mask-image: linear-gradient(to left, #000 45%, transparent);
+  }
+  .bento__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+    opacity: 0.85;
+    scale: 1.05;
+    transition:
+      opacity var(--dur-base),
+      scale var(--dur-slow) var(--ease-out-expo);
+  }
+  .bento__img img.is-contain {
+    object-fit: contain;
+    object-position: right bottom;
+  }
+  .bento__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .bento__arrow {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    /* Fondo propio para que se lea encima de las miniaturas */
+    background: var(--surface);
+    transition:
+      transform var(--dur-base) var(--ease-out-expo),
+      border-color var(--dur-base),
+      background var(--dur-base);
+  }
+  .bento__short {
+    display: block;
+    max-width: 34ch;
+    margin-top: 0.4rem;
+    color: var(--muted);
+    transition: color var(--dur-base);
+  }
+  /* Miniatura de los mosaicos pequeños: una tarjeta inclinada que asoma por la esquina */
+  .bento__peek {
+    position: absolute;
+    top: 1.25rem;
+    right: -16%;
+    width: 68%;
+    aspect-ratio: 16 / 10;
+    z-index: -2;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid var(--line);
+    box-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.45);
+    rotate: -5deg;
+    transition:
+      opacity var(--dur-base),
+      rotate var(--dur-slow) var(--ease-out-expo),
+      translate var(--dur-slow) var(--ease-out-expo);
+  }
+  .bento__peek img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top left;
+  }
+  .bento__more {
+    display: grid;
+    gap: 0.25rem;
+    margin-top: 0.75rem;
+    font-size: var(--text-step--1);
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition:
+      max-height var(--dur-slow) var(--ease-out-expo),
+      opacity var(--dur-base);
+  }
+  /* Cada punto en una sola línea, con «…» si no cabe: en los mosaicos estrechos los puntos largos
+     ocupaban varias líneas y el último quedaba cortado. El texto completo está en la página del servicio */
+  .bento__more span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .bento__more span::before {
+    content: "+ ";
+  }
+  @media (hover: hover) {
+    .bento__link:hover {
+      color: var(--accent-ink);
+    }
+    .bento__link:hover::before {
+      transform: translateY(0);
+      border-radius: 0;
+    }
+    .bento__link:hover .bento__img img {
+      opacity: 0;
+      scale: 1.12;
+    }
+    .bento__link:hover .bento__peek {
+      opacity: 0;
+      rotate: 0deg;
+      translate: 0 -12px;
+    }
+    .bento__link:hover .bento__short {
+      color: var(--accent-ink);
+    }
+    .bento__link:hover .bento__more {
+      max-height: 10rem;
+      opacity: 1;
+    }
+    .bento__link:hover .bento__arrow {
+      border-color: var(--accent-ink);
+      background: transparent;
+      transform: rotate(45deg);
+    }
+  }
+  /* Entrada: el mosaico se abre desde el centro, en vez del fundido general */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .bento__tile[data-reveal] {
+      opacity: 1;
+      transform: none;
+      clip-path: inset(18% 18% 18% 18% round 24px);
+      transition: clip-path 1.1s var(--ease-out-expo);
+      transition-delay: var(--delay);
+    }
+    :global(.js) .bento__tile.is-in {
+      clip-path: inset(0 0 0 0 round 24px);
+    }
+  }
+  @media (max-width: 1023px) {
+    .bento {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-areas:
+        "web web"
+        "store store"
+        "land brand"
+        "fix maint";
+      grid-template-rows: none;
+      grid-auto-rows: minmax(200px, auto);
+    }
+    /* En dos columnas los mosaicos pequeños necesitan más alto para que la miniatura no tape el texto */
+    .bento__tile:has(.bento__peek) {
+      min-height: 380px;
+    }
+  }
+</style>

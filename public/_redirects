@@ -1,0 +1,11 @@
+# Redirecciones de Cloudflare (Workers static assets). Una por línea: origen destino código.
+# 2026-11-01: la invitación de XV y el buscador de mesas dejaron de ser casos (siguen en el portafolio,
+# en Eventos, con enlace a su sitio). Sus páginas de caso llevan al portafolio.
+/work/quinceanera /work 301
+/work/table-finder /work 301
+/es/trabajo/quinceanera /es/trabajo 301
+/es/trabajo/table-finder /es/trabajo 301
+/work/quinceanera/ /work 301
+/work/table-finder/ /work 301
+/es/trabajo/quinceanera/ /es/trabajo 301
+/es/trabajo/table-finder/ /es/trabajo 301

@@ -1,5 +1,5 @@
 {
-  "order": 5, "category": "events", "featured": false, "hasCase": true, "year": 2025,
+  "order": 6, "category": "events", "featured": false, "hasCase": false, "year": 2025,
   "url": "https://willnet-dev.github.io/invitacion-marcela/",
   "image": { "en": "invitacion-xv.jpg", "es": "invitacion-xv.jpg", "mobileEn": "invitacion-xv.jpg", "mobileEs": "invitacion-xv.jpg" },
   "stack": ["HTML", "CSS", "JavaScript", "GitHub Pages"],

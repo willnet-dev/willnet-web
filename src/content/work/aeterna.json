@@ -1,0 +1,20 @@
+{
+  "order": 5, "category": "web", "featured": false, "hasCase": true, "year": 2026, "withDopicos": false, "kind": "fix",
+  "url": "https://aeternaartwellness.com",
+  "image": { "en": "aeterna.jpg", "es": "aeterna.jpg", "mobileEn": "aeterna-movil.jpg", "mobileEs": "aeterna-movil.jpg" },
+  "stack": ["WordPress", "Elementor", "Yoast SEO"],
+  "en": {
+    "title": "AETERNA Art Wellness & Spa", "type": "Website fixes",
+    "summary": "Med spa in West Palm Beach: I fixed, updated and sped up the WordPress site it already had, without starting over.",
+    "challenge": "AETERNA already had a WordPress site, but its membership prices and cancellation policy changed from page to page, it still showed a location that had closed, it had duplicate pages, and every page loaded 13–15 font families and dozens of images at once.",
+    "solution": "I made a full backup, did every change on a local copy and published it once it was approved: WordPress and 8 plugins updated, prices and policies unified, the closed location and duplicate pages removed with redirects, Google reviews added, descriptive alt text on the photos, fonts reduced to 3, images converted to WebP and loaded only when needed, browser cache and security headers.",
+    "result": "Phase 1 is live at aeternaartwellness.com with 0 broken links: 3 font families instead of 13–15, 338 images in WebP, and 6 images loading up front on the home page instead of 36."
+  },
+  "es": {
+    "title": "AETERNA Art Wellness & Spa", "type": "Arreglos web",
+    "summary": "Med spa en West Palm Beach: arreglé, actualicé y aceleré el WordPress que ya tenía, sin empezar de cero.",
+    "challenge": "AETERNA ya tenía una web en WordPress, pero los precios de las membresías y la política de cancelación cambiaban de una página a otra, seguía mostrando una sede que había cerrado, tenía páginas duplicadas y cada página cargaba de 13 a 15 familias de letras y decenas de imágenes a la vez.",
+    "solution": "Hice un respaldo completo, trabajé todos los cambios en una copia local y los publiqué cuando se aprobaron: WordPress y 8 plugins actualizados, precios y políticas unificados, la sede cerrada y las páginas duplicadas fuera con redirecciones, reseñas de Google, textos alternativos en las fotos, letras reducidas a 3, imágenes en WebP que cargan solo cuando hacen falta, caché del navegador y cabeceras de seguridad.",
+    "result": "La fase 1 está publicada en aeternaartwellness.com con 0 enlaces rotos: 3 familias de letras en vez de 13–15, 338 imágenes en WebP y 6 imágenes que cargan de entrada en la portada en vez de 36."
+  }
+}

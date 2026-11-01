@@ -21,6 +21,8 @@ const c = d[lang];
 const cases = (await getCollection("work")).filter((x) => x.data.hasCase).sort((a, b) => a.data.order - b.data.order);
 const next = cases[(cases.findIndex((x) => x.id === project.id) + 1) % cases.length];
 const shot = workImg(lang === "es" ? d.image.es : d.image.en);
+// En un arreglo no se parte de un wireframe: el rótulo dice que es el sitio actualizado
+const frameLabel = d.kind === "fix" ? copy.case.fixLabel : copy.case.wireLabel;
 const path = workPath(project.id, lang);
 const blocks = [
   { label: copy.case.challenge, text: c.challenge },
@@ -78,7 +80,7 @@ const schema = [
     </dl>
   </PageHead>
 
-  <section class="wrap case" data-case-build aria-label={copy.case.wireLabel}>
+  <section class="wrap case" data-case-build aria-label={frameLabel}>
     <div class="case__text">
       {
         blocks.map((b, i) => (
@@ -95,7 +97,7 @@ const schema = [
     </div>
     <div class="case__stage">
       <div class="case__sticky">
-        <p class="eyebrow mb-4">{copy.case.wireLabel}</p>
+        <p class="eyebrow mb-4">{frameLabel}</p>
         <CaseFrame src={shot} alt={`${c.title} — ${c.type}`} url={d.url} live />
       </div>
     </div>

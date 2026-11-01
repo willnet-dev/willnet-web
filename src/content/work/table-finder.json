@@ -1,5 +1,5 @@
 {
-  "order": 6, "category": "events", "featured": false, "hasCase": true, "year": 2025,
+  "order": 7, "category": "events", "featured": false, "hasCase": false, "year": 2025,
   "url": "https://willnet-dev.github.io/assignacion_mesas/",
   "image": { "en": "mesas.jpg", "es": "mesas.jpg", "mobileEn": "mesas-movil.jpg", "mobileEs": "mesas-movil.jpg" },
   "stack": ["HTML", "CSS", "JavaScript"],

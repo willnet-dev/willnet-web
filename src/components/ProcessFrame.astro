@@ -1,6 +1,10 @@
 ---
 // Marco de navegador que muestra el estado del proceso (opción B):
-// 1 conversación · 2 wireframe · 3 diseño · 4 publicado. El estado cambia con data-state.
+// 1 conversación · 2 presupuesto sobre el wireframe · 3 diseño con comentarios · 4 publicado.
+// El estado cambia con data-state; el 0 (solo en el marco fijo, antes de verlo) deja el chat vacío
+// para que los mensajes entren uno por uno (Willder, 2026-10-31).
+import { formatPrice, getService } from "../data/services";
+
 interface Props {
   state?: 1 | 2 | 3 | 4;
   live?: boolean;
@@ -8,6 +12,8 @@ interface Props {
 }
 const { state = 1, live = false, lang } = Astro.props;
 const es = lang === "es";
+// El presupuesto de ejemplo usa el precio «desde» de una web de negocio (src/data/services.ts)
+const quote = getService("websites").price;
 ---
 
 <div class="pframe browser" data-state={state} {...(live ? { "data-process-frame": "" } : {})} aria-hidden="true">
@@ -40,6 +46,21 @@ const es = lang === "es";
       </div>
       <div class="pf-cards"><span></span><span></span><span></span></div>
     </div>
+    <!-- 2 · Presupuesto: la propuesta entra sobre el boceto, línea por línea, y se sella -->
+    <div class="pf-quote">
+      <span class="pf-quote__stamp">{es ? "Aprobado" : "Approved"}</span>
+      <p class="pf-quote__ref">{es ? "Propuesta" : "Proposal"} · #0142</p>
+      <p class="pf-quote__title">{es ? "Web para tu negocio" : "Website for your business"}</p>
+      <ul>
+        <li><span>{es ? "Diseño + 5 páginas" : "Design + 5 pages"}</span><i class="pf-check"></i></li>
+        <li><span>{es ? "Formulario y WhatsApp" : "Form + WhatsApp"}</span><i class="pf-check"></i></li>
+        <li><span>{es ? "Lista en" : "Ready in"}</span><span>{es ? "3 semanas" : "3 weeks"}</span></li>
+        <li class="pf-quote__total"><span>Total</span><span data-quote-total={quote}>{formatPrice(quote)}</span></li>
+      </ul>
+    </div>
+    <!-- 3 · Revisión: comentarios del cliente sobre el diseño -->
+    <span class="pf-pin pf-pin--a">{es ? "¿Logo más grande?" : "Bigger logo?"}</span>
+    <span class="pf-pin pf-pin--b">✓ {es ? "¡Me encanta!" : "Love it!"}</span>
     <span class="pframe__badge">{es ? "30 días de soporte" : "30 days support"}</span>
   </div>
 </div>
@@ -49,6 +70,8 @@ const es = lang === "es";
     position: relative;
     aspect-ratio: 16 / 10;
     overflow: hidden;
+    /* La tarjeta y los comentarios miden su letra con el ancho del marco (cqi) */
+    container-type: inline-size;
   }
   .pframe .browser__url {
     position: relative;
@@ -105,6 +128,20 @@ const es = lang === "es";
     border-radius: 14px;
     font-size: clamp(0.72rem, 0.6rem + 0.4vw, 0.9rem);
     line-height: 1.35;
+    transition:
+      opacity var(--dur-base),
+      transform var(--dur-base) var(--ease-out-expo);
+  }
+  /* Antes de ver el marco los mensajes esperan; al llegar al paso 1 entran uno tras otro */
+  [data-state="0"] .bubble {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  [data-state="1"] .bubble:nth-child(2) {
+    transition-delay: 350ms;
+  }
+  [data-state="1"] .bubble:nth-child(3) {
+    transition-delay: 700ms;
   }
   .bubble--them {
     align-self: flex-start;
@@ -243,6 +280,157 @@ const es = lang === "es";
     opacity: 1;
     transform: none;
   }
+  /* En el presupuesto el boceto queda detrás, más tenue */
+  [data-state="2"] .pframe__page {
+    opacity: 0.35;
+  }
+
+  /* Estado 2: tarjeta de propuesta */
+  .pf-quote {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: min(64%, 320px);
+    height: fit-content;
+    padding: 0.9em 1.1em;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.35);
+    font-size: clamp(0.6rem, 2.5cqi, 0.9rem);
+    line-height: 1.3;
+    opacity: 0;
+    transform: translateY(18%) rotate(3deg);
+    transition:
+      opacity var(--dur-base),
+      transform var(--dur-slow) var(--ease-out-expo);
+  }
+  .pf-quote__ref {
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    color: var(--muted);
+  }
+  .pf-quote__title {
+    margin: 0.15em 0 0.5em;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .pf-quote li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1em;
+    padding: 0.35em 0;
+    border-bottom: 1px solid var(--line);
+    opacity: 0;
+    transform: translateX(-8px);
+    transition:
+      opacity var(--dur-base),
+      transform var(--dur-base) var(--ease-out-expo);
+  }
+  .pf-quote .pf-quote__total {
+    border-bottom: 0;
+    font-weight: 600;
+  }
+  .pf-check {
+    flex: none;
+    width: 1.15em;
+    height: 1.15em;
+    border-radius: 50%;
+    background: var(--accent);
+    position: relative;
+  }
+  .pf-check::after {
+    content: "";
+    position: absolute;
+    left: 38%;
+    top: 22%;
+    width: 25%;
+    height: 45%;
+    border: solid var(--accent-ink);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .pf-quote__stamp {
+    position: absolute;
+    right: -0.8em;
+    top: -0.9em;
+    padding: 0.2em 0.6em;
+    border: 2px solid var(--accent-ink);
+    border-radius: 6px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: var(--font-mono);
+    font-size: 0.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: rotate(-10deg) scale(1.8);
+    transition:
+      opacity 0.2s,
+      transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  [data-state="2"] .pf-quote,
+  [data-state="2"] .pf-quote li {
+    opacity: 1;
+    transform: none;
+  }
+  [data-state="2"] .pf-quote li:nth-child(1) {
+    transition-delay: 200ms;
+  }
+  [data-state="2"] .pf-quote li:nth-child(2) {
+    transition-delay: 330ms;
+  }
+  [data-state="2"] .pf-quote li:nth-child(3) {
+    transition-delay: 460ms;
+  }
+  [data-state="2"] .pf-quote li:nth-child(4) {
+    transition-delay: 590ms;
+  }
+  [data-state="2"] .pf-quote__stamp {
+    opacity: 1;
+    transform: rotate(-10deg) scale(1);
+    transition-delay: 1.5s;
+  }
+  /* Aprobada, la tarjeta sale hacia arriba y deja ver el diseño */
+  :is([data-state="3"], [data-state="4"]) .pf-quote {
+    transform: translateY(-14%) scale(0.96);
+  }
+
+  /* Estado 3: comentarios de revisión */
+  .pf-pin {
+    position: absolute;
+    padding: 0.35em 0.75em;
+    border-radius: 10px 10px 10px 2px;
+    background: var(--text);
+    color: var(--bg);
+    font-size: clamp(0.55rem, 2.2cqi, 0.8rem);
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 0;
+    scale: 0.6;
+    transform-origin: 0 100%;
+    transition:
+      opacity 0.25s,
+      scale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .pf-pin--a {
+    left: 16%;
+    top: 4%;
+  }
+  .pf-pin--b {
+    left: 22%;
+    top: 66%;
+  }
+  [data-state="3"] .pf-pin {
+    opacity: 1;
+    scale: 1;
+    transition-delay: 450ms;
+  }
+  [data-state="3"] .pf-pin--b {
+    transition-delay: 800ms;
+  }
 
   /* Estado 3 y 4: diseño terminado */
   :is([data-state="3"], [data-state="4"]) :is(.pf-logo, .pf-links i, .pf-line, .pf-cards span) {
@@ -273,5 +461,12 @@ const es = lang === "es";
   [data-state="4"] :is(.pframe__url-live, .pframe__live, .pframe__badge) {
     opacity: 1;
     transform: none;
+  }
+  /* Al publicar, LIVE y el soporte entran con un pequeño rebote */
+  [data-state="4"] :is(.pframe__live, .pframe__badge) {
+    transition-timing-function: ease, cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  [data-state="4"] .pframe__badge {
+    transition-delay: 300ms;
   }
 </style>

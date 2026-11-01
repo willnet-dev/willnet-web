@@ -23,6 +23,8 @@ const work = defineCollection({
     hasCase: z.boolean(),
     year: z.number(),
     withDopicos: z.boolean().default(false),
+    // «fix»: arreglo de una web que ya existía (no se parte de un wireframe); cambia el rótulo del caso
+    kind: z.enum(["build", "fix"]).default("build"),
     url: z.string(),
     image: z.object({ en: z.string(), es: z.string(), mobileEn: z.string(), mobileEs: z.string() }),
     stack: z.array(z.string()),

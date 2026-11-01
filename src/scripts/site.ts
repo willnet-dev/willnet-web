@@ -175,6 +175,73 @@ function initMagnetic() {
   });
 }
 
+/* ---------- Servicios: vista previa que sigue al mouse (solo escritorio con mouse) ---------- */
+function initServicePreview() {
+  if (!finePointer() || reducedMotion() || !matchMedia("(min-width: 768px)").matches) return;
+  document.querySelectorAll<HTMLElement>("[data-svc-list]").forEach((list) => {
+    const preview = list.querySelector<HTMLElement>("[data-svc-preview]");
+    if (!preview) return;
+    const items = preview.querySelectorAll<HTMLElement>("[data-svc-item]");
+    const xTo = gsap.quickTo(preview, "x", { duration: 0.5, ease: "power3.out" });
+    const yTo = gsap.quickTo(preview, "y", { duration: 0.5, ease: "power3.out" });
+    const rTo = gsap.quickTo(preview, "rotation", { duration: 0.6, ease: "power3.out" });
+    let shown = false;
+    let pointer = { x: 0, y: 0 };
+    let settle = 0;
+    const hide = () => {
+      shown = false;
+      preview.classList.remove("is-on");
+    };
+    // Coloca la vista previa a la derecha del cursor (sin salirse de la lista) y muestra la del servicio
+    const update = (clientX: number, clientY: number) => {
+      const row = document.elementFromPoint(clientX, clientY)?.closest<HTMLElement>("[data-svc]");
+      if (!row || !list.contains(row)) return hide();
+      items.forEach((item) => item.classList.toggle("is-active", item.dataset.svcItem === row.dataset.svc));
+      const r = list.getBoundingClientRect();
+      const x = gsap.utils.clamp(0, r.width - preview.offsetWidth, clientX - r.left + 32);
+      const y = clientY - r.top - preview.offsetHeight / 2;
+      if (shown) {
+        xTo(x);
+        yTo(y);
+      } else {
+        xTo(x, x);
+        yTo(y, y);
+        shown = true;
+        preview.classList.add("is-on");
+      }
+    };
+    listen(list, "pointermove", ((e: PointerEvent) => {
+      // Se inclina un poco hacia donde va el mouse y vuelve a quedar recta al parar
+      rTo(gsap.utils.clamp(-8, 8, (e.clientX - pointer.x) * 0.4));
+      window.clearTimeout(settle);
+      settle = window.setTimeout(() => rTo(0), 120);
+      pointer = { x: e.clientX, y: e.clientY };
+      update(e.clientX, e.clientY);
+    }) as EventListener);
+    listen(list, "pointerleave", hide);
+    // Al hacer scroll sin mover el mouse, la fila bajo el cursor cambia: se actualiza igual
+    listen(window, "scroll", () => shown && update(pointer.x, pointer.y), { passive: true });
+    onCleanup(() => window.clearTimeout(settle));
+  });
+}
+
+/* ---------- Servicios (opción 2, bento): brillo del borde que sigue al mouse ---------- */
+function initBento() {
+  if (!finePointer() || reducedMotion()) return;
+  document.querySelectorAll<HTMLElement>("[data-bento]").forEach((bento) => {
+    const tiles = bento.querySelectorAll<HTMLElement>(".bento__tile");
+    // Cada mosaico recibe la posición del mouse relativa a él: el brillo se ve también en los vecinos
+    listen(bento, "pointermove", ((e: PointerEvent) => {
+      tiles.forEach((tile) => {
+        const r = tile.getBoundingClientRect();
+        tile.style.setProperty("--mx", `${e.clientX - r.left}px`);
+        tile.style.setProperty("--my", `${e.clientY - r.top}px`);
+      });
+    }) as EventListener);
+    listen(bento, "pointerleave", () => tiles.forEach((tile) => tile.style.removeProperty("--mx")));
+  });
+}
+
 /* ---------- Revelado al entrar en pantalla ---------- */
 function initReveal() {
   const items = document.querySelectorAll<HTMLElement>("[data-reveal]");
@@ -305,10 +372,29 @@ function initScroll() {
     if (process) {
       const frame = process.querySelector<HTMLElement>("[data-process-frame]");
       const steps = process.querySelectorAll<HTMLElement>("[data-process-step]");
+      // El total del presupuesto cuenta desde $0 cada vez que se llega al paso 2
+      const total = frame?.querySelector<HTMLElement>("[data-quote-total]");
+      const amount = Number(total?.dataset.quoteTotal ?? 0);
+      const counter = { v: amount };
       const activate = (step: HTMLElement) => {
-        frame?.setAttribute("data-state", step.dataset.processStep!);
+        const state = step.dataset.processStep!;
+        if (total && state === "2" && frame?.dataset.state !== "2") {
+          gsap.fromTo(counter, { v: 0 }, {
+            v: amount, duration: 1, delay: 0.6, ease: "power2.out", overwrite: true,
+            onUpdate: () => { total.textContent = `$${Math.round(counter.v).toLocaleString("en-US")}`; },
+          });
+        }
+        frame?.setAttribute("data-state", state);
         steps.forEach((s) => s.classList.toggle("is-active", s === step));
       };
+      // Si el marco aún no se ve, el chat empieza vacío y los mensajes entran cuando aparece la sección
+      if (frame && process.getBoundingClientRect().top > innerHeight * 0.6) {
+        frame.dataset.state = "0";
+        ScrollTrigger.create({
+          trigger: process, start: "top 60%", once: true,
+          onEnter: () => { if (frame.dataset.state === "0") frame.dataset.state = "1"; },
+        });
+      }
       // Al entrar (bajando o subiendo) en un paso, el marco pasa a ese estado; al salir se queda como está
       steps.forEach((step) => {
         ScrollTrigger.create({ trigger: step, start: "top 60%", end: "bottom 40%", onEnter: () => activate(step), onEnterBack: () => activate(step) });
@@ -343,6 +429,49 @@ function initScroll() {
     }
   });
   onCleanup(() => ctx.revert());
+
+  // gsap.matchMedia rehace cada bloque si el ancho cruza el corte (girar la tableta, cambiar la ventana)
+  const mm = gsap.matchMedia();
+  mm.add({ mobile: "(max-width: 767px)", vertical: "(max-width: 1023px)", desktop: "(min-width: 1024px)" }, (ctx) => {
+    const { mobile, vertical } = ctx.conditions as { mobile: boolean; vertical: boolean };
+
+    if (mobile) {
+      // Home, servicios en móvil: el título se pinta de gris a negro mientras la tarjeta sube por la pantalla
+      gsap.utils.toArray<HTMLElement>("[data-svc-list] .price-row__title").forEach((title) => {
+        gsap.fromTo(title, { "--paint": "100%" }, {
+          "--paint": "0%", ease: "none",
+          scrollTrigger: { trigger: title.closest("li"), start: "top 85%", end: "top 40%", scrub: true },
+        });
+      });
+
+      // Página de servicios en móvil: la tarjeta de atrás se encoge y se oscurece mientras la siguiente la tapa
+      const stack = gsap.utils.toArray<HTMLElement>("[data-stack-card]");
+      stack.forEach((item, i) => {
+        const next = stack[i + 1];
+        if (!next) return;
+        gsap.fromTo(item.firstElementChild, { scale: 1, "--shade": 0 }, {
+          scale: 0.9, "--shade": 0.5, ease: "none",
+          scrollTrigger: { trigger: next, start: "top bottom", end: "top 15%", scrub: true },
+        });
+      });
+    }
+
+    // Página de servicios, proceso: la línea de tiempo se llena con el scroll (vertical en tableta y
+    // móvil) y enciende cada paso al alcanzarlo
+    const line = document.querySelector<HTMLElement>("[data-timeline]");
+    if (line) {
+      const steps = line.querySelectorAll<HTMLElement>("[data-timeline-step]");
+      const axis = vertical ? "scaleY" : "scaleX";
+      gsap.fromTo(line.querySelector("[data-timeline-fill]"), { [axis]: 0 }, {
+        [axis]: 1, ease: "none",
+        scrollTrigger: {
+          trigger: line, start: "top 70%", end: vertical ? "bottom 70%" : "top 20%", scrub: true,
+          onUpdate: (self) => steps.forEach((s, i) => s.classList.toggle("is-on", self.progress >= Math.max(0.01, i * 0.29))),
+        },
+      });
+    }
+  });
+  onCleanup(() => mm.revert());
 }
 
 /* ---------- Transición entre páginas: cortina lima con el nombre de la página ---------- */
@@ -396,6 +525,8 @@ export function initSite() {
     initMenu();
     initTheme();
     initMagnetic();
+    initServicePreview();
+    initBento();
     initReveal();
     initTypewriter();
     initBackTop();

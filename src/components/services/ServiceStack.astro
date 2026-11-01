@@ -1,0 +1,123 @@
+---
+// Servicios en móvil: tarjetas que se apilan, solo con nombre y descripción (los precios están en la página
+// de cada servicio). Cada tarjeta se queda fija arriba y la siguiente sube y la tapa; la de atrás se encoge
+// y se oscurece un poco (GSAP, en site.ts → data-stack-card).
+// En escritorio y tableta la página usa el bento (ServiceBento.astro).
+import type { Lang } from "../../i18n/routes";
+import { t } from "../../i18n/ui";
+import { serviceCards } from "../../lib/serviceCards";
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+const copy = t(lang);
+const cards = await serviceCards(lang);
+---
+
+<ol class="stack">
+  {
+    cards.map((c, i) => (
+      <li class="stack__item" style={`--i:${i}`} data-stack-card>
+        <article class="stack__card">
+          <div class="stack__body">
+            <p class="eyebrow">// {String(i + 1).padStart(2, "0")}</p>
+            <h2 class="display mt-3 text-[length:var(--text-step-3)]">{c.name}</h2>
+            <p class="mt-3 max-w-[40ch] text-muted">{c.short}</p>
+            <a href={c.href} class="btn btn-primary mt-5 self-start">
+              <span class="btn-label">{copy.common.readMore}</span>
+            </a>
+          </div>
+          <div class="stack__media" aria-hidden="true">
+            {c.img ? (
+              <img src={c.img} alt="" loading="lazy" decoding="async" class:list={{ "is-contain": c.contain }} />
+            ) : (
+              <span class="stack__num">{String(i + 1).padStart(2, "0")}</span>
+            )}
+          </div>
+        </article>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  /* El espacio entre tarjetas es el recorrido en el que cada una se lee entera antes de que la tapen */
+  .stack {
+    display: grid;
+    gap: 25vh;
+  }
+  .stack__item {
+    position: sticky;
+    /* Cada tarjeta se queda un poco más abajo que la anterior: se ven los bordes del mazo */
+    top: calc(var(--header-h) + 0.5rem + var(--i) * 0.5rem);
+  }
+  .stack__card {
+    position: relative;
+    display: grid;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid var(--line);
+    border-radius: 22px;
+    background: var(--surface);
+    transform-origin: 50% 0;
+    box-shadow: 0 -20px 50px -30px rgb(0 0 0 / 0.35);
+  }
+  /* Sombra que GSAP sube cuando la tarjeta queda atrás */
+  .stack__card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--bg);
+    opacity: var(--shade, 0);
+    pointer-events: none;
+  }
+  .stack__body {
+    display: flex;
+    flex-direction: column;
+  }
+  .stack__media {
+    position: relative;
+    order: -1;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--surface-2);
+  }
+  .stack__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+  }
+  .stack__media img.is-contain {
+    object-fit: contain;
+    object-position: center;
+    background: #fff;
+  }
+  /* Sin captura: el número grande en lima */
+  .stack__num {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-family: var(--font-display);
+    font-size: 4.5rem;
+    font-weight: 600;
+    letter-spacing: -0.05em;
+  }
+  /* Movimiento reducido: tarjetas una debajo de otra, sin quedarse fijas */
+  @media (prefers-reduced-motion: reduce) {
+    .stack {
+      gap: 1rem;
+    }
+    .stack__item {
+      position: static;
+    }
+  }
+</style>

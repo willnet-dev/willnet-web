@@ -158,6 +158,7 @@ const en = {
     similar: "Start a similar project",
     next: "Next project",
     wireLabel: "From wireframe to live site",
+    fixLabel: "The updated site, live",
   },
   about: {
     title: "About Willder Gómez — WillNet",
@@ -385,6 +386,7 @@ const es: typeof en = {
     similar: "Empezar un proyecto parecido",
     next: "Siguiente proyecto",
     wireLabel: "Del wireframe al sitio publicado",
+    fixLabel: "El sitio actualizado, en vivo",
   },
   about: {
     title: "Sobre Willder Gómez — WillNet",

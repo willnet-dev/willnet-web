@@ -1,9 +1,13 @@
 ---
-// Página de servicios: los 5 servicios con precio «desde», el proceso y la forma de pago.
+// Página de servicios: los servicios con precio «desde», plazo y qué incluyen, el proceso y un CTA.
+// Con efectos propios, distintos de la Home (elegidos por Willder el 2026-11-01 entre 3 opciones de
+// servicios y 2 de proceso): bento en escritorio y tableta, tarjetas que se apilan en móvil, y el
+// proceso como línea de tiempo que se llena con el scroll.
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
-import PriceList from "../components/PriceList.astro";
-import Process from "../components/Process.astro";
+import ServiceBento from "../components/services/ServiceBento.astro";
+import ServiceStack from "../components/services/ServiceStack.astro";
+import ProcessTimeline from "../components/services/ProcessTimeline.astro";
 import { r, servicePath, type Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
 import { services } from "../data/services";
@@ -34,10 +38,12 @@ const schema = [
       { name: copy.nav.services, href: r("services", lang) },
     ]}
   />
+  <!-- Solo se muestra una de las dos según el ancho (la otra queda con display: none) -->
   <section class="wrap pb-[clamp(4rem,10vh,8rem)]" aria-label={copy.nav.services}>
-    <PriceList lang={lang} headingLevel="h2" />
+    <div class="svc-desktop"><ServiceBento lang={lang} /></div>
+    <div class="svc-mobile"><ServiceStack lang={lang} /></div>
   </section>
-  <Process lang={lang} eyebrow={copy.home.processEyebrow} title={copy.home.processTitle} />
+  <ProcessTimeline lang={lang} eyebrow={copy.home.processEyebrow} title={copy.home.processTitle} />
   <section class="wrap pb-[clamp(4rem,10vh,8rem)]">
     <div class="grid gap-6 rounded-3xl border border-line bg-surface p-[clamp(1.5rem,4vw,3.5rem)] md:grid-cols-[1.4fr_auto] md:items-center" data-reveal>
       <div>
@@ -48,3 +54,16 @@ const schema = [
     </div>
   </section>
 </Base>
+
+<style>
+  @media (max-width: 767px) {
+    .svc-desktop {
+      display: none;
+    }
+  }
+  @media (min-width: 768px) {
+    .svc-mobile {
+      display: none;
+    }
+  }
+</style>

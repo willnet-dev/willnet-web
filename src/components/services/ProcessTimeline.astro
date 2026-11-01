@@ -1,0 +1,155 @@
+---
+// Proceso de la página de servicios: línea de tiempo. Una línea lima se llena con el scroll y cada paso
+// se enciende cuando la línea lo alcanza (site.ts → data-timeline). Horizontal en escritorio; vertical
+// en tableta y móvil (en 4 columnas de tableta no caben palabras como «Presupuesto»).
+import type { Lang } from "../../i18n/routes";
+import { t } from "../../i18n/ui";
+
+interface Props {
+  lang: Lang;
+  eyebrow: string;
+  title: string;
+}
+const { lang, eyebrow, title } = Astro.props;
+const copy = t(lang);
+---
+
+<section class="wrap py-[clamp(5rem,12vh,9rem)]" aria-labelledby="timeline-title">
+  <p class="eyebrow mb-4" data-reveal>{eyebrow}</p>
+  <h2 id="timeline-title" class="display mb-16 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{title}</h2>
+  <div class="tl" data-timeline>
+    <div class="tl__rail" aria-hidden="true"><span class="tl__fill" data-timeline-fill></span></div>
+    <ol class="tl__steps">
+      {
+        copy.process.map((step, i) => (
+          <li class="tl__step" data-timeline-step>
+            <span class="tl__dot" aria-hidden="true">{i + 1}</span>
+            <p class="tl__tag">{step.tag}</p>
+            <h3 class="display text-[length:var(--text-step-2)]">{step.title}</h3>
+            <p class="mt-2 text-muted">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .tl {
+    position: relative;
+    --dot: 2.75rem;
+  }
+  .tl__rail {
+    position: absolute;
+    left: calc(var(--dot) / 2);
+    right: 12%;
+    top: calc(var(--dot) / 2 - 1px);
+    height: 2px;
+    background: var(--line);
+  }
+  .tl__fill {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: left;
+  }
+  /* En tema claro la lima casi no se ve sobre el fondo: la línea va en negro (como los pasos de la Home) */
+  :global([data-theme="light"]) .tl__fill {
+    background: var(--text);
+  }
+  .tl__steps {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2rem;
+  }
+  .tl__dot {
+    display: grid;
+    place-items: center;
+    width: var(--dot);
+    height: var(--dot);
+    margin-bottom: 1.5rem;
+    border-radius: 50%;
+    border: 2px solid var(--line);
+    background: var(--bg);
+    font-family: var(--font-mono);
+    font-weight: 600;
+    transition:
+      background var(--dur-base),
+      border-color var(--dur-base),
+      color var(--dur-base),
+      scale var(--dur-base) cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .tl__tag {
+    display: inline-block;
+    margin-bottom: 0.6rem;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: var(--text-step--1);
+  }
+  .tl__step.is-on .tl__dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+    scale: 1.15;
+  }
+  /* Con animación, el texto de cada paso sube cuando la línea llega a él */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(.js) .tl__fill {
+      transform: scaleX(0);
+    }
+    :global(.js) .tl__step > :not(.tl__dot) {
+      opacity: 0.25;
+      translate: 0 14px;
+      transition:
+        opacity var(--dur-slow) var(--ease-out-expo),
+        translate var(--dur-slow) var(--ease-out-expo);
+    }
+    :global(.js) .tl__step.is-on > :not(.tl__dot) {
+      opacity: 1;
+      translate: none;
+    }
+  }
+  @media (max-width: 1023px) {
+    .tl__rail {
+      left: calc(var(--dot) / 2 - 1px);
+      right: auto;
+      top: calc(var(--dot) / 2);
+      bottom: 12%;
+      width: 2px;
+      height: auto;
+    }
+    .tl__fill {
+      transform-origin: top;
+    }
+    .tl__steps {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2.5rem;
+    }
+    .tl__step {
+      padding-left: calc(var(--dot) + 1.25rem);
+      position: relative;
+    }
+    .tl__dot {
+      position: absolute;
+      left: 0;
+      top: 0;
+      margin: 0;
+    }
+  }
+  @media (max-width: 1023px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .tl__fill {
+      transform: scaleY(0);
+    }
+  }
+  /* Movimiento reducido: la línea completa y todos los pasos encendidos */
+  @media (prefers-reduced-motion: reduce) {
+    .tl__dot {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-ink);
+    }
+  }
+</style>

@@ -143,17 +143,17 @@ export const services: Service[] = [
     // Servicio pedido por Willder el 2026-10-26: muestra los logos y diseños que ha hecho
     key: "branding",
     price: 350,
-    gallery: ["acl-logo", "alibel-logo", "anto-logo", "dopicos-card", "nicole-media-kit", "quinceanera", "birthday-invitation"],
+    gallery: ["macias-logo", "acl-logo", "alibel-logo", "anto-logo", "dopicos-card", "nicole-media-kit", "quinceanera", "birthday-invitation"],
     en: {
       name: "Branding",
-      short: "Logos and visual identity so your business is recognized everywhere.",
+      short: "Your logo plus every version your website and social media need, so your business is recognized everywhere.",
       h1: "Branding and logo design that makes your business memorable",
       title: "Branding and logo design from $350 — WillNet",
       description: "Logo design and visual identity from $350, ready in 1–2 weeks: logo versions, colors, fonts and files for web, print and social media. Free quote from WillNet.",
       timeline: "1–2 weeks",
       intro: "Your logo and colors are the first thing people remember. I design an identity that fits your business and works the same on your website, your cards and your social media. I also design business cards, media kits and invitations.",
       forWho: ["New businesses that need a logo before launching", "Brands whose current logo looks dated or hard to read", "Businesses that want their website, cards and social media to look consistent"],
-      included: ["Custom logo design", "Versions for light and dark backgrounds, one color and icon", "Color palette and fonts", "Files ready for web, print and social media (SVG, PNG and PDF)", "Short guide on how to use your brand"],
+      included: ["Custom logo design", "Versions for light and dark backgrounds, one color, icon and favicon", "Color palette and fonts", "Social media profile images and files ready for web and print (SVG, PNG and PDF)", "Short guide on how to use your brand"],
       faq: [
         { q: "What files do I get?", a: "SVG, PNG and PDF versions of your logo, ready for your website, print and social media, plus your colors and fonts." },
         { q: "Can you refresh my current logo instead of starting over?", a: "Yes. I can update your current logo while keeping what people already recognize, or create a new one if that works better for your business." },
@@ -162,14 +162,14 @@ export const services: Service[] = [
     },
     es: {
       name: "Branding",
-      short: "Logos e identidad visual para que tu negocio se reconozca en todas partes.",
+      short: "Tu logo y todas las versiones que necesitan tu web y tus redes, para que tu negocio se reconozca en todas partes.",
       h1: "Branding y diseño de logos para que tu negocio se recuerde",
       title: "Branding y diseño de logos desde $350 — WillNet",
       description: "Diseño de logo e identidad visual desde $350, listo en 1–2 semanas: versiones del logo, colores, tipografías y archivos para web, impresión y redes. Presupuesto gratis con WillNet.",
       timeline: "1–2 semanas",
       intro: "Tu logo y tus colores son lo primero que la gente recuerda. Diseño una identidad que encaje con tu negocio y se vea igual en tu web, tus tarjetas y tus redes sociales. También diseño tarjetas de presentación, media kits e invitaciones.",
       forWho: ["Negocios nuevos que necesitan un logo antes de lanzar", "Marcas con un logo que se ve anticuado o cuesta leer", "Negocios que quieren que su web, sus tarjetas y sus redes se vean iguales"],
-      included: ["Diseño de logo a medida", "Versiones para fondo claro y oscuro, a un color e ícono", "Paleta de colores y tipografías", "Archivos listos para web, impresión y redes (SVG, PNG y PDF)", "Guía corta de cómo usar tu marca"],
+      included: ["Diseño de logo a medida", "Versiones para fondo claro y oscuro, a un color, ícono y favicon", "Paleta de colores y tipografías", "Imágenes de perfil para redes y archivos listos para web e impresión (SVG, PNG y PDF)", "Guía corta de cómo usar tu marca"],
       faq: [
         { q: "¿Qué archivos recibo?", a: "Versiones de tu logo en SVG, PNG y PDF, listas para tu web, impresión y redes sociales, además de tus colores y tipografías." },
         { q: "¿Puedes renovar mi logo actual en lugar de empezar de cero?", a: "Sí. Puedo actualizar tu logo manteniendo lo que la gente ya reconoce, o crear uno nuevo si le conviene más a tu negocio." },
@@ -180,6 +180,8 @@ export const services: Service[] = [
   {
     key: "website-fixes",
     price: 300,
+    // Caso de arreglos: AETERNA (fase 1 publicada el 2026-10-26)
+    caseSlug: "aeterna",
     en: {
       name: "Website fixes & redesigns",
       short: "Fix, speed up or modernize the website you already have.",

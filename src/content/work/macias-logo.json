@@ -1,0 +1,8 @@
+{
+  "order": 9, "category": "design", "featured": false, "hasCase": false, "year": 2026, "withDopicos": false,
+  "url": "",
+  "image": { "en": "logo-macias-en.jpg", "es": "logo-macias.jpg", "mobileEn": "logo-macias-en.jpg", "mobileEs": "logo-macias.jpg" },
+  "stack": [],
+  "en": { "title": "Macias Counseling brand identity", "type": "Logo + brand system", "summary": "Logo for a counseling practice plus every version it needs: light and dark backgrounds, one color, icon, favicon and social media profile images." },
+  "es": { "title": "Identidad de Macias Counseling", "type": "Logo + sistema de marca", "summary": "Logo para una consulta de terapia y todas las versiones que necesita: fondo claro y oscuro, a un color, ícono, favicon e imágenes de perfil para redes." }
+}

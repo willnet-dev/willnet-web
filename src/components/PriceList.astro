@@ -2,8 +2,14 @@
 // Lista de servicios: título a la izquierda y descripción a la derecha. Cada fila lleva a la página
 // del servicio, que es donde se ven el precio «desde», el plazo y cómo son los pagos
 // (decisiones de Willder, 2026-10-25 y 2026-10-26).
+// Animación propia, distinta del resto de la Home (Willder, 2026-10-31):
+// · Escritorio: cada título sube desde detrás de un recorte y la línea de abajo se dibuja; al pasar
+//   el mouse, una vista previa del servicio sigue al cursor (captura real o lista de lo que incluye).
+// · Móvil: la tarjeta aparece, el título sube igual y luego se pinta de gris a negro con el scroll.
+// Con movimiento reducido todo se ve quieto desde el principio.
 import { servicePath, type Lang } from "../i18n/routes";
 import { services } from "../data/services";
+import { serviceCards } from "../lib/serviceCards";
 
 interface Props {
   lang: Lang;
@@ -11,16 +17,23 @@ interface Props {
 }
 const { lang, headingLevel = "h3" } = Astro.props;
 const H = headingLevel;
+
+// Vista previa: la captura del caso del servicio o la primera de su galería; si no hay, tres cosas incluidas
+const previews = await serviceCards(lang);
 ---
 
-<div>
+<div class="svc-wrap" data-svc-list>
   <ul class="price-list border-t border-line">
     {
       services.map((s, i) => (
-        <li class="border-b border-line" data-reveal style={`--delay:${i * 60}ms`}>
-          <a href={servicePath(s.key, lang)} class="price-row group">
-            <span class="eyebrow">{String(i + 1).padStart(2, "0")}</span>
-            <H class="display min-w-0 text-[length:var(--text-step-2)]">{s[lang].name}</H>
+        <li class="border-b border-line" data-reveal style={`--delay:${i * 90}ms`}>
+          <a href={servicePath(s.key, lang)} class="price-row group" data-svc={s.key}>
+            <span class="eyebrow price-row__num">{String(i + 1).padStart(2, "0")}</span>
+            <H class="display min-w-0 text-[length:var(--text-step-2)]">
+              <span class="price-row__mask">
+                <span class="price-row__title">{s[lang].name}</span>
+              </span>
+            </H>
             <span class="price-row__desc text-muted">{s[lang].short}</span>
             <span class="price-row__arrow" aria-hidden="true">
               <svg viewBox="0 0 24 24" width="22" height="22"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
@@ -30,9 +43,35 @@ const H = headingLevel;
       ))
     }
   </ul>
+  <!-- GSAP mueve la capa de fuera (x, y, giro); la de dentro aparece y crece con CSS -->
+  <div class="svc-preview" aria-hidden="true" data-svc-preview>
+    <div class="svc-preview__card">
+    {
+      previews.map((p) => (
+        <div class="svc-preview__item" data-svc-item={p.key}>
+          {p.img ? (
+            <img src={p.img} alt="" loading="lazy" decoding="async" class:list={{ "is-contain": p.contain }} />
+          ) : (
+            <ul class="svc-preview__list">
+              {p.items.map((item) => (
+                <li>
+                  <i />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      ))
+    }
+    </div>
+  </div>
 </div>
 
 <style>
+  .svc-wrap {
+    position: relative;
+  }
   .price-row {
     position: relative;
     display: grid;
@@ -52,6 +91,16 @@ const H = headingLevel;
     transform: scaleY(0);
     transform-origin: bottom;
     transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  /* El recorte deja espacio para las letras con descendente (g, p) */
+  .price-row__mask,
+  .price-row__title {
+    display: block;
+  }
+  .price-row__mask {
+    overflow: hidden;
+    padding-bottom: 0.12em;
+    margin-bottom: -0.12em;
   }
   .price-row__desc {
     max-width: 44ch;
@@ -81,6 +130,158 @@ const H = headingLevel;
       transform: rotate(-45deg);
     }
   }
+
+  /* ---------- Entrada (A): telón en el título y línea que se dibuja ---------- */
+  @media (prefers-reduced-motion: no-preference) {
+    /* Sin el fundido general de [data-reveal]: aquí cada parte entra por su cuenta */
+    :global(.js) .price-list > li[data-reveal] {
+      position: relative;
+      opacity: 1;
+      transform: none;
+    }
+    :global(.js) .price-list .price-row__title {
+      transform: translateY(105%);
+      transition: transform 1s var(--ease-out-expo);
+      transition-delay: calc(var(--delay) + 100ms);
+    }
+    :global(.js) .price-list :is(.price-row__num, .price-row__desc, .price-row__arrow) {
+      opacity: 0;
+      translate: 0 12px;
+      transition:
+        opacity var(--dur-slow) var(--ease-out-expo),
+        translate var(--dur-slow) var(--ease-out-expo),
+        background var(--dur-base) var(--ease-out-expo),
+        color var(--dur-base),
+        transform var(--dur-base) var(--ease-out-expo);
+      transition-delay: calc(var(--delay) + 250ms), calc(var(--delay) + 250ms), 0s, 0s, 0s;
+    }
+    :global(.js) .price-list li.is-in .price-row__title {
+      transform: none;
+    }
+    :global(.js) .price-list li.is-in :is(.price-row__num, .price-row__desc, .price-row__arrow) {
+      opacity: 1;
+      translate: none;
+    }
+  }
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    /* La línea de abajo se dibuja de izquierda a derecha en vez de estar desde el principio */
+    :global(.js) .price-list > li[data-reveal] {
+      border-bottom-color: transparent;
+    }
+    :global(.js) .price-list > li[data-reveal]::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 1px;
+      background: var(--line);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 1.2s var(--ease-out-expo);
+      transition-delay: var(--delay);
+    }
+    :global(.js) .price-list > li.is-in::after {
+      transform: none;
+    }
+  }
+
+  /* ---------- Vista previa que sigue al mouse (C), solo escritorio con mouse ---------- */
+  .svc-preview {
+    display: none;
+  }
+  @media (hover: hover) and (pointer: fine) and (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .svc-preview {
+      display: block;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 3;
+      width: clamp(240px, 22vw, 320px);
+      aspect-ratio: 16 / 10;
+      pointer-events: none;
+    }
+    .svc-preview__card {
+      position: relative;
+      height: 100%;
+      border-radius: 14px;
+      overflow: hidden;
+      background: var(--surface-2);
+      box-shadow: 0 24px 50px -20px rgb(0 0 0 / 0.45);
+      opacity: 0;
+      scale: 0.6;
+      transition:
+        opacity 0.25s,
+        scale 0.45s var(--ease-out-expo);
+    }
+    .svc-preview.is-on .svc-preview__card {
+      opacity: 1;
+      scale: 1;
+    }
+    .svc-preview__item {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .svc-preview__item.is-active {
+      opacity: 1;
+    }
+    .svc-preview__item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+      scale: 1.08;
+      transition: scale 0.6s var(--ease-out-expo);
+    }
+    .svc-preview__item.is-active img {
+      scale: 1;
+    }
+    /* Logos y piezas de diseño: completas sobre fondo blanco */
+    .svc-preview__item img.is-contain {
+      object-fit: contain;
+      object-position: center;
+      background: #fff;
+    }
+    .svc-preview__list {
+      display: grid;
+      align-content: center;
+      gap: 0.6rem;
+      height: 100%;
+      padding: 1.2rem 1.4rem;
+      background: var(--accent);
+      color: var(--accent-ink);
+      font-size: 0.9rem;
+      font-weight: 500;
+      line-height: 1.25;
+    }
+    .svc-preview__list li {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .svc-preview__list i {
+      flex: none;
+      position: relative;
+      width: 1.2rem;
+      height: 1.2rem;
+      border-radius: 50%;
+      background: var(--accent-ink);
+    }
+    .svc-preview__list i::after {
+      content: "";
+      position: absolute;
+      left: 38%;
+      top: 22%;
+      width: 25%;
+      height: 45%;
+      border: solid var(--accent);
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
+  }
+
   /* Móvil: tarjetas de 2 en 2 con número, título, descripción corta y flecha (decisión de Willder, 2026-10-26) */
   @media (max-width: 767px) {
     .price-list {
@@ -118,6 +319,26 @@ const H = headingLevel;
       margin-top: auto;
       width: 2.1rem;
       height: 2.1rem;
+    }
+  }
+  /* Móvil con animación (A + B): la tarjeta aparece, el título sube y luego se pinta de gris a
+     negro mientras baja la página (GSAP mueve --paint). El gris es --muted, que ya cumple el
+     contraste AA, así el texto se lee en cualquier punto del recorrido */
+  @media (max-width: 767px) and (prefers-reduced-motion: no-preference) {
+    :global(.js) .price-list > li[data-reveal] {
+      opacity: 0;
+      transition: opacity var(--dur-slow) var(--ease-out-expo);
+      transition-delay: calc(var(--delay) / 2);
+    }
+    :global(.js) .price-list > li.is-in {
+      opacity: 1;
+    }
+    :global(.js) .price-list .price-row__title {
+      --paint: 100%;
+      background: linear-gradient(90deg, var(--text) 50%, var(--muted) 50%) var(--paint) 0 / 200% 100% no-repeat;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
   }
 </style>
