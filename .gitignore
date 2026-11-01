@@ -10,3 +10,5 @@ CLAUDE.md
 docs/
 *.log
 .dev.vars
+# Retratos candidatos para About (fotos de Willder generadas con IA): no van al repo público
+originales/about/

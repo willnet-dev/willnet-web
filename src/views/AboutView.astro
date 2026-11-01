@@ -1,6 +1,6 @@
 ---
 // Sobre mí: historia de Willder, espacio para su foto, cifras verificables, habilidades y formación.
-// FOTO: cuando esté lista, guárdala como public/img/willder.jpg (vertical, 4:5) y cambia hasPhoto a true.
+// FOTO: public/img/willder.jpg (vertical 4:5, 1120×1400). Original y alternativas en originales/about/ (fuera del repo).
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
@@ -14,7 +14,7 @@ interface Props {
 const { lang } = Astro.props;
 const copy = t(lang);
 const a = copy.about;
-const hasPhoto = false;
+const hasPhoto = true;
 const realProjects = (await getCollection("work")).filter((p) => p.data.category !== "learning").length;
 const tools = ["HTML", "CSS", "JavaScript", "Tailwind CSS", "Astro", "React", "Three.js", "GSAP", "Node.js", "WordPress", "WooCommerce", "Stripe", "Cloudflare", "Git", "GitHub", "Figma", "Canva", "Claude Code"];
 
@@ -56,7 +56,7 @@ const person = {
     <div class="about-photo" data-speed="-0.08">
       {
         hasPhoto ? (
-          <img src="/img/willder.jpg" alt={a.photoAlt} width="800" height="1000" class="h-full w-full object-cover" />
+          <img src="/img/willder.jpg" alt={a.photoAlt} width="1120" height="1400" class="h-full w-full object-cover" />
         ) : (
           <div class="about-photo__empty">
             <svg viewBox="0 0 416 290" width="96" fill="currentColor" aria-hidden="true"><path d="M0 0 96 37 156 203 107 290Z" /><path d="M416 0 320 37 260 203 309 290Z" /><path d="M160 64 208 83 256 64 208 174Z" /></svg>
