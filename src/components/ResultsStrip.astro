@@ -44,24 +44,24 @@ const h = t(lang).home;
 </section>
 
 <style>
+  /* 2 por fila en móvil y tableta (como las cifras de Sobre mí), 4 en escritorio */
   .results {
     display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     border-top: 1px solid var(--line);
-  }
-  @media (min-width: 640px) {
-    .results {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
   }
   @media (min-width: 1024px) {
     .results {
       grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
+  /* Cada cifra mide su columna (container-type) y el número se ajusta a ella: «100/100» nunca toca la
+     cifra de al lado, sea cual sea el ancho de la pantalla o el zoom */
   .result {
+    container-type: inline-size;
     display: flex;
     flex-direction: column;
-    padding: 2rem 1.5rem 2rem 0;
+    padding: 2rem 1.25rem 2rem 0;
     border-bottom: 1px solid var(--line);
   }
   .result__num {
@@ -69,7 +69,7 @@ const h = t(lang).home;
     align-items: baseline;
     gap: 0.2em;
     font-family: var(--font-display);
-    font-size: var(--text-step-5);
+    font-size: min(var(--text-step-5), 23cqi);
     font-weight: 600;
     line-height: 1;
     letter-spacing: -0.04em;
@@ -89,12 +89,5 @@ const h = t(lang).home;
   .result__src {
     margin-top: auto;
     padding-top: 1.5rem;
-  }
-  /* En 4 columnas «100/100» llenaba la columna entera: el número escala con el ancho y deja aire
-     (va al final para ganarle a la regla base de .result__num) */
-  @media (min-width: 1024px) {
-    .result__num {
-      font-size: min(var(--text-step-5), 5.4vw);
-    }
   }
 </style>

@@ -6,6 +6,7 @@
 import type { Lang } from "../../i18n/routes";
 import { t } from "../../i18n/ui";
 import { serviceCards } from "../../lib/serviceCards";
+import Logo from "../Logo.astro";
 
 interface Props {
   lang: Lang;
@@ -32,7 +33,9 @@ const cards = await serviceCards(lang);
             {c.img ? (
               <img src={c.img} alt="" loading="lazy" decoding="async" class:list={{ "is-contain": c.contain }} />
             ) : (
-              <span class="stack__num">{String(i + 1).padStart(2, "0")}</span>
+              <span class="stack__logo">
+                <Logo />
+              </span>
             )}
           </div>
         </article>
@@ -98,18 +101,20 @@ const cards = await serviceCards(lang);
     object-position: center;
     background: #fff;
   }
-  /* Sin captura: el número grande en lima */
-  .stack__num {
+  /* Sin captura (Mantenimiento): el logo de WillNet sobre lima, todo en tinta oscura (también la pieza
+     central de la W, que en tema oscuro es lima y no se vería sobre este fondo) */
+  .stack__logo {
     position: absolute;
     inset: 0;
     display: grid;
     place-items: center;
     background: var(--accent);
     color: var(--accent-ink);
-    font-family: var(--font-display);
-    font-size: 4.5rem;
-    font-weight: 600;
-    letter-spacing: -0.05em;
+    --link: var(--accent-ink);
+  }
+  .stack__logo :global(svg) {
+    width: 62%;
+    height: auto;
   }
   /* Movimiento reducido: tarjetas una debajo de otra, sin quedarse fijas */
   @media (prefers-reduced-motion: reduce) {
