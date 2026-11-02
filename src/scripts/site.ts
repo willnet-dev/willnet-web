@@ -543,7 +543,10 @@ function bindCurtain() {
     const el = curtain();
     if (!el || reducedMotion()) return;
     const label = el.querySelector<HTMLElement>("[data-curtain-label]");
-    const text = e.sourceElement?.textContent?.trim();
+    // data-curtain-text manda sobre el texto del enlace: el botón de idioma tiene dentro las dos etiquetas
+    // que ruedan (EN y ES) y el telón decía «ENES»; con el atributo dice «Español» o «English».
+    const source = e.sourceElement as HTMLElement | undefined;
+    const text = (source?.dataset.curtainText ?? source?.textContent)?.trim();
     if (label) label.textContent = text && text.length < 32 ? text : "WillNet";
     const original = e.loader;
     e.loader = async () => {

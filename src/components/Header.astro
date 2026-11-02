@@ -58,6 +58,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
         class="icon-btn icon-fill lang-btn font-mono text-sm"
         data-roll={lang === "en" ? "up" : "down"}
         data-magnetic
+        data-curtain-text={copy.nav.langLabel}
         aria-label={`${copy.nav.langShort} · ${copy.nav.langLabel}`}
       >
         <span class="btn-label lang-btn__roll" aria-hidden="true">{langRoll.map((l) => <span>{l}</span>)}</span>
