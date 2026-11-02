@@ -4,6 +4,8 @@ import type { Lang } from "./routes";
 export const site = {
   name: "WillNet",
   person: "Willder Gómez",
+  // Cómo se presenta Willder desde el 2026-11-01 (antes «Web developer»). Va en los datos estructurados (Person.jobTitle)
+  role: "Freelance web developer & designer",
   // Alias del mismo buzón, por contexto (como en la landing actual; decisión de Willder, 2026-10-26):
   // contact@ para pedir presupuesto y contacto general; info@ y support@ en el pie; support@ para clientes actuales
   email: "contact@willnet.dev",
@@ -86,6 +88,7 @@ const en = {
     description:
       "Modern websites, landing pages and online stores built directly with you. Bilingual web designer serving the US and Latin America. Free quote.",
     eyebrow: "WillNet",
+    role: "Freelance Web Developer & Designer",
     h1: "Modern websites — built directly with you.",
     typePrefix: "I build",
     typeWords: ["landing pages", "online stores", "business websites", "website fixes"],
@@ -189,13 +192,16 @@ const en = {
   },
   about: {
     title: "About Willder Gómez — WillNet",
-    description: "Willder Gómez is the bilingual, self-taught web developer behind WillNet, based in West Palm Beach, FL and working across the US and Latin America.",
+    description: "Willder Gómez is the freelance web developer and designer behind WillNet: self-taught, bilingual and detail-driven, based in West Palm Beach, FL. Websites for the US and Latin America.",
     eyebrow: "// About",
     h1: "Hi, I'm Will. I build the websites myself.",
-    intro: [
-      "I'm Willder Gómez, a web developer based in West Palm Beach, Florida. I help businesses, brands and people build a professional online presence — from online stores to event invitations.",
-      "I handle the whole process, from design to launch, so you can focus on your business. I work in English and Spanish, with clients across the US and Latin America.",
-    ],
+    intro: "I'm Willder Gómez, a freelance web developer and designer based in West Palm Beach, Florida. I help businesses, brands and people build a professional online presence — from online stores to event invitations.",
+    // Rasgo que Willder quiere destacar (2026-11-01): va resaltado entre la presentación (intro) y el cierre (outro)
+    detail: {
+      lead: "Attention to detail defines everything I do.",
+      text: "Before anything goes live, I check every page on phones, tablets and computers, in light and dark mode: the spacing, the speed, the words — the small things most people never notice, but everyone feels.",
+    },
+    outro: "I handle the whole process, from design to launch, so you can focus on your business. I work in English and Spanish, with clients across the US and Latin America.",
     photoAlt: "Photo of Willder Gómez",
     photoSoon: "Photo coming soon",
     statProjects: "real projects delivered",
@@ -206,7 +212,7 @@ const en = {
     skills: [
       { group: "Web", items: ["Responsive design", "WordPress and WooCommerce", "Technical SEO", "Speed and performance", "Domains and hosting", "Online payments", "Website maintenance"] },
       { group: "Design and brand", items: ["UI/UX design", "Logos and branding", "Business cards and invitations"] },
-      { group: "Working together", items: ["Bilingual (EN/ES)", "Customer service", "Project management", "Continuous learning"] },
+      { group: "Working together", items: ["Attention to detail", "Bilingual (EN/ES)", "Customer service", "Project management", "Continuous learning"] },
     ],
     eduTitle: "Learning path",
     eduText: "Most of what I know I learned on my own, building real projects. These are the courses that gave it structure:",
@@ -341,6 +347,7 @@ const es: typeof en = {
     description:
       "Páginas web modernas, landing pages y tiendas en línea hechas contigo. Diseñador web bilingüe para EE. UU. y Latinoamérica. Presupuesto gratis.",
     eyebrow: "WillNet",
+    role: "Desarrollador y diseñador web freelance",
     h1: "Webs modernas, hechas directamente contigo.",
     typePrefix: "Hago",
     typeWords: ["landing pages", "tiendas en línea", "sitios web", "arreglos web"],
@@ -444,13 +451,15 @@ const es: typeof en = {
   },
   about: {
     title: "Sobre Willder Gómez — WillNet",
-    description: "Willder Gómez es el desarrollador web detrás de WillNet: autodidacta, bilingüe y con base en West Palm Beach, FL. Webs para negocios de EE. UU. y Latinoamérica.",
+    description: "Willder Gómez es el desarrollador y diseñador web freelance detrás de WillNet: autodidacta, bilingüe y atento a cada detalle, con base en West Palm Beach, FL.",
     eyebrow: "// Sobre mí",
     h1: "Hola, soy Will. Las webs las construyo yo.",
-    intro: [
-      "Soy Willder Gómez, desarrollador web con base en West Palm Beach, Florida. Ayudo a negocios, marcas y personas a tener una presencia profesional en internet: desde tiendas en línea hasta invitaciones para eventos.",
-      "Me encargo de todo el proceso, del diseño al lanzamiento, para que tú te enfoques en tu negocio. Trabajo en inglés y en español, con clientes en todo EE. UU. y Latinoamérica.",
-    ],
+    intro: "Soy Willder Gómez, desarrollador y diseñador web freelance con base en West Palm Beach, Florida. Ayudo a negocios, marcas y personas a tener una presencia profesional en internet: desde tiendas en línea hasta invitaciones para eventos.",
+    detail: {
+      lead: "La atención al detalle define todo lo que hago.",
+      text: "Antes de publicar, reviso cada página en celular, tableta y computadora, en modo claro y oscuro: los espacios, la velocidad, los textos… esos pequeños detalles que casi nadie nota, pero que todos sienten.",
+    },
+    outro: "Me encargo de todo el proceso, del diseño al lanzamiento, para que tú te enfoques en tu negocio. Trabajo en inglés y en español, con clientes en todo EE. UU. y Latinoamérica.",
     photoAlt: "Foto de Willder Gómez",
     photoSoon: "Foto próximamente",
     statProjects: "proyectos reales entregados",
@@ -461,7 +470,7 @@ const es: typeof en = {
     skills: [
       { group: "Web", items: ["Diseño adaptable", "WordPress y WooCommerce", "SEO técnico", "Velocidad y rendimiento", "Dominios y hosting", "Pagos en línea", "Mantenimiento web"] },
       { group: "Diseño y marca", items: ["Diseño UI/UX", "Logos e identidad", "Tarjetas e invitaciones"] },
-      { group: "Trabajar juntos", items: ["Bilingüe (EN/ES)", "Atención al cliente", "Gestión de proyectos", "Aprendizaje continuo"] },
+      { group: "Trabajar juntos", items: ["Atención al detalle", "Bilingüe (EN/ES)", "Atención al cliente", "Gestión de proyectos", "Aprendizaje continuo"] },
     ],
     eduTitle: "Formación",
     eduText: "La mayor parte de lo que sé lo aprendí por mi cuenta, construyendo proyectos reales. Estos cursos le dieron estructura:",

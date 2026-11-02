@@ -1,5 +1,5 @@
 ---
-// Sobre mí: historia de Willder, su foto (entra con un telón lima y se inclina en 3D con el mouse), cifras verificables que cuentan al aparecer, habilidades (replegables en el celular) y herramientas.
+// Sobre mí: historia de Willder, su foto (entra con un telón lima y se inclina en 3D con el mouse), cifras verificables que cuentan al aparecer, presentación con la atención al detalle resaltada, habilidades (replegables en el celular) y herramientas.
 // FOTO: public/img/willder-{720,1136}.{avif,webp} + willder.jpg de respaldo, generadas con `npm run about-photo`
 // desde el original de Canva (1136×1408). Original y alternativas en originales/about/ (fuera del repo).
 import { getCollection } from "astro:content";
@@ -33,7 +33,7 @@ const person = {
   "@type": "Person",
   "@id": `${site.url}/#willder`,
   name: site.person,
-  jobTitle: "Web developer",
+  jobTitle: site.role,
   worksFor: { "@id": `${site.url}/#business` },
   address: { "@type": "PostalAddress", addressLocality: site.city, addressRegion: site.region, addressCountry: site.country },
   knowsLanguage: ["en", "es"],
@@ -87,7 +87,11 @@ const person = {
     </div>
     <div>
       <div class="prose-w grid gap-5 text-[length:var(--text-step-1)]">
-        {a.intro.map((pp) => <p data-reveal>{pp}</p>)}
+        <p data-reveal>{a.intro}</p>
+        <p class="about-detail" data-reveal>
+          <strong>{a.detail.lead}</strong> {a.detail.text}
+        </p>
+        <p data-reveal>{a.outro}</p>
       </div>
       <dl class="mt-12 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-line pt-8">
         {
@@ -308,6 +312,18 @@ const person = {
     .skill[open]::details-content {
       block-size: auto;
     }
+  }
+  /* Atención al detalle: el rasgo que Willder quiere destacar, con una barra lima a la izquierda */
+  .about-detail {
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--accent);
+    color: var(--muted);
+  }
+  .about-detail strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: var(--text);
+    font-weight: 600;
   }
   .about-photo__empty {
     height: 100%;

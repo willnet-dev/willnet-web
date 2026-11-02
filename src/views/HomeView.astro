@@ -28,7 +28,7 @@ const homeFaq = faqFor(lang, true);
   <!-- HERO: poco texto, la W 3D como foco y el mouse animado (referencias: tamalsen.dev y willnet.dev) -->
   <section class="hero" data-hero>
     <div class="wrap hero__content">
-      <p class="eyebrow hero__in" style="--i:0"><b>&lt;Web Developer&gt;</b> · WillNet</p>
+      <p class="eyebrow hero__role hero__in" style="--i:0"><b>&lt;{h.role}&gt;</b><span class="hero__brand"> · WillNet</span></p>
       <h1 class="display hero__title hero__in" style="--i:1">{h.h1}</h1>
       <p class="hero__type hero__in" style="--i:2">
         <span class="text-muted">{h.typePrefix}</span>
@@ -200,6 +200,16 @@ const homeFaq = faqFor(lang, true);
   }
   .hero__content > * {
     pointer-events: auto;
+  }
+  /* «<Freelance Web Developer & Designer>» es largo: en el celular se reparte en líneas parejas y se omite
+     «· WillNet», que ya está en el logo de arriba */
+  .hero__role {
+    text-wrap: balance;
+  }
+  @media (max-width: 639px) {
+    .hero__brand {
+      display: none;
+    }
   }
   .hero__title {
     font-size: var(--text-step-5);
