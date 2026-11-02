@@ -1,5 +1,5 @@
 ---
-// Sobre mí: historia de Willder, su foto (entra con un telón lima y se inclina en 3D con el mouse), cifras verificables que cuentan al aparecer, habilidades y formación.
+// Sobre mí: historia de Willder, su foto (entra con un telón lima y se inclina en 3D con el mouse), cifras verificables que cuentan al aparecer, habilidades (replegables en el celular) y herramientas.
 // FOTO: public/img/willder-{720,1136}.{avif,webp} + willder.jpg de respaldo, generadas con `npm run about-photo`
 // desde el original de Canva (1136×1408). Original y alternativas en originales/about/ (fuera del repo).
 import { getCollection } from "astro:content";
@@ -108,7 +108,27 @@ const person = {
 
   <section class="wrap border-t border-line py-[clamp(4rem,10vh,7rem)]" aria-labelledby="skills-title">
     <h2 id="skills-title" class="display mb-10 text-[length:var(--text-step-3)]" data-reveal>{a.skillsTitle}</h2>
-    <div class="grid gap-10 md:grid-cols-3">
+    {/* Celular: cada grupo es una tarjeta replegable (<details>, funciona sin JavaScript) para que la lista no se haga
+        tan larga. Tableta y escritorio: las 3 columnas abiertas. Las dos versiones salen de los mismos datos (a.skills) */}
+    <div class="grid gap-3 md:hidden">
+      {
+        a.skills.map((g, i) => (
+          <details class="skill" data-reveal style={`--delay:${i * 80}ms`}>
+            <summary class="skill__head">
+              <h3 class="eyebrow">// {g.group}</h3>
+              <span class="skill__count" aria-hidden="true">{g.items.length}</span>
+              <span class="skill__icon" aria-hidden="true" />
+            </summary>
+            <ul class="skill__list">
+              {g.items.map((it) => (
+                <li>{it}</li>
+              ))}
+            </ul>
+          </details>
+        ))
+      }
+    </div>
+    <div class="hidden gap-10 md:grid md:grid-cols-3">
       {
         a.skills.map((g, i) => (
           <div data-reveal style={`--delay:${i * 80}ms`}>
@@ -124,25 +144,8 @@ const person = {
     </div>
   </section>
 
-  <section class="wrap grid gap-10 border-t border-line py-[clamp(4rem,10vh,7rem)] lg:grid-cols-[1fr_1.4fr]" aria-labelledby="edu-title">
-    <div>
-      <h2 id="edu-title" class="display text-[length:var(--text-step-3)]" data-reveal>{a.eduTitle}</h2>
-      <p class="mt-4 max-w-[44ch] text-muted" data-reveal>{a.eduText}</p>
-    </div>
-    <ol class="border-t border-line">
-      {
-        a.education.map((e) => (
-          <li class="grid grid-cols-[1fr_auto] gap-4 border-b border-line py-5" data-reveal>
-            <span>
-              <span class="block font-semibold">{e.name}</span>
-              <span class="text-muted">{e.org}</span>
-            </span>
-            <span class="eyebrow self-center">{e.date}</span>
-          </li>
-        ))
-      }
-    </ol>
-  </section>
+  {/* «Learning path» (a.eduTitle, a.education en ui.ts) quitada por ahora (pedido de Willder, 2026-11-01). Para
+      volver a mostrarla, recuperar esta sección del historial de git */}
 
   <section class="border-y border-line py-6" aria-label={a.toolsTitle}>
     <p class="wrap eyebrow mb-4">// {a.toolsTitle}</p>
@@ -221,6 +224,89 @@ const person = {
     }
     :global(.js) .about-photo__frame.is-in picture {
       scale: 1;
+    }
+  }
+  /* Tarjetas replegables de «Con qué trabajo» (solo celular). Mismo ícono que las preguntas frecuentes (FaqList):
+     el «+» se pone lima y se vuelve «−» al abrir */
+  .skill {
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .skill__head {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.1rem 1.25rem;
+    cursor: pointer;
+    list-style: none;
+  }
+  .skill__head::-webkit-details-marker {
+    display: none;
+  }
+  .skill__count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: var(--text-step--1);
+    color: var(--muted);
+  }
+  .skill__icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    transition: background var(--dur-base) var(--ease-out-expo);
+  }
+  .skill__icon::before,
+  .skill__icon::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 12px;
+    height: 2px;
+    margin: -1px 0 0 -6px;
+    background: currentColor;
+    border-radius: 2px;
+  }
+  .skill__icon::after {
+    transform: rotate(90deg);
+    transition: transform var(--dur-base) var(--ease-out-expo);
+  }
+  .skill[open] .skill__icon {
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: var(--accent);
+  }
+  .skill[open] .skill__icon::after {
+    transform: rotate(0deg);
+  }
+  .skill__list {
+    display: grid;
+    gap: 0.5rem;
+    padding: 0 1.25rem 1.25rem;
+  }
+  .skill__list li {
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--line);
+  }
+  /* Abrir y cerrar con una transición de altura donde el navegador lo permite (Chrome y Safari recientes); en los
+     demás la tarjeta se abre de golpe, que también funciona */
+  @media (prefers-reduced-motion: no-preference) {
+    .skill {
+      interpolate-size: allow-keywords;
+    }
+    .skill::details-content {
+      block-size: 0;
+      overflow: hidden;
+      transition:
+        block-size var(--dur-base) var(--ease-out-expo),
+        content-visibility var(--dur-base) allow-discrete;
+    }
+    .skill[open]::details-content {
+      block-size: auto;
     }
   }
   .about-photo__empty {
