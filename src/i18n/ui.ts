@@ -22,7 +22,7 @@ export const site = {
   instagram: "https://www.instagram.com/willnet.dev/",
   tiktok: "https://www.tiktok.com/@willnet.dev",
   x: "https://x.com/willnet_dev",
-  facebook: "https://www.facebook.com/willgo22",
+  facebook: "https://www.facebook.com/willnet.dev",
   url: "https://willnet.dev",
 };
 
