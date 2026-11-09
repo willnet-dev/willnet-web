@@ -20,8 +20,22 @@ export const site = {
   linkedin: "https://www.linkedin.com/in/will-net/",
   github: "https://github.com/willnet-dev",
   instagram: "https://www.instagram.com/willnet.dev/",
+  tiktok: "https://www.tiktok.com/@willnet.dev",
+  x: "https://x.com/willnet_dev",
+  facebook: "https://www.facebook.com/willgo22",
   url: "https://willnet.dev",
 };
+
+// Redes en el orden en que se muestran (pie, menú del teléfono, Contacto y schema sameAs).
+// TikTok, X y Facebook agregados el 2026-11-08.
+export const socials = [
+  { name: "LinkedIn", href: site.linkedin, icon: "linkedin" },
+  { name: "GitHub", href: site.github, icon: "github" },
+  { name: "Instagram", href: site.instagram, icon: "instagram" },
+  { name: "TikTok", href: site.tiktok, icon: "tiktok" },
+  { name: "X", href: site.x, icon: "x" },
+  { name: "Facebook", href: site.facebook, icon: "facebook" },
+] as const;
 
 const en = {
   meta: {

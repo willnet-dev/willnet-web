@@ -6,7 +6,7 @@ import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
 import { r, type Lang } from "../i18n/routes";
-import { site, t, whatsappHref } from "../i18n/ui";
+import { site, socials, t, whatsappHref } from "../i18n/ui";
 import { services } from "../data/services";
 import { breadcrumbs } from "../lib/schema";
 
@@ -145,10 +145,9 @@ const key = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
 
       <h2 class="eyebrow mt-4 text-center">// {p.social}</h2>
       <!-- Solo íconos, centrados (decisión de Willder, 2026-10-26) -->
-      <ul class="flex justify-center gap-3">
-        <li><a href={site.linkedin} target="_blank" rel="noopener" class="btn social-icon" aria-label="LinkedIn" data-magnetic><span class="btn-label"><Icon name="linkedin" size={22} /></span></a></li>
-        <li><a href={site.github} target="_blank" rel="noopener" class="btn social-icon" aria-label="GitHub" data-magnetic><span class="btn-label"><Icon name="github" size={22} /></span></a></li>
-        <li><a href={site.instagram} target="_blank" rel="noopener" class="btn social-icon" aria-label="Instagram" data-magnetic><span class="btn-label"><Icon name="instagram" size={22} /></span></a></li>
+      <!-- 6 redes: 3 por fila en el teléfono, una sola fila desde 640 px (2026-11-08) -->
+      <ul class="mx-auto flex max-w-[204px] flex-wrap justify-center gap-3 sm:max-w-none">
+        {socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener" class="btn social-icon" aria-label={s.name} data-magnetic><span class="btn-label"><Icon name={s.icon} size={22} /></span></a></li>)}
       </ul>
       <p class="mt-2 text-sm text-muted">{copy.footer.tagline}</p>
     </aside>

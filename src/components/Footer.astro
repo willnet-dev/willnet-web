@@ -5,7 +5,7 @@
 import Logo from "./Logo.astro";
 import Icon from "./Icon.astro";
 import { r, servicePath, type Lang } from "../i18n/routes";
-import { site, t } from "../i18n/ui";
+import { site, socials, t } from "../i18n/ui";
 import { services } from "../data/services";
 
 interface Props {
@@ -14,11 +14,6 @@ interface Props {
 const { lang } = Astro.props;
 const copy = t(lang);
 const year = new Date().getFullYear();
-const socials = [
-  { name: "LinkedIn", href: site.linkedin, icon: "linkedin" as const },
-  { name: "GitHub", href: site.github, icon: "github" as const },
-  { name: "Instagram", href: site.instagram, icon: "instagram" as const },
-];
 ---
 
 <!-- En móvil sin borde arriba: quedaba pegado al botón de WhatsApp de «Let's work together» (Willder, 2026-10-29) -->
