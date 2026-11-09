@@ -1,0 +1,28 @@
+---
+// Fila de íconos redondos de las redes (menú del teléfono, Contacto y pie móvil).
+// Siempre en una sola fila: en el teléfono los botones se encogen con el ancho de la pantalla
+// (40 px a 320 px, ~47 px a 390 px) y llegan a 56 px en pantallas grandes (Willder, 2026-11-08).
+import Icon from "./Icon.astro";
+import { socials } from "../i18n/ui";
+
+interface Props {
+  /** Efecto magnético al pasar el ratón (solo Contacto). */
+  magnetic?: boolean;
+  class?: string;
+}
+const { magnetic = false, class: cls = "" } = Astro.props;
+---
+
+<ul class:list={["social-row", cls]}>
+  {
+    socials.map((s) => (
+      <li>
+        <a href={s.href} target="_blank" rel="noopener" class="btn social-icon" aria-label={s.name} data-magnetic={magnetic ? "" : undefined}>
+          <span class="btn-label">
+            <Icon name={s.icon} size={20} />
+          </span>
+        </a>
+      </li>
+    ))
+  }
+</ul>

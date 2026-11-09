@@ -260,12 +260,22 @@
     padding: 0.9em 1.8em;
   }
 
-  /* Botón redondo solo con ícono (redes en Contacto y en el menú) */
+  /* Botón redondo solo con ícono (redes en Contacto, en el menú y en el pie móvil).
+     Crece con la pantalla: 40 px a 320 px, ~47 px a 390 px, 56 px como máximo (2026-11-08). */
   .social-icon {
-    width: 56px;
-    height: 56px;
-    min-height: 56px;
+    --social-size: clamp(40px, 12vw, 56px);
+    width: var(--social-size);
+    height: var(--social-size);
+    min-height: var(--social-size);
     padding: 0;
+  }
+
+  /* Las 6 redes siempre en una sola fila */
+  .social-row {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: clamp(6px, 2vw, 12px);
   }
 
   /* Botón circular grande del bloque «Let's work together» */

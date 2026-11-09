@@ -4,10 +4,10 @@
 // el menú se abre a pantalla completa (referencia: dennissnellenberg.com; decisión de Willder, 2026-10-26).
 // Idioma y tema (Willder, 2026-10-31): al pasar el mouse los dos círculos se rellenan de lima. El de idioma
 // muestra el idioma actual y el texto rueda hacia el otro (sube en inglés, baja en español).
-import Icon from "./Icon.astro";
 import Logo from "./Logo.astro";
 import { altPath, r, type Lang } from "../i18n/routes";
-import { site, socials, t, whatsappHref } from "../i18n/ui";
+import { site, t, whatsappHref } from "../i18n/ui";
+import SocialIcons from "./SocialIcons.astro";
 
 interface Props {
   lang: Lang;
@@ -98,10 +98,7 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
         <a href={whatsappHref(lang)} class="btn w-full" target="_blank" rel="noopener"><span class="btn-label">{copy.cta.whatsapp}</span></a>
         <div class="mt-6">
           <p class="eyebrow mb-3 text-center">{copy.footer.socials}</p>
-          <!-- 6 redes: 3 por fila para que quepan a 320 px (2026-11-08) -->
-          <ul class="mx-auto flex max-w-[204px] flex-wrap justify-center gap-3">
-            {socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener" class="btn social-icon" aria-label={s.name}><span class="btn-label"><Icon name={s.icon} size={22} /></span></a></li>)}
-          </ul>
+          <SocialIcons />
         </div>
       </div>
     </div>
