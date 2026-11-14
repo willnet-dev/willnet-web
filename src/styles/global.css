@@ -15,7 +15,7 @@
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #1c1d20;
+  --bg: #161719; /* Negro Mate un poco más oscuro (Willder, 2026-11-14; antes #1c1d20) */
   --surface: #33373d;
   --surface-2: #5a6068;
   --line: #464b52;

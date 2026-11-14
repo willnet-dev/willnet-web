@@ -127,7 +127,7 @@ function initTheme() {
   const sync = () => {
     const dark = document.documentElement.dataset.theme !== "light";
     btn.setAttribute("aria-label", dark ? btn.dataset.labelLight! : btn.dataset.labelDark!);
-    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#1c1d20" : "#f1f3f4");
+    document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#161719" : "#f1f3f4");
   };
   sync();
   listen(btn, "click", () => {
