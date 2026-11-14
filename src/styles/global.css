@@ -6,34 +6,46 @@
 /* El tema se elige con data-theme en <html> (script en Base.astro). Oscuro por defecto. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* ---------- Tokens de color: «Señal en la oscuridad» ---------- */
+/* ---------- Tokens de color: «Tormenta + lima» (Willder, 2026-11-13) ----------
+   Regla 60-30-10: 60 % fondo (Negro Mate / Blanco Polar), 30 % tarjetas y estructura (grises Tormenta),
+   10 % acento lima. Se eligió con el probador de paletas (rama prueba-paleta); antes, negro #0a0a0b + lima.
+   --logo-accent: centro de la W (lima sobre oscuro, oliva sobre claro). --logo-accent-inverse: el de un
+   círculo en el color del texto (avatar de «Let's work together»).
+   --card-shadow: oscuro con filo de luz arriba (sobre casi negro una sombra sola no se ve); claro, suave. */
 :root,
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0a0a0b;
-  --surface: #141416;
-  --surface-2: #1c1c1f;
-  --line: #2a2a2e;
-  --text: #f4f4f2;
-  --muted: #9a9a9f;
+  --bg: #1c1d20;
+  --surface: #33373d;
+  --surface-2: #5a6068;
+  --line: #464b52;
+  --text: #f4f5f6;
+  --muted: #b5bac0;
   --accent: #d4ff3a;
-  --accent-ink: #0a0a0b;
+  --accent-ink: #1c1d20;
   --link: #d4ff3a;
-  --wire: #3a3a40;
+  --wire: #5a6068;
+  --logo-accent: #d4ff3a;
+  --logo-accent-inverse: #4d6b00;
+  --card-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 2px 4px rgb(0 0 0 / 0.35), 0 18px 36px -14px rgb(0 0 0 / 0.75);
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #f3f2ee;
-  --surface: #ffffff;
-  --surface-2: #e9e8e2;
-  --line: #d6d4cc;
-  --text: #0b0b0c;
-  --muted: #55555b;
+  --bg: #f1f3f4;
+  --surface: #dcdfe2;
+  --surface-2: #e8eaec;
+  --line: #c9cdd1;
+  --text: #1c1d20;
+  --muted: #3f454c;
   --accent: #d4ff3a;
-  --accent-ink: #0a0a0b;
-  --link: #4d6b00;
-  --wire: #b9b7ae;
+  --accent-ink: #1c1d20;
+  /* Oliva oscuro: el #4d6b00 da 3.4:1 sobre las tarjetas grises; este, 6.3:1 */
+  --link: #3d5500;
+  --wire: #b3b8bd;
+  --logo-accent: #4d6b00;
+  --logo-accent-inverse: #d4ff3a;
+  --card-shadow: 0 1px 2px rgb(28 29 32 / 0.06), 0 4px 10px -2px rgb(28 29 32 / 0.08), 0 18px 36px -14px rgb(28 29 32 / 0.25);
 }
 
 /* inline: las utilidades (text-muted, border-line…) apuntan a la variable, así siguen los colores
@@ -49,6 +61,7 @@
   --color-accent-ink: var(--accent-ink);
   --color-link: var(--link);
   --color-wire: var(--wire);
+  --shadow-card: var(--card-shadow);
 }
 
 @theme {
@@ -532,25 +545,41 @@
 
 /* ---------- Escenario final con telón (Base.astro) ---------- */
 @layer components {
-  /* El escenario va en gris carbón en los dos temas para que el telón se vea al levantarse
-     (elegido por Willder entre contrario, lima y gris, 2026-10-26) */
+  /* El escenario tiene que ser distinto del fondo de la página para que el telón se vea al levantarse.
+     Oscuro: el negro de la web anterior (#0a0a0b), más oscuro que el Negro Mate. Claro: gris claro de la
+     familia Tormenta, porque el negro se veía muy fuerte (Willder, 2026-11-13; antes, gris carbón en los dos) */
   .stage {
     color-scheme: dark;
-    --bg: #222226;
-    --surface: #2a2a2f;
-    --surface-2: #323238;
-    --line: #3a3a41;
+    --bg: #0a0a0b;
+    --surface: #141416;
+    --surface-2: #1c1c1f;
+    --line: #2a2a2e;
     --text: #f4f4f2;
-    --muted: #a6a6ac;
+    --muted: #9a9a9f;
     --accent: #d4ff3a;
-    --accent-ink: #0a0a0b;
+    --accent-ink: #1c1d20;
     --link: #d4ff3a;
-    --wire: #4a4a52;
+    --wire: #3a3a40;
+    --logo-accent: #d4ff3a;
+    --logo-accent-inverse: #4d6b00;
     --lip-h: 10vh;
     position: relative;
     overflow: clip;
     background: var(--bg);
     color: var(--text);
+  }
+  [data-theme="light"] .stage {
+    color-scheme: light;
+    --bg: #d9dce0;
+    --surface: #cdd1d5;
+    --surface-2: #e4e6e9;
+    --line: #b9bec3;
+    --text: #1c1d20;
+    --muted: #3f454c;
+    --link: #3d5500;
+    --wire: #a7adb3;
+    --logo-accent: #4d6b00;
+    --logo-accent-inverse: #d4ff3a;
   }
   /* Telón: elipse del color de la página; solo asoma su parte de abajo, que es la curva */
   .stage__lip {

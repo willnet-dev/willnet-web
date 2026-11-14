@@ -85,7 +85,7 @@ const schema = [
       <ul class="grid gap-4">
         {c.forWho.map((item) => <li class="border-b border-line pb-4 text-[length:var(--text-step-1)]">{item}</li>)}
       </ul>
-      <div class="mt-10 rounded-2xl border border-line bg-surface p-6">
+      <div class="mt-10 rounded-2xl border border-line bg-surface shadow-card p-6">
         <p class="eyebrow mb-3">// {copy.payment.title}</p>
         <p class="text-muted">{s.price >= 1000 ? copy.payment.over : copy.payment.under}</p>
         <p class="mt-2"><span class="hl">{copy.payment.support}</span></p>
@@ -131,7 +131,7 @@ const schema = [
             <MetricBars metrics={example.data.metrics} lang={lang} stacked />
           </div>
         ) : (
-          <figure class="self-start rounded-3xl border border-line bg-surface p-8" data-reveal style="--delay:100ms">
+          <figure class="self-start rounded-3xl border border-line bg-surface shadow-card p-8" data-reveal style="--delay:100ms">
             <p class="font-display text-[length:var(--text-step-5)] leading-none font-semibold tracking-tighter">
               <span data-count="53">53</span>%
             </p>

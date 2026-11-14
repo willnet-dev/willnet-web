@@ -64,7 +64,8 @@ const cards = await serviceCards(lang);
     border-radius: 22px;
     background: var(--surface);
     transform-origin: 50% 0;
-    box-shadow: 0 -20px 50px -30px rgb(0 0 0 / 0.35);
+    /* Sombra hacia arriba para el apilado + sombra de tarjeta (2026-11-13) */
+    box-shadow: 0 -20px 50px -30px rgb(0 0 0 / 0.35), var(--card-shadow);
   }
   /* Sombra que GSAP sube cuando la tarjeta queda atrás */
   .stack__card::after {

@@ -15,7 +15,7 @@ const copy = t(lang);
   <div class="wrap together__inner" data-together-inner>
     <div class="flex items-center gap-4">
       <span class="together__avatar" aria-hidden="true">
-        <svg viewBox="0 0 416 290" width="30" fill="currentColor"><path d="M0 0 96 37 156 203 107 290Z"></path><path d="M416 0 320 37 260 203 309 290Z"></path><path d="M160 64 208 83 256 64 208 174Z"></path></svg>
+        <svg viewBox="0 0 416 290" width="30" fill="currentColor"><path d="M0 0 96 37 156 203 107 290Z"></path><path d="M416 0 320 37 260 203 309 290Z"></path><path d="M160 64 208 83 256 64 208 174Z" style="fill: var(--logo-accent-inverse)"></path></svg>
       </span>
       <h2 id="together-title" class="display text-[length:var(--text-step-5)]">
         {copy.cta.together}<br />{copy.cta.together2}
@@ -68,6 +68,8 @@ const copy = t(lang);
     border-radius: 50%;
     background: var(--text);
     color: var(--bg);
+    /* El centro de la W va en el acento del logo: oliva sobre el círculo claro (tema oscuro) y lima sobre
+       el oscuro (tema claro), con --logo-accent-inverse (corrección de Willder, 2026-11-13) */
   }
   .together__rule {
     position: relative;
