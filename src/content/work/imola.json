@@ -1,5 +1,5 @@
 {
-  "order": 3, "category": "web", "featured": true, "hasCase": true, "year": 2025,
+  "order": 4, "category": "web", "featured": true, "hasCase": true, "year": 2025,
   "url": "https://imolagoldjewelry.com",
   "image": { "en": "imola.jpg", "es": "imola.jpg", "mobileEn": "imola-movil.jpg", "mobileEs": "imola-movil.jpg" },
   "stack": ["WordPress", "WooCommerce"],

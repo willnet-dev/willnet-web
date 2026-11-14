@@ -203,6 +203,8 @@ const en = {
     metricsTextLive: "Google Lighthouse scores, measured on the live site.",
     before: "Before",
     after: "After",
+    testimonialEyebrow: "// In the client's words",
+    translatedFromEs: "Translated from Spanish",
   },
   about: {
     title: "About Willder Gómez — WillNet",
@@ -462,6 +464,8 @@ const es: typeof en = {
     metricsTextLive: "Puntuaciones de Google Lighthouse, medidas en el sitio en vivo.",
     before: "Antes",
     after: "Después",
+    testimonialEyebrow: "// En palabras del cliente",
+    translatedFromEs: "Traducido del español",
   },
   about: {
     title: "Sobre Willder Gómez — WillNet",

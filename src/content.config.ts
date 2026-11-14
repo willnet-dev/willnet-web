@@ -26,6 +26,16 @@ const metric = z.object({
   es: z.string(),
 });
 
+// Testimonio real del cliente (texto exacto). Si solo lo escribió en un idioma, el otro lleva la
+// traducción y `original` dice en cuál lo escribió, para avisarlo en la página. Nunca inventado
+const testimonial = z.object({
+  author: z.string(),
+  role: z.object({ en: z.string(), es: z.string() }),
+  en: z.string(),
+  es: z.string(),
+  original: z.enum(["en", "es"]),
+});
+
 const work = defineCollection({
   loader: glob({ pattern: "*.json", base: "./src/content/work" }),
   schema: z.object({
@@ -41,6 +51,7 @@ const work = defineCollection({
     image: z.object({ en: z.string(), es: z.string(), mobileEn: z.string(), mobileEs: z.string() }),
     stack: z.array(z.string()),
     metrics: z.array(metric).default([]),
+    testimonial: testimonial.optional(),
     en: copy,
     es: copy,
   }),

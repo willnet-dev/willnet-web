@@ -117,6 +117,24 @@ const schema = [
     )
   }
 
+  {
+    d.testimonial && (
+      <section class="wrap border-t border-line py-[clamp(4rem,10vh,7rem)]" aria-label={copy.case.testimonialEyebrow.replace("// ", "")}>
+        <figure data-reveal>
+          <p class="eyebrow mb-6">{copy.case.testimonialEyebrow}</p>
+          <span class="display block text-[length:var(--text-step-5)] leading-[0.6] text-link" aria-hidden="true">“</span>
+          <blockquote class="mt-2 max-w-[46ch] text-[length:var(--text-step-2)] leading-[1.35] font-medium text-ink">
+            <p>{d.testimonial[lang]}</p>
+          </blockquote>
+          <figcaption class="mt-8 text-muted">
+            <span class="font-semibold text-ink">{d.testimonial.author}</span> · {d.testimonial.role[lang]}
+            {d.testimonial.original !== lang && <span class="block mt-1 text-[0.875em]">{copy.case.translatedFromEs}</span>}
+          </figcaption>
+        </figure>
+      </section>
+    )
+  }
+
   <section class="wrap grid gap-6 py-[clamp(4rem,10vh,7rem)] md:grid-cols-2">
     <a href={r("contact", lang)} class="case-cta case-cta--primary" data-reveal>
       <span class="eyebrow">// {copy.cta.getInTouch}</span>

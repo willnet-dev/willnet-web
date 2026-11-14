@@ -68,7 +68,7 @@ export const services: Service[] = [
   {
     key: "websites",
     price: 1200,
-    caseSlug: "imola",
+    caseSlug: "macias-counseling",
     en: {
       name: "Business websites",
       short: "Up to five pages that explain what you do and why to choose you.",

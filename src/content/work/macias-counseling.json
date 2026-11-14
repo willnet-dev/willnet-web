@@ -1,0 +1,26 @@
+{
+  "order": 3, "category": "web", "featured": true, "hasCase": true, "year": 2026,
+  "url": "https://denismacias.com",
+  "image": { "en": "web-macias-en.jpg", "es": "web-macias.jpg", "mobileEn": "web-macias-movil-en.jpg", "mobileEs": "web-macias-movil.jpg" },
+  "stack": ["Astro", "Tailwind CSS", "Lenis", "Web3Forms", "Cloudflare"],
+  "metrics": [
+    { "id": "performance-desktop", "after": 99, "unit": "/100", "en": "speed on desktop", "es": "de velocidad en computadora" },
+    { "id": "accessibility", "after": 100, "unit": "/100", "en": "accessibility", "es": "de accesibilidad" },
+    { "id": "best-practices", "after": 100, "unit": "/100", "en": "best practices", "es": "de buenas prácticas" },
+    { "id": "seo", "after": 100, "unit": "/100", "en": "SEO", "es": "de SEO" }
+  ],
+  "en": {
+    "title": "Macias Counseling", "type": "Bilingual website",
+    "summary": "34-page bilingual website for a psychological evaluation practice in Florida: immigration evaluations (asylum, VAWA, U visa, extreme hardship), bariatric evaluations, clear prices and online requests.",
+    "challenge": "Macias Counseling had an unfinished GoDaddy page: repeated headings, an empty reviews section, buttons that led nowhere and nothing in Spanish, although many of its clients speak it. Someone with an immigration case needed to understand the process and the price, and request an evaluation with confidence.",
+    "solution": "A new site in Spanish and English with a page for each service, \"from\" prices, the team, the 4 steps of the process, FAQ, a page for attorneys and forms that reach the team's inbox. The hero has a video of Denis, and the hands from the logo I designed meet at the end of the page. I also moved the domain from GoDaddy to Cloudflare without interrupting their email.",
+    "result": "The site has been live at denismacias.com since November 13, 2026, replacing the GoDaddy page."
+  },
+  "es": {
+    "title": "Macias Counseling", "type": "Sitio web bilingüe",
+    "summary": "Sitio bilingüe de 34 páginas para una consulta de evaluaciones psicológicas en Florida: evaluaciones para inmigración (asilo, VAWA, visa U, dificultad extrema), evaluación bariátrica, precios claros y solicitud en línea.",
+    "challenge": "Macias Counseling tenía una página de GoDaddy sin terminar: títulos repetidos, una sección de reseñas vacía, botones que no llevaban a ningún lado y nada en español, aunque buena parte de sus clientes lo habla. Una persona con un caso de inmigración necesitaba entender el proceso y el precio, y pedir su evaluación con confianza.",
+    "solution": "Un sitio nuevo en español e inglés con una página por servicio, precios «desde», el equipo, los 4 pasos del proceso, preguntas frecuentes, una página para abogados y formularios que llegan al correo del equipo. La portada lleva un video de Denis, y las manos del logo que diseñé se encuentran al final de la página. Además pasé el dominio de GoDaddy a Cloudflare sin cortar su correo.",
+    "result": "El sitio está publicado en denismacias.com desde el 13 de noviembre de 2026 y reemplazó a la página de GoDaddy."
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "order": 5, "category": "web", "featured": false, "hasCase": true, "year": 2026, "withDopicos": false, "kind": "fix",
+  "order": 6, "category": "web", "featured": false, "hasCase": true, "year": 2026, "withDopicos": false, "kind": "fix",
   "url": "https://aeternaartwellness.com",
   "image": { "en": "aeterna.jpg", "es": "aeterna.jpg", "mobileEn": "aeterna-movil.jpg", "mobileEs": "aeterna-movil.jpg" },
   "stack": ["WordPress", "Elementor", "Yoast SEO"],
