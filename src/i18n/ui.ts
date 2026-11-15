@@ -24,7 +24,27 @@ export const site = {
   x: "https://x.com/willnet_dev",
   facebook: "https://www.facebook.com/willnet.dev",
   url: "https://willnet.dev",
+  // Llamadas gratis en Calendly (pedido de Willder, 2026-11-14). Los enlaces llevan los colores del tema
+  // oscuro (fondo #161719, texto #f4f5f6, lima #d4ff3a); en el tema claro src/scripts/calendly.ts los cambia.
+  calendly: {
+    intro: "https://calendly.com/will-gomez-willnet/30min",
+    deep: "https://calendly.com/will-gomez-willnet/1-hour-meeting",
+  },
 };
+
+// Enlace a una llamada con los colores del sitio y de dónde viene la reserva (utm_campaign), para verlo en Calendly.
+// Sin JavaScript abre Calendly en otra pestaña; con JavaScript, src/scripts/calendly.ts lo abre en una ventana encima.
+export function calendlyHref(kind: keyof typeof site.calendly, campaign: string) {
+  const params = new URLSearchParams({
+    background_color: "161719",
+    text_color: "f4f5f6",
+    primary_color: "d4ff3a",
+    utm_source: "willnet.dev",
+    utm_medium: "website",
+    utm_campaign: campaign,
+  });
+  return `${site.calendly[kind]}?${params}`;
+}
 
 // Redes en el orden en que se muestran (pie, menú del teléfono, Contacto y schema sameAs).
 // TikTok, X y Facebook agregados el 2026-11-08.
@@ -69,6 +89,7 @@ const en = {
     together2: "together",
     getInTouch: "Get in touch",
     togetherText: "Tell me about your business. The first consultation is free and you'll get a clear quote with price and delivery date.",
+    bookCall: "Book a free call",
   },
   footer: {
     tagline: "Web design and development for growing businesses. Based in West Palm Beach, FL — working with clients across the US and Latin America.",
@@ -251,8 +272,18 @@ const en = {
     description: "Tell me about your project and get a free, no-commitment quote with price and delivery date. In English or Spanish. WhatsApp, phone or email.",
     eyebrow: "// Contact",
     h1: "Let's talk about your website",
-    intro: "Fill in this short form and I'll reply with questions or a quote. Prefer to chat? Message me on WhatsApp.",
+    intro: "Fill in this short form and I'll reply with questions or a quote. Prefer to talk? Book a free video call or message me on WhatsApp.",
     other: "Other ways to reach me",
+    booking: {
+      title: "Book a free video call",
+      intro: "Pick a time that works for you. Both calls are free, on Google Meet, in English or Spanish.",
+      introName: "Free intro call",
+      introMeta: "30 min · Free",
+      introText: "Tell me what you need and leave with clear next steps.",
+      deepName: "Project deep dive",
+      deepMeta: "1 hour · Free",
+      deepText: "Your project is already defined, or you want me to review your current website.",
+    },
     social: "Find me online",
     phone: "Phone",
   },
@@ -289,7 +320,7 @@ const en = {
     title: "Privacy policy — WillNet",
     description: "How WillNet handles the information you send through the contact form and how the website measures visits without cookies.",
     h1: "Privacy policy",
-    updated: "Last updated: October 25, 2026",
+    updated: "Last updated: November 14, 2026",
   },
   notFound: {
     title: "Page not found — WillNet",
@@ -330,6 +361,7 @@ const es: typeof en = {
     together2: "juntos",
     getInTouch: "Hablemos",
     togetherText: "Cuéntame sobre tu negocio. La primera consulta es gratis y recibes un presupuesto claro, con precio y fecha de entrega.",
+    bookCall: "Agenda una llamada gratis",
   },
   footer: {
     tagline: "Diseño y desarrollo web para negocios que crecen. Con base en West Palm Beach, FL, trabajando con clientes en todo EE. UU. y Latinoamérica.",
@@ -511,8 +543,18 @@ const es: typeof en = {
     description: "Cuéntame tu proyecto y recibe un presupuesto gratis y sin compromiso, con precio y fecha de entrega. En inglés o español. WhatsApp, llamada o correo.",
     eyebrow: "// Contacto",
     h1: "Hablemos de tu web",
-    intro: "Llena este formulario corto y te respondo con preguntas o un presupuesto. ¿Prefieres conversar? Escríbeme por WhatsApp.",
+    intro: "Llena este formulario corto y te respondo con preguntas o un presupuesto. ¿Prefieres conversar? Agenda una videollamada gratis o escríbeme por WhatsApp.",
     other: "Otras formas de contactarme",
+    booking: {
+      title: "Agenda una videollamada gratis",
+      intro: "Elige el horario que te quede bien. Las dos son gratis, por Google Meet, en inglés o en español.",
+      introName: "Primera llamada",
+      introMeta: "30 min · Gratis",
+      introText: "Cuéntame qué necesitas y sal con los próximos pasos claros.",
+      deepName: "Revisión a fondo",
+      deepMeta: "1 hora · Gratis",
+      deepText: "Ya tienes el proyecto claro o quieres que revise tu web actual.",
+    },
     social: "Encuéntrame en redes",
     phone: "Teléfono",
   },
@@ -548,7 +590,7 @@ const es: typeof en = {
     title: "Política de privacidad — WillNet",
     description: "Cómo trata WillNet la información que envías por el formulario de contacto y cómo mide las visitas sin cookies.",
     h1: "Política de privacidad",
-    updated: "Última actualización: 25 de octubre de 2026",
+    updated: "Última actualización: 14 de noviembre de 2026",
   },
   notFound: {
     title: "Página no encontrada — WillNet",

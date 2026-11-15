@@ -37,6 +37,12 @@ function bindSmoothScroll() {
   gsap.ticker.lagSmoothing(0);
 }
 
+// Ventanas encima de la página (Calendly, src/scripts/calendly.ts) piden detener el scroll suave mientras están abiertas
+window.addEventListener("willnet:scroll-lock", (e) => {
+  if ((e as CustomEvent<boolean>).detail) lenis?.stop();
+  else lenis?.start();
+});
+
 // Desplazamiento animado: con Lenis si está activo; si no, el nativo del navegador
 function scrollToY(top: number) {
   if (lenis) lenis.scrollTo(top);

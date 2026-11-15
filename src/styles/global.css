@@ -629,3 +629,13 @@
     }
   }
 }
+
+/* Ventana de Calendly (src/scripts/calendly.ts, 2026-11-14). El fondo de Calendly es gris al 40 % y dejaba
+   ver la cabecera y el botón de WhatsApp, que se confundían con la ventana y con su botón de cerrar.
+   Con «html» delante gana a widget.css, que se carga después. */
+html .calendly-overlay .calendly-close-overlay {
+  background: rgb(10 10 11 / 0.9);
+}
+html[data-theme="light"] .calendly-overlay .calendly-close-overlay {
+  background: rgb(28 29 32 / 0.8);
+}
