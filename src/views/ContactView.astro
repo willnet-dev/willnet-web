@@ -1,12 +1,12 @@
 ---
-// Contacto: formulario corto de presupuesto (acción principal), llamadas en Calendly + WhatsApp, correo y teléfono.
+// Contacto: formulario corto de presupuesto (acción principal), llamadas en Calendly + correo y teléfono (WhatsApp: el botón flotante).
 // El formulario envía a Web3Forms con la clave pública PUBLIC_WEB3FORMS_KEY (archivo .env, ver README).
 // Sin clave, muestra el aviso de «formulario sin conectar» y deja correo y WhatsApp como alternativa.
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
 import { r, type Lang } from "../i18n/routes";
-import { calendlyHref, site, t, whatsappHref } from "../i18n/ui";
+import { calendlyHref, site, t } from "../i18n/ui";
 import SocialIcons from "../components/SocialIcons.astro";
 import { services } from "../data/services";
 import { breadcrumbs } from "../lib/schema";
@@ -154,14 +154,7 @@ const calls = [
     <aside class="grid content-start gap-4">
       <h2 class="eyebrow">// {p.other}</h2>
       <!-- Tarjetas con ícono y el mismo relleno que los botones al pasar el mouse (pedido de Willder, 2026-10-26).
-           En el teléfono no va la de WhatsApp: ya está el botón flotante de la esquina (Willder, 2026-11-16) -->
-      <a href={whatsappHref(lang)} target="_blank" rel="noopener" class="contact-card contact-card--accent contact-card--wa" data-magnetic data-magnetic-strength="0.12">
-        <span class="contact-card__icon"><Icon name="whatsapp" /></span>
-        <span class="contact-card__text">
-          <span class="eyebrow">WhatsApp</span>
-          <span class="text-[length:var(--text-step-2)] font-semibold">{copy.cta.whatsapp} ↗</span>
-        </span>
-      </a>
+           Sin tarjeta de WhatsApp en ningún tamaño: basta el botón flotante de la esquina (Willder, 2026-11-16) -->
       <a href={`mailto:${site.email}`} class="contact-card" data-magnetic data-magnetic-strength="0.12">
         <span class="contact-card__icon"><Icon name="email" /></span>
         <span class="contact-card__text">
@@ -377,8 +370,7 @@ const calls = [
     cursor: not-allowed;
     opacity: 0.55;
   }
-  /* Mismo efecto que los botones: un relleno lima con borde curvo sube desde abajo.
-     La tarjeta de WhatsApp (ya lima) se rellena con el color del texto, como el botón principal */
+  /* Mismo efecto que los botones: un relleno lima con borde curvo sube desde abajo */
   .contact-card {
     --card-fill: var(--accent);
     --card-fill-fg: var(--accent-ink);
@@ -432,26 +424,6 @@ const calls = [
   .contact-card[aria-busy="true"] {
     cursor: progress;
     opacity: 0.75;
-  }
-  .contact-card--accent {
-    --card-fill: var(--text);
-    --card-fill-fg: var(--bg);
-    background: var(--accent);
-    color: var(--accent-ink);
-    border-color: var(--accent);
-  }
-  .contact-card--accent .contact-card__icon {
-    border-color: currentColor;
-  }
-  .contact-card--accent .eyebrow {
-    color: inherit;
-  }
-  /* Teléfono: sin la tarjeta de WhatsApp, ya está el botón flotante de la esquina (Willder, 2026-11-16).
-     Va aquí y no con max-md:hidden porque .contact-card (display: flex) le ganaría */
-  @media (max-width: 767px) {
-    .contact-card--wa {
-      display: none;
-    }
   }
   @media (hover: hover) {
     .contact-card:hover {
