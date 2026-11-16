@@ -16,7 +16,8 @@ export default defineConfig({
   compressHTML: true,
   // inlineStylesheets: el CSS va dentro del HTML y no bloquea el primer pintado
   build: { format: "file", inlineStylesheets: "always" },
-  integrations: [react(), ...(isProduction ? [sitemap()] : [])],
+  // La cuenta regresiva del lanzamiento (2026-11-16) no va en el sitemap: la sirve el Worker, no se visita
+  integrations: [react(), ...(isProduction ? [sitemap({ filter: (page) => !page.includes("/cuenta-regresiva") })] : [])],
   vite: {
     plugins: [tailwindcss()],
     optimizeDeps: { include: ["three", "@react-three/fiber", "react", "react-dom", "react-dom/client", "gsap", "gsap/ScrollTrigger"] },

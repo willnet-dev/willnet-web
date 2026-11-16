@@ -1,0 +1,331 @@
+---
+// Cuenta regresiva del lanzamiento oficial (pedido de Willder, 2026-11-16).
+// No se visita directamente: hasta la hora del lanzamiento, el Worker (worker/index.ts) la sirve en lugar de
+// cualquier página de willnet.dev con el código 503 («cerrado un momento»), para que Google no pierda las páginas.
+// A la hora del lanzamiento el Worker deja de servirla y la web se ve sola, sin publicar nada.
+// Bilingüe en la misma página: el script de <head> elige el idioma (ruta /es, idioma del navegador o el botón).
+import "../styles/global.css";
+import Logo from "../components/Logo.astro";
+import SocialIcons from "../components/SocialIcons.astro";
+import { calendlyHref, whatsappHref } from "../i18n/ui";
+import unboundedLatin from "@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2?url";
+import geistLatin from "@fontsource-variable/geist/files/geist-latin-wght-normal.woff2?url";
+
+// Miércoles 18 de noviembre de 2026, 6:00 p. m. en Florida (EST, UTC−5). Igual que COUNTDOWN_UNTIL en wrangler.jsonc.
+const LAUNCH = "2026-11-18T23:00:00Z";
+const units = [
+  { key: "d", en: "Days", es: "Días" },
+  { key: "h", en: "Hours", es: "Horas" },
+  { key: "m", en: "Minutes", es: "Minutos" },
+  { key: "s", en: "Seconds", es: "Segundos" },
+];
+---
+
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WillNet — Launching Wednesday · Llega el miércoles</title>
+    <meta name="description" content="The new willnet.dev launches Wednesday, November 18 at 6:00 pm ET. La nueva willnet.dev llega el miércoles 18 de noviembre a las 6:00 p. m." />
+    <meta name="robots" content="noindex" />
+    <meta name="theme-color" content="#161719" />
+    <link rel="preload" href={unboundedLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={geistLatin} as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32x32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="WillNet" />
+    <meta property="og:title" content="willnet.dev — Launching Wednesday, 6:00 pm ET" />
+    <meta property="og:image" content="https://willnet.dev/og-en.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      (() => {
+        let lang = null;
+        try { lang = localStorage.getItem("cd-lang"); } catch {}
+        if (!lang) lang = location.pathname.startsWith("/es") || (navigator.language || "").toLowerCase().startsWith("es") ? "es" : "en";
+        document.documentElement.lang = lang;
+        document.documentElement.classList.add("js");
+      })();
+    </script>
+  </head>
+  <body>
+    <div class="cd" data-launch={LAUNCH}>
+      <!-- W grande de fondo, recortada a la derecha: la misma forma del logo, solo con borde -->
+      <svg class="cd__w" viewBox="0 0 416 290" aria-hidden="true">
+        <path d="M0 0 96 37 156 203 107 290Z"></path>
+        <path d="M416 0 320 37 260 203 309 290Z"></path>
+        <path class="cd__w-center" d="M160 64 208 83 256 64 208 174Z"></path>
+      </svg>
+
+      <header class="cd__top">
+        <Logo class="h-6 w-auto sm:h-7" />
+        <button type="button" class="btn cd__lang" data-lang-toggle>
+          <span class="btn-label"><span data-l="en"><span aria-hidden="true">ES</span><span class="sr-only" lang="es">Ver en español</span></span><span data-l="es"><span aria-hidden="true">EN</span><span class="sr-only" lang="en">View in English</span></span></span>
+        </button>
+      </header>
+
+      <main class="cd__main">
+        <p class="eyebrow cd__live"><span class="cd__dot" aria-hidden="true"></span>willnet.dev</p>
+        <h1 class="display cd__title">
+          <span data-l="en">New website.<br />Launching soon.</span>
+          <span data-l="es">Web nueva.<br />Muy pronto.</span>
+        </h1>
+        <p class="cd__intro">
+          <span data-l="en">Modern websites, built directly with you. The new willnet.dev opens <strong>Wednesday, November 18 at 6:00 pm ET</strong>.</span>
+          <span data-l="es">Webs modernas, hechas directamente contigo. La nueva willnet.dev abre el <strong>miércoles 18 de noviembre a las 6:00 p. m. (hora de Florida)</strong>.</span>
+        </p>
+
+        <div class="cd__clock" role="timer" aria-live="off" data-clock>
+          {
+            units.map((u) => (
+              <div class="cd__cell">
+                <span class="cd__num" data-unit={u.key}>--</span>
+                <span class="cd__label">
+                  <span data-l="en">{u.en}</span>
+                  <span data-l="es">{u.es}</span>
+                </span>
+              </div>
+            ))
+          }
+        </div>
+        <p class="cd__local" data-local hidden></p>
+        <p class="cd__done" data-done hidden>
+          <span data-l="en">We're live. Loading the new site…</span>
+          <span data-l="es">Ya está en línea. Cargando la web nueva…</span>
+        </p>
+
+        <div class="cd__actions">
+          <p class="cd__wait">
+            <span data-l="en">Can't wait? Let's talk now:</span>
+            <span data-l="es">¿No quieres esperar? Hablemos ya:</span>
+          </p>
+          <div class="cd__btns">
+            <a href={calendlyHref("intro", "countdown")} target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+              <span class="btn-label"><span data-l="en">Book a free call</span><span data-l="es">Agenda una llamada gratis</span></span>
+            </a>
+            <a href={whatsappHref("en")} target="_blank" rel="noopener" class="btn btn-lg" data-l="en"><span class="btn-label">WhatsApp</span></a>
+            <a href={whatsappHref("es")} target="_blank" rel="noopener" class="btn btn-lg" data-l="es"><span class="btn-label">WhatsApp</span></a>
+          </div>
+        </div>
+      </main>
+
+      <footer class="cd__foot">
+        <SocialIcons />
+        <p class="cd__copy">© 2026 WillNet · West Palm Beach, FL</p>
+      </footer>
+    </div>
+
+    <script>
+      // Cuenta regresiva: cada segundo hasta la hora del lanzamiento; al llegar a cero recarga la página
+      // y el Worker ya sirve la web normal. El idioma se cambia con el botón y se recuerda en este navegador.
+      const root = document.querySelector<HTMLElement>("[data-launch]")!;
+      const launch = Date.parse(root.dataset.launch!);
+      const html = document.documentElement;
+      const nums = Object.fromEntries(
+        [...root.querySelectorAll<HTMLElement>("[data-unit]")].map((el) => [el.dataset.unit!, el]),
+      );
+      const pad = (n: number) => String(n).padStart(2, "0");
+
+      // Hora del lanzamiento en la zona del visitante (solo si no está en la hora de Florida)
+      const local = root.querySelector<HTMLElement>("[data-local]")!;
+      const zone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const renderLocal = () => {
+        if (zone === "America/New_York") return;
+        const es = html.lang === "es";
+        const when = new Intl.DateTimeFormat(es ? "es" : "en", { weekday: "long", hour: "numeric", minute: "2-digit", timeZoneName: "short" }).format(launch);
+        local.textContent = es ? `En tu zona horaria: ${when}.` : `In your time zone: ${when}.`;
+        local.hidden = false;
+      };
+      renderLocal();
+
+      document.querySelector("[data-lang-toggle]")?.addEventListener("click", () => {
+        html.lang = html.lang === "es" ? "en" : "es";
+        try { localStorage.setItem("cd-lang", html.lang); } catch {}
+        renderLocal();
+      });
+
+      let timer = 0;
+      const tick = () => {
+        const left = Math.max(0, launch - Date.now());
+        const s = Math.floor(left / 1000);
+        nums.d.textContent = pad(Math.floor(s / 86400));
+        nums.h.textContent = pad(Math.floor((s % 86400) / 3600));
+        nums.m.textContent = pad(Math.floor((s % 3600) / 60));
+        nums.s.textContent = pad(s % 60);
+        if (left === 0) {
+          clearInterval(timer);
+          root.querySelector<HTMLElement>("[data-done]")!.hidden = false;
+          // Unos segundos de margen por si el reloj del visitante va adelantado
+          setTimeout(() => location.reload(), 4000);
+        }
+      };
+      tick();
+      timer = window.setInterval(tick, 1000);
+    </script>
+
+    <style>
+      html:not([lang="es"]) [data-l="es"],
+      html[lang="es"] [data-l="en"] {
+        display: none !important;
+      }
+      body {
+        background: var(--bg);
+        color: var(--text);
+      }
+      .cd {
+        position: relative;
+        isolation: isolate;
+        overflow: hidden;
+        min-height: 100svh;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: clamp(2rem, 5vh, 3.5rem);
+        padding: 1.25rem clamp(1rem, 5vw, 4rem) 1.5rem;
+      }
+      .cd__w {
+        position: absolute;
+        z-index: -1;
+        right: -18vw;
+        top: 50%;
+        width: max(70vw, 520px);
+        translate: 0 -50%;
+        fill: none;
+        stroke: var(--line);
+        stroke-width: 1.2;
+        opacity: 0.7;
+      }
+      .cd__w-center {
+        stroke: var(--accent);
+        opacity: 0.55;
+      }
+      /* En el teléfono la W queda detrás del texto: más tenue para que no compita con la lectura */
+      @media (max-width: 767px) {
+        .cd__w {
+          opacity: 0.35;
+        }
+        .cd__w-center {
+          opacity: 0.4;
+        }
+      }
+      .cd__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .cd__lang {
+        min-width: 48px;
+        min-height: 48px;
+        padding: 0 0.9rem;
+      }
+      .cd__main {
+        align-self: center;
+        display: grid;
+        gap: clamp(1.25rem, 3vh, 2rem);
+        max-width: 60rem;
+      }
+      .cd__live {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .cd__dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 0 rgb(212 255 58 / 0.6);
+        animation: cd-pulse 2.4s var(--ease-out-expo) infinite;
+      }
+      @keyframes cd-pulse {
+        0% { box-shadow: 0 0 0 0 rgb(212 255 58 / 0.55); }
+        70%, 100% { box-shadow: 0 0 0 12px rgb(212 255 58 / 0); }
+      }
+      .cd__title {
+        font-size: var(--text-step-5);
+        line-height: 0.98;
+      }
+      .cd__intro {
+        max-width: 44ch;
+        font-size: var(--text-step-1);
+        color: var(--muted);
+      }
+      .cd__intro strong {
+        color: var(--text);
+        font-weight: 600;
+      }
+      .cd__clock {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: clamp(0.5rem, 1.6vw, 1rem);
+        max-width: 44rem;
+      }
+      .cd__cell {
+        display: grid;
+        gap: 0.35rem;
+        justify-items: center;
+        padding: clamp(0.9rem, 2.5vw, 1.6rem) 0.25rem;
+        border-radius: 18px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        box-shadow: var(--card-shadow);
+      }
+      .cd__num {
+        font-family: var(--font-display);
+        font-weight: 600;
+        font-size: clamp(1.9rem, 1.2rem + 4vw, 4.2rem);
+        line-height: 1;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
+      .cd__label {
+        font-family: var(--font-mono);
+        font-size: clamp(0.68rem, 0.6rem + 0.35vw, 0.85rem);
+        color: var(--muted);
+      }
+      .cd__local,
+      .cd__done {
+        color: var(--muted);
+        font-size: var(--text-step--1);
+      }
+      .cd__done {
+        color: var(--accent);
+        font-weight: 600;
+      }
+      .cd__actions {
+        display: grid;
+        gap: 0.9rem;
+        margin-top: clamp(0.25rem, 2vh, 1rem);
+      }
+      .cd__wait {
+        font-weight: 600;
+      }
+      .cd__btns {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+      }
+      @media (max-width: 639px) {
+        .cd__btns > * {
+          width: 100%;
+        }
+      }
+      .cd__foot {
+        display: grid;
+        gap: 1rem;
+        justify-items: center;
+      }
+      .cd__copy {
+        font-family: var(--font-mono);
+        font-size: var(--text-step--1);
+        color: var(--muted);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .cd__dot {
+          animation: none;
+        }
+      }
+    </style>
+  </body>
+</html>
