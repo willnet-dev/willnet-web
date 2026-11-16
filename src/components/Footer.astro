@@ -1,6 +1,6 @@
 ---
 // Pie de página. Escritorio: logo, hora local de West Palm Beach, páginas, servicios y redes.
-// Móvil: versión corta como en dennissnellenberg.com (redes, © y hora local) para que, al llegar al final,
+// Móvil: versión corta como en dennissnellenberg.com (texto de presentación, redes, © y hora local) para que, al llegar al final,
 // se vea el bloque «Let's work together» (decisión de Willder, 2026-10-26).
 import Logo from "./Logo.astro";
 import Icon from "./Icon.astro";
@@ -72,6 +72,8 @@ const year = new Date().getFullYear();
 
   <!-- Móvil: corto, como en la referencia -->
   <div class="wrap pt-7 pb-20 md:hidden">
+    <!-- Texto de presentación, que antes iba en Contacto bajo las redes (Willder, 2026-11-16) -->
+    <p class="mx-auto mb-6 max-w-[38ch] text-center text-sm text-muted">{copy.footer.tagline}</p>
     <nav aria-label={copy.footer.socials}>
       <h2 class="eyebrow mb-3 text-center">{copy.footer.socials}</h2>
       <!-- Solo íconos, en una fila (Willder, 2026-11-08; antes eran nombres en texto) -->

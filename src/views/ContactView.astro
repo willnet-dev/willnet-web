@@ -1,5 +1,5 @@
 ---
-// Contacto: formulario corto de presupuesto (acción principal) + WhatsApp, correo y teléfono.
+// Contacto: formulario corto de presupuesto (acción principal), llamadas en Calendly + WhatsApp, correo y teléfono.
 // El formulario envía a Web3Forms con la clave pública PUBLIC_WEB3FORMS_KEY (archivo .env, ver README).
 // Sin clave, muestra el aviso de «formulario sin conectar» y deja correo y WhatsApp como alternativa.
 import Base from "../layouts/Base.astro";
@@ -48,28 +48,12 @@ const calls = [
     ]}
   />
 
-  <!-- Llamadas gratis en Calendly, antes del formulario para que en el teléfono se vean sin bajar todo el formulario
-       (pedido de Willder, 2026-11-14). Se abren en una ventana encima de la página: src/scripts/calendly.ts -->
-  <section class="wrap pb-12" aria-labelledby="book-title">
-    <h2 id="book-title" class="eyebrow">// {b.title}</h2>
-    <p class="mt-3 max-w-[60ch] text-muted">{b.intro}</p>
-    <div class="mt-6 grid gap-4 sm:grid-cols-2">
-      {
-        calls.map((c) => (
-          <a href={c.href} target="_blank" rel="noopener" class="contact-card" data-calendly data-magnetic data-magnetic-strength="0.12">
-            <span class="contact-card__icon"><Icon name="calendar" /></span>
-            <span class="contact-card__text">
-              <span class="eyebrow">{c.meta}</span>
-              <span class="text-[length:var(--text-step-1)] font-semibold">{c.name} ↗</span>
-              <span class="contact-card__note text-sm text-muted">{c.text}</span>
-            </span>
-          </a>
-        ))
-      }
-    </div>
-  </section>
 
-  <section class="wrap grid gap-12 pb-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1.5fr_1fr]">
+  <!-- Una sola cuadrícula con tres piezas: formulario, llamadas de Calendly y otras formas de contacto.
+       El orden en el HTML es el del teléfono (formulario → Calendly → correo y teléfono), para que el teclado y el
+       lector de pantalla sigan lo que se ve en la pantalla principal. Desde 768 px Calendly vuelve arriba
+       (md:order-first) y en escritorio ocupa las dos columnas, como antes (Willder, 2026-11-16). -->
+  <div class="wrap grid gap-12 pb-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1.5fr_1fr]">
     <form class="qform" data-quote-form data-key={key} data-lang={lang} novalidate>
       {!key && <p class="qform__notice" role="note">{f.notConnected}</p>}
 
@@ -145,10 +129,33 @@ const calls = [
       <p class="qform__status" data-status role="status" aria-live="polite" data-success={f.success} data-error={f.error}></p>
     </form>
 
+    <!-- Llamadas gratis en Calendly. Se abren en una ventana encima de la página: src/scripts/calendly.ts
+         Teléfono: debajo del formulario (pedido de Willder, 2026-11-16; antes iban arriba, 2026-11-14).
+         Tableta y escritorio: siguen arriba del formulario. -->
+    <section class="md:order-first lg:col-span-2" aria-labelledby="book-title">
+      <h2 id="book-title" class="eyebrow">// {b.title}</h2>
+      <p class="mt-3 max-w-[60ch] text-muted">{b.intro}</p>
+      <div class="mt-6 grid gap-4 sm:grid-cols-2">
+        {
+          calls.map((c) => (
+            <a href={c.href} target="_blank" rel="noopener" class="contact-card" data-calendly data-magnetic data-magnetic-strength="0.12">
+              <span class="contact-card__icon"><Icon name="calendar" /></span>
+              <span class="contact-card__text">
+                <span class="eyebrow">{c.meta}</span>
+                <span class="text-[length:var(--text-step-1)] font-semibold">{c.name} ↗</span>
+                <span class="contact-card__note text-sm text-muted">{c.text}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </section>
+
     <aside class="grid content-start gap-4">
       <h2 class="eyebrow">// {p.other}</h2>
-      <!-- Tarjetas con ícono y el mismo relleno que los botones al pasar el mouse (pedido de Willder, 2026-10-26) -->
-      <a href={whatsappHref(lang)} target="_blank" rel="noopener" class="contact-card contact-card--accent" data-magnetic data-magnetic-strength="0.12">
+      <!-- Tarjetas con ícono y el mismo relleno que los botones al pasar el mouse (pedido de Willder, 2026-10-26).
+           En el teléfono no va la de WhatsApp: ya está el botón flotante de la esquina (Willder, 2026-11-16) -->
+      <a href={whatsappHref(lang)} target="_blank" rel="noopener" class="contact-card contact-card--accent contact-card--wa" data-magnetic data-magnetic-strength="0.12">
         <span class="contact-card__icon"><Icon name="whatsapp" /></span>
         <span class="contact-card__text">
           <span class="eyebrow">WhatsApp</span>
@@ -170,12 +177,15 @@ const calls = [
         </span>
       </a>
 
-      <h2 class="eyebrow mt-4 text-center">// {p.social}</h2>
-      <!-- Solo íconos, centrados (decisión de Willder, 2026-10-26) -->
-      <SocialIcons magnetic />
-      <p class="mt-2 text-sm text-muted">{copy.footer.tagline}</p>
+      <!-- Redes: solo íconos, centrados (decisión de Willder, 2026-10-26). En el teléfono no van: se repetían con
+           las del pie, que ahora lleva también este texto (Willder, 2026-11-16) -->
+      <div class="mt-4 grid gap-4 max-md:hidden">
+        <h2 class="eyebrow text-center">// {p.social}</h2>
+        <SocialIcons magnetic />
+        <p class="mt-2 text-sm text-muted">{copy.footer.tagline}</p>
+      </div>
     </aside>
-  </section>
+  </div>
 </Base>
 
 <script>
@@ -435,6 +445,13 @@ const calls = [
   }
   .contact-card--accent .eyebrow {
     color: inherit;
+  }
+  /* Teléfono: sin la tarjeta de WhatsApp, ya está el botón flotante de la esquina (Willder, 2026-11-16).
+     Va aquí y no con max-md:hidden porque .contact-card (display: flex) le ganaría */
+  @media (max-width: 767px) {
+    .contact-card--wa {
+      display: none;
+    }
   }
   @media (hover: hover) {
     .contact-card:hover {
