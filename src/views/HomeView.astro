@@ -3,6 +3,7 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import MotionLab from "../components/MotionLab.astro";
+import VariantSwitcher from "../components/VariantSwitcher.astro";
 import Process from "../components/Process.astro";
 import PriceList from "../components/PriceList.astro";
 import FaqList from "../components/FaqList.astro";
@@ -35,6 +36,8 @@ const homeFaq = faqFor(lang, true);
       document.documentElement.dataset.labV = pick("seccion3d");
     })();
   </script>
+  {/* Botones para cambiar de versión: solo en el servidor local, nunca en la web publicada */}
+  {import.meta.env.DEV && <VariantSwitcher />}
 
   <!-- HERO: la foto de Willder recortada (sin tarjeta) y el texto. La W 3D pasó a la sección «3D y movimiento».
        Tres decoraciones para elegir: A · contorno de la W en lima, B · el nombre gigante detrás, C · disco lima y todo centrado -->
