@@ -1,5 +1,5 @@
 {
-  "order": 5, "category": "web", "featured": false, "hasCase": true, "year": 2025,
+  "order": 5, "category": "web", "featured": false, "hasCase": true, "inShowcase": false, "year": 2025,
   "url": "https://mastermind-team.com",
   "image": { "en": "mastermind-en.jpg", "es": "mastermind.jpg", "mobileEn": "mastermind-movil-en.jpg", "mobileEs": "mastermind-movil.jpg" },
   "stack": ["HTML", "Tailwind CSS", "JavaScript", "Calendly", "Web3Forms", "Meta Pixel"],

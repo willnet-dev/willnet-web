@@ -2,7 +2,7 @@
 // Página de inicio (EN y ES). Las rutas src/pages/index.astro y src/pages/es/index.astro solo la llaman.
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
-import HeroW from "../components/three/HeroW.tsx";
+import MotionLab from "../components/MotionLab.astro";
 import Process from "../components/Process.astro";
 import PriceList from "../components/PriceList.astro";
 import FaqList from "../components/FaqList.astro";
@@ -25,38 +25,55 @@ const homeFaq = faqFor(lang, true);
 ---
 
 <Base lang={lang} title={h.title} description={h.description} schema={[faqPage(homeFaq)]}>
-  <!-- HERO: poco texto, la W 3D como foco y el mouse animado (referencias: tamalsen.dev y willnet.dev) -->
+  <!-- Comparador temporal de la ronda 21 (2026-11-16): ?hero=a|b|c y ?seccion3d=a|b|c.
+       Se quita cuando Willder elija. Sin parámetro: A y A -->
+  <script is:inline>
+    (() => {
+      const q = new URLSearchParams(location.search);
+      const pick = (k) => (/^[abc]$/.test(q.get(k) || "") ? q.get(k) : "a");
+      document.documentElement.dataset.heroV = pick("hero");
+      document.documentElement.dataset.labV = pick("seccion3d");
+    })();
+  </script>
+
+  <!-- HERO: la foto de Willder recortada (sin tarjeta) y el texto. La W 3D pasó a la sección «3D y movimiento».
+       Tres decoraciones para elegir: A · contorno de la W en lima, B · el nombre gigante detrás, C · disco lima y todo centrado -->
   <section class="hero" data-hero>
-    <div class="wrap hero__content">
-      <p class="eyebrow hero__role hero__in" style="--i:0"><b>&lt;{h.role}&gt;</b><span class="hero__brand"> · WillNet</span></p>
-      <h1 class="display hero__title hero__in" style="--i:1">{h.h1}</h1>
-      <p class="hero__type hero__in" style="--i:2">
-        <span class="text-muted">{h.typePrefix}</span>
-        <span class="hero__word" data-typewriter data-words={JSON.stringify(h.typeWords)}>{h.typeWords[0]}</span><span class="type-caret" aria-hidden="true"></span>
-      </p>
-      <p class="text-muted hero__in" style="--i:3">{h.support}</p>
-      <div class="hero__actions mt-2 flex flex-wrap gap-3 hero__in" style="--i:4">
-        <a href={r("contact", lang)} class="btn btn-primary btn-lg" data-magnetic><span class="btn-label">{copy.cta.quote}</span></a>
-      </div>
+    <div class="wrap hero__name" aria-hidden="true">
+      <svg viewBox="0 0 1000 170"><text x="500" y="150" text-anchor="middle" textLength="990" lengthAdjust="spacingAndGlyphs">WILLDER</text></svg>
     </div>
 
-    <!-- La escena va después del texto en el HTML para que el botón de pausa no sea el primer foco -->
-    <div class="hero__scene">
-      <div class="hero__fallback" data-hero-fallback aria-hidden="true">
-        <svg viewBox="0 0 416 290" class="hero__w">
-          <defs>
-            <linearGradient id="chrome" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="var(--text)" stop-opacity="0.95"></stop>
-              <stop offset="0.5" stop-color="var(--muted)"></stop>
-              <stop offset="1" stop-color="var(--text)" stop-opacity="0.8"></stop>
-            </linearGradient>
-          </defs>
-          <path d="M0 0 96 37 156 203 107 290Z" fill="url(#chrome)"></path>
-          <path d="M416 0 320 37 260 203 309 290Z" fill="url(#chrome)"></path>
-          <path d="M160 64 208 83 256 64 208 174Z" fill="var(--accent)"></path>
-        </svg>
+    <div class="hero__visual">
+      <svg class="hero__deco hero__deco--w" viewBox="-12 -12 440 314" aria-hidden="true">
+        <path d="M0 0 96 37 156 203 107 290Z"></path>
+        <path d="M416 0 320 37 260 203 309 290Z"></path>
+        <path d="M160 64 208 83 256 64 208 174Z"></path>
+      </svg>
+      <span class="hero__deco hero__deco--sun" aria-hidden="true"></span>
+      <!-- Recorte de la foto del estudio (1136 × 1408): se muestra a 700 px de alto como máximo para que
+           en pantallas retina se vea a su tamaño real, sin estirarse -->
+      <picture class="hero__pic">
+        <source type="image/avif" srcset="/img/hero/willder-recorte-720.avif 720w, /img/hero/willder-recorte-1136.avif 1136w" sizes="(min-width: 1100px) 565px, 420px" />
+        <source type="image/webp" srcset="/img/hero/willder-recorte-720.webp 720w, /img/hero/willder-recorte-1136.webp 1136w" sizes="(min-width: 1100px) 565px, 420px" />
+        <img src="/img/hero/willder-recorte-1136.webp" width="1136" height="1408" alt={h.photoAlt} fetchpriority="high" decoding="async" />
+      </picture>
+    </div>
+
+    <div class="wrap hero__content">
+      <div class="hero__lead">
+        <p class="eyebrow hero__role hero__in" style="--i:0"><b>&lt;{h.role}&gt;</b><span class="hero__brand"> · WillNet</span></p>
+        <h1 class="display hero__title hero__in" style="--i:1">{h.h1}</h1>
       </div>
-      <HeroW client:idle pauseLabel={copy.common.pauseScene} playLabel={copy.common.playScene} />
+      <div class="hero__more">
+        <p class="hero__type hero__in" style="--i:2">
+          <span class="text-muted">{h.typePrefix}</span>
+          <span class="hero__word" data-typewriter data-words={JSON.stringify(h.typeWords)}>{h.typeWords[0]}</span><span class="type-caret" aria-hidden="true"></span>
+        </p>
+        <p class="text-muted hero__in" style="--i:3">{h.support}</p>
+        <div class="hero__actions mt-2 flex flex-wrap gap-3 hero__in" style="--i:4">
+          <a href={r("contact", lang)} class="btn btn-primary btn-lg" data-magnetic><span class="btn-label">{copy.cta.quote}</span></a>
+        </div>
+      </div>
     </div>
 
     <!-- Mouse animado (referencia: tamalsen.dev): el contorno se dibuja, un trazo lima da la vuelta,
@@ -126,6 +143,9 @@ const homeFaq = faqFor(lang, true);
     </div>
   </section>
 
+  <!-- 3D Y MOVIMIENTO: la W 3D, efectos visuales e interacción con el scroll (ronda 21) -->
+  <MotionLab lang={lang} />
+
   <!-- TRABAJO DESTACADO con parallax -->
   <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="work-title" data-parallax-root>
     <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
@@ -161,34 +181,121 @@ const homeFaq = faqFor(lang, true);
 </Base>
 
 <style>
+  /* ---------- HERO (ronda 21): foto recortada + texto ----------
+     A (por defecto) y B: escritorio con el texto a la izquierda y la foto a la derecha, apoyada abajo.
+     C y todas las pantallas de menos de 1100 px: la foto arriba al centro y el texto centrado debajo.
+     --vis-h es el alto de la foto: nunca más de 700 px, para que en retina no se estire (la foto mide 1408) */
   .hero {
+    --vis-h: min(84svh, 700px);
     position: relative;
     min-height: 100svh;
     display: grid;
     align-items: end;
     padding-top: var(--header-h);
     overflow: hidden;
+    isolation: isolate;
   }
-  .hero__scene {
+  .hero__visual {
     position: absolute;
-    inset: 0;
     z-index: 1;
+    right: clamp(0px, 3vw, 4rem);
+    bottom: 0;
+    height: var(--vis-h);
+    aspect-ratio: 1136 / 1408;
+    isolation: isolate;
+    pointer-events: none;
   }
-  .hero__fallback {
+  /* Halo lima suave detrás de la cabeza */
+  .hero__visual::before {
+    content: "";
     position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    transition: opacity 600ms var(--ease-out-expo);
+    inset: -6% -14% 18%;
+    z-index: -2;
+    background: radial-gradient(closest-side at 50% 42%, color-mix(in oklab, var(--accent) 20%, transparent), transparent);
   }
-  .hero__fallback.is-hidden {
-    opacity: 0;
+  .hero__pic {
+    display: block;
+    height: 100%;
   }
-  .hero__w {
-    width: min(46vw, 520px);
-    transform: translate(18%, -12%);
-    opacity: 0.9;
+  .hero__pic img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: bottom center;
+    /* Abajo se funde con el fondo; a la derecha, donde la foto corta el hombro, también */
+    -webkit-mask-image: linear-gradient(to top, transparent, #000 18%), linear-gradient(to left, transparent, #000 13%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to top, transparent, #000 18%), linear-gradient(to left, transparent, #000 13%);
+    mask-composite: intersect;
   }
+  .hero__deco {
+    position: absolute;
+    z-index: -1;
+  }
+  /* A · contorno de la W de la marca detrás de los hombros */
+  .hero__deco--w {
+    left: -6%;
+    top: 16%;
+    width: 112%;
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.8;
+  }
+  .hero__deco--w path {
+    vector-effect: non-scaling-stroke;
+  }
+  :global([data-theme="light"]) .hero__deco--w {
+    stroke: var(--link);
+    opacity: 0.6;
+  }
+  /* C · disco lima detrás de la cabeza */
+  .hero__deco--sun {
+    display: none;
+    left: 13%;
+    top: 4%;
+    width: 74%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+  /* B · el nombre gigante en contorno, detrás de la foto */
+  .hero__name {
+    display: none;
+    position: absolute;
+    inset-inline: 0;
+    top: calc(var(--header-h) + 2svh);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .hero__name svg {
+    display: block;
+    width: 100%;
+    overflow: visible;
+  }
+  /* La letra variable tiene contornos que se cruzan por dentro: se rellena con el color del fondo
+     encima del trazo (paint-order) para que solo se vea el borde de afuera */
+  .hero__name text {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 168px;
+    fill: var(--bg);
+    stroke: var(--wire);
+    stroke-width: 3.2;
+    paint-order: stroke fill;
+  }
+  :global(html[data-hero-v="b"]) .hero__name,
+  :global(html[data-hero-v="c"]) .hero__deco--sun {
+    display: block;
+  }
+  :global(html[data-hero-v="b"]) .hero__deco--w,
+  :global(html[data-hero-v="c"]) .hero__deco--w {
+    display: none;
+  }
+
   .hero__content {
     position: relative;
     z-index: 2;
@@ -198,7 +305,13 @@ const homeFaq = faqFor(lang, true);
     padding-bottom: clamp(5.5rem, 14vh, 8rem);
     pointer-events: none;
   }
-  .hero__content > * {
+  .hero__lead,
+  .hero__more {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: inherit;
+  }
+  .hero__content :is(p, h1, a) {
     pointer-events: auto;
   }
   /* «<Freelance Web Developer & Designer>» es largo: en el celular se reparte en líneas parejas y se omite
@@ -215,10 +328,10 @@ const homeFaq = faqFor(lang, true);
     font-size: var(--text-step-5);
     max-width: 14ch;
   }
-  /* Escritorio: el texto ocupa la columna izquierda y la W 3D la derecha */
+  /* Escritorio (A y B): el texto ocupa la columna izquierda y la foto la derecha */
   @media (min-width: 1100px) {
     .hero__title {
-      max-width: 56vw;
+      max-width: min(50vw, 15ch);
       font-size: clamp(2.6rem, 0.8rem + 3.9vw, 5.6rem);
     }
   }
@@ -229,6 +342,85 @@ const homeFaq = faqFor(lang, true);
   .hero__word {
     color: var(--text);
   }
+
+  /* Pantallas de menos de 1100 px (todas las versiones): foto arriba al centro, texto centrado debajo */
+  @media (max-width: 1099px) {
+    .hero {
+      --vis-h: min(48svh, 480px);
+      align-items: start;
+    }
+    .hero__visual {
+      top: var(--header-h);
+      bottom: auto;
+      right: auto;
+      left: 50%;
+      translate: -50% 0;
+    }
+    .hero__pic img {
+      -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
+      mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
+    }
+    .hero__content {
+      padding-top: calc(var(--vis-h) * 0.8);
+      padding-bottom: 6.5rem;
+      justify-items: center;
+      text-align: center;
+    }
+    .hero__title {
+      max-width: 16ch;
+    }
+    .hero__actions {
+      justify-content: center;
+    }
+    .hero__name {
+      top: calc(var(--header-h) + var(--vis-h) * 0.1);
+    }
+    .hero__deco--w {
+      left: -8%;
+      top: 6%;
+      width: 116%;
+    }
+  }
+  @media (max-width: 767px) {
+    .hero {
+      --vis-h: min(44svh, 400px);
+    }
+    .hero__title {
+      max-width: 13ch;
+    }
+  }
+  /* C en escritorio: la misma composición centrada, con la foto más baja para que quepa el texto */
+  @media (min-width: 1100px) {
+    :global(html[data-hero-v="c"]) .hero {
+      --vis-h: min(56svh, 560px);
+      align-items: start;
+    }
+    :global(html[data-hero-v="c"]) .hero__visual {
+      top: var(--header-h);
+      bottom: auto;
+      right: auto;
+      left: 50%;
+      translate: -50% 0;
+    }
+    :global(html[data-hero-v="c"]) .hero__pic img {
+      -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 34%), linear-gradient(to left, transparent, #000 12%);
+      mask-image: linear-gradient(to top, transparent 4%, #000 34%), linear-gradient(to left, transparent, #000 12%);
+    }
+    :global(html[data-hero-v="c"]) .hero__content {
+      padding-top: calc(var(--vis-h) * 0.78);
+      padding-bottom: 6rem;
+      justify-items: center;
+      text-align: center;
+    }
+    :global(html[data-hero-v="c"]) .hero__title {
+      max-width: 22ch;
+      font-size: clamp(2.6rem, 1rem + 2.6vw, 4.4rem);
+    }
+    :global(html[data-hero-v="c"]) .hero__actions {
+      justify-content: center;
+    }
+  }
+
   .scroll-cue {
     position: absolute;
     z-index: 2;
@@ -251,56 +443,16 @@ const homeFaq = faqFor(lang, true);
       border-left: 1px solid var(--line);
     }
   }
-  /* Menos de 1100 px: la W va arriba y el texto debajo, sin taparse */
-  @media (max-width: 1099px) {
-    .hero__content {
-      padding-top: 46vh;
-    }
-    .hero__fallback {
-      place-items: start center;
-      padding-top: calc(72px + 6vh);
-    }
-    .hero__w {
-      width: min(70vw, 34vh * 1.43);
-      transform: none;
-    }
-  }
-  /* Móvil: la W queda de fondo, grande y tenue, y el texto y los botones van centrados encima */
-  @media (max-width: 767px) {
-    .hero {
-      align-items: center;
-    }
-    .hero__content {
-      padding-top: calc(var(--header-h) + 1.5rem);
-      padding-bottom: 6.5rem;
-      justify-items: center;
-      text-align: center;
-    }
-    .hero__title {
-      max-width: 13ch;
-    }
-    .hero__actions {
-      justify-content: center;
-    }
-    /* El canvas lo crea React: sin :global el estilo con alcance de Astro no le llega */
-    .hero__scene :global(canvas),
-    .hero__fallback {
-      opacity: 0.3;
-    }
-    .hero__fallback {
-      place-items: center;
-      padding-top: 0;
-    }
-    .hero__w {
-      width: min(105vw, 50svh * 1.43);
-    }
-  }
 
-  /* Entrada del hero: solo un desplazamiento corto; el texto nunca está oculto (ni sin JavaScript ni si la animación no corre) */
+  /* Entrada del hero: solo un desplazamiento corto; el texto y la foto nunca están ocultos
+     (ni sin JavaScript ni si la animación no corre) */
   @media (prefers-reduced-motion: no-preference) {
     .hero__in {
       animation: heroIn 700ms var(--ease-out-expo) both;
       animation-delay: calc(var(--i) * 60ms);
+    }
+    .hero__pic {
+      animation: heroIn 1100ms var(--ease-out-expo) both;
     }
   }
   @keyframes heroIn {

@@ -43,6 +43,9 @@ const work = defineCollection({
     category: z.enum(["web", "events", "design", "learning"]),
     featured: z.boolean(),
     hasCase: z.boolean(),
+    // false: tiene caso, pero en Work va en la cuadrícula con el resto y no en la lista con los celulares 3D
+    // (Mastermind, pedido de Willder, 2026-11-16)
+    inShowcase: z.boolean().default(true),
     year: z.number(),
     withDopicos: z.boolean().default(false),
     // «fix»: arreglo de una web que ya existía (no se parte de un wireframe); cambia el rótulo del caso

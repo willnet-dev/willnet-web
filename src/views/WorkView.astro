@@ -19,8 +19,11 @@ const { lang } = Astro.props;
 const copy = t(lang);
 const p = copy.workPage;
 const all = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
-const cases = all.filter((x) => x.data.hasCase);
-const rest = all.filter((x) => !x.data.hasCase);
+// Lista con los celulares 3D: los casos marcados para la vitrina. El resto (y los casos con
+// inShowcase: false, como Mastermind) va en la cuadrícula de abajo
+const inShowcase = (x: (typeof all)[number]) => x.data.hasCase && x.data.inShowcase;
+const cases = all.filter(inShowcase);
+const rest = all.filter((x) => !inShowcase(x));
 const restCats = ["events", "design", "learning"] as const;
 
 const showcaseItems = cases.map((c) => ({

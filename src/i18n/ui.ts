@@ -158,6 +158,20 @@ const en = {
     faqEyebrow: "// Questions",
     faqTitle: "Before you ask",
     faqMore: "See all questions",
+    photoAlt: "Willder Gómez, web developer and designer behind WillNet",
+    lab: {
+      eyebrow: "// 3D & motion",
+      title: "Websites that move",
+      text: "3D, scroll-driven animation and visual effects that make a site memorable — built light, so it still loads fast on a phone.",
+      hint: "Live 3D · scroll to play with it",
+      items: [
+        { title: "3D on the web", text: "Interactive models and logos built with Three.js that react to your mouse and your scroll." },
+        { title: "Scroll interactions", text: "Sections that pin, reveal and transform as you scroll, like the W in this section." },
+        { title: "Micro-interactions", text: "Magnetic buttons, hover effects and page transitions that make every click feel good." },
+        { title: "Smooth and fast", text: "Smooth scrolling at 60 fps, and a calm version for people who prefer less motion." },
+      ],
+      tryMe: "Try me",
+    },
   },
   process: [
     { title: "Let's talk", text: "Tell me what you need by WhatsApp, phone or the form. This first consultation is free.", tag: "Free" },
@@ -430,6 +444,20 @@ const es: typeof en = {
     faqEyebrow: "// Preguntas",
     faqTitle: "Antes de que preguntes",
     faqMore: "Ver todas las preguntas",
+    photoAlt: "Willder Gómez, desarrollador y diseñador web detrás de WillNet",
+    lab: {
+      eyebrow: "// 3D y movimiento",
+      title: "Webs que se mueven",
+      text: "3D, animaciones con el scroll y efectos visuales que hacen que una web se recuerde, hechos ligeros para que carguen rápido en el celular.",
+      hint: "3D en vivo · baja para jugar con ella",
+      items: [
+        { title: "3D en la web", text: "Modelos y logos interactivos hechos con Three.js que reaccionan al mouse y al scroll." },
+        { title: "Interacción con el scroll", text: "Secciones que se fijan, aparecen y se transforman mientras bajas, como la W de esta sección." },
+        { title: "Microinteracciones", text: "Botones magnéticos, efectos al pasar el mouse y transiciones entre páginas que hacen agradable cada clic." },
+        { title: "Fluido y rápido", text: "Scroll suave a 60 fps y una versión tranquila para quien prefiere menos movimiento." },
+      ],
+      tryMe: "Pruébame",
+    },
   },
   process: [
     { title: "Hablamos", text: "Cuéntame qué necesitas por WhatsApp, llamada o el formulario. Esta primera consulta es gratis.", tag: "Gratis" },
