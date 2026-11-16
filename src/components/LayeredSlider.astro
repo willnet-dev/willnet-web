@@ -1,5 +1,8 @@
 ---
 // Slider por capas de los casos de estudio en Work (pedido de Willder, 2026-11-16; reemplaza los celulares 3D).
+// Ocupa toda la pantalla, de borde a borde, como la demo de Osmo (antes iba dentro de una tarjeta).
+// Todos los controles van arriba, debajo del espacio del header: abajo quedan libres las esquinas para
+// los botones flotantes de WhatsApp y de volver arriba.
 // Idea tomada de la demo «Layered Image Slider» de Osmo (osmo.supply), escrita de nuevo para esta web.
 // Tres capas que se mueven juntas:
 //   1. Fondo a todo lo ancho: la captura de escritorio desenfocada (en el teléfono, la del celular), con fundido.
@@ -33,7 +36,7 @@ const pad = (x: number) => String(x).padStart(2, "0");
 const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
 ---
 
-<section class="wrap ls" data-ls data-ls-autoplay="6" aria-roledescription="carousel" aria-label={s.label}>
+<section class="ls" data-ls data-ls-autoplay="6" aria-roledescription="carousel" aria-label={s.label}>
   <div class="ls__stage" data-ls-stage>
     <!-- Capa 1: fondos -->
     <div class="ls__bgs" aria-hidden="true">
@@ -365,11 +368,10 @@ const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    height: clamp(560px, 84svh, 860px);
-    border-radius: 28px;
+    --ls-edge: max(1rem, calc((100% - 1320px) / 2));
+    height: max(560px, 100svh);
     background: #0a0a0b;
     color: var(--ls-ink);
-    box-shadow: var(--card-shadow);
     touch-action: pan-y;
     user-select: none;
     -webkit-user-select: none;
@@ -408,13 +410,14 @@ const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
   .ls__top {
     position: absolute;
     z-index: 30;
-    top: 1.1rem;
-    left: 1.1rem;
-    right: 1.1rem;
+    top: calc(var(--header-h) + 0.75rem);
+    left: var(--ls-edge);
+    right: var(--ls-edge);
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     min-height: 44px;
+    padding-left: 56px;
   }
   .ls__toggle {
     position: absolute;
@@ -423,7 +426,7 @@ const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
   }
   .ls__count {
     display: grid;
-    justify-items: center;
+    justify-items: start;
     gap: 0.5rem;
     font-family: var(--font-mono);
     font-size: var(--text-step--1);
@@ -450,7 +453,7 @@ const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
   .ls__body {
     position: absolute;
     z-index: 30;
-    inset: 5rem 1rem 1.5rem;
+    inset: calc(var(--header-h) + 4.5rem) 1rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -534,8 +537,8 @@ const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
   .ls__nav {
     position: absolute;
     z-index: 30;
-    right: 1.1rem;
-    bottom: 1.1rem;
+    top: calc(var(--header-h) + 0.75rem);
+    right: var(--ls-edge);
     display: flex;
     gap: 0.5rem;
   }
@@ -577,14 +580,13 @@ const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
     display: block;
   }
 
-  /* Teléfono: fondo con la captura del celular, ventana horizontal con la de escritorio y flechas arriba */
+  /* Teléfono: fondo con la captura del celular y ventana horizontal con la de escritorio */
   @media (max-width: 767px) {
     .ls__stage {
-      height: clamp(540px, 82svh, 720px);
-      border-radius: 22px;
+      height: max(540px, 100svh);
     }
     .ls__body {
-      inset: 4.75rem 0.75rem 1.25rem;
+      inset: calc(var(--header-h) + 4.25rem) 0.75rem 1.5rem;
       gap: 1.5rem;
     }
     .ls__center {
@@ -606,18 +608,6 @@ const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
     }
     .ls__mask-item img {
       border-radius: 11px;
-    }
-    .ls__nav {
-      top: 1.1rem;
-      bottom: auto;
-      right: 1.1rem;
-    }
-    .ls__top {
-      justify-content: flex-start;
-      padding-left: 56px;
-    }
-    .ls__count {
-      justify-items: start;
     }
   }
 
