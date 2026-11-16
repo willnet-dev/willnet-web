@@ -3,8 +3,7 @@
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import MotionLab from "../components/MotionLab.astro";
-import VariantSwitcher from "../components/VariantSwitcher.astro";
-import Process from "../components/Process.astro";
+import ProcessTimeline from "../components/services/ProcessTimeline.astro";
 import PriceList from "../components/PriceList.astro";
 import FaqList from "../components/FaqList.astro";
 import ProjectCard from "../components/ProjectCard.astro";
@@ -26,43 +25,27 @@ const homeFaq = faqFor(lang, true);
 ---
 
 <Base lang={lang} title={h.title} description={h.description} schema={[faqPage(homeFaq)]}>
-  <!-- Comparador temporal de la ronda 21 (2026-11-16): ?hero=a|b|c y ?seccion3d=a|b|c.
-       Se quita cuando Willder elija. Sin parámetro: A y A -->
-  <script is:inline>
-    (() => {
-      const q = new URLSearchParams(location.search);
-      const pick = (k) => (/^[abc]$/.test(q.get(k) || "") ? q.get(k) : "a");
-      document.documentElement.dataset.heroV = pick("hero");
-      document.documentElement.dataset.labV = pick("seccion3d");
-    })();
-  </script>
-  {/* Botones para cambiar de versión: solo en el servidor local, nunca en la web publicada */}
-  {import.meta.env.DEV && <VariantSwitcher />}
-
-  <!-- HERO: la foto de Willder recortada (sin tarjeta) y el texto. La W 3D pasó a la sección «3D y movimiento».
-       Tres decoraciones para elegir: A · contorno de la W en lima, B · el nombre gigante detrás, C · disco lima y todo centrado -->
-  <section class="hero" data-hero>
-    <div class="wrap hero__name" aria-hidden="true">
-      <svg viewBox="0 0 1000 170"><text x="500" y="150" text-anchor="middle" textLength="990" lengthAdjust="spacingAndGlyphs">WILLDER</text></svg>
-    </div>
-
+  <!-- HERO: la foto de Willder recortada (sin tarjeta) con el contorno lima de la W detrás (versión A, ronda 21).
+       Parallax por capas al bajar (site.ts → data-parallax-layers; referencia: osmo.supply, «Parallax Image Layers»):
+       el halo es el fondo y se queda más atrás, luego la W, el texto y por último la foto, que casi sigue al scroll -->
+  <section class="hero" data-hero data-parallax-layers>
     <div class="hero__visual">
-      <svg class="hero__deco hero__deco--w" viewBox="-12 -12 440 314" aria-hidden="true">
+      <span class="hero__halo" data-parallax-layer="1" aria-hidden="true"></span>
+      <svg class="hero__deco" data-parallax-layer="2" viewBox="-12 -12 440 314" aria-hidden="true">
         <path d="M0 0 96 37 156 203 107 290Z"></path>
         <path d="M416 0 320 37 260 203 309 290Z"></path>
         <path d="M160 64 208 83 256 64 208 174Z"></path>
       </svg>
-      <span class="hero__deco hero__deco--sun" aria-hidden="true"></span>
       <!-- Recorte de la foto del estudio (1136 × 1408): se muestra a 700 px de alto como máximo para que
            en pantallas retina se vea a su tamaño real, sin estirarse -->
-      <picture class="hero__pic">
+      <picture class="hero__pic" data-parallax-layer="4">
         <source type="image/avif" srcset="/img/hero/willder-recorte-720.avif 720w, /img/hero/willder-recorte-1136.avif 1136w" sizes="(min-width: 1100px) 565px, 420px" />
         <source type="image/webp" srcset="/img/hero/willder-recorte-720.webp 720w, /img/hero/willder-recorte-1136.webp 1136w" sizes="(min-width: 1100px) 565px, 420px" />
         <img src="/img/hero/willder-recorte-1136.webp" width="1136" height="1408" alt={h.photoAlt} fetchpriority="high" decoding="async" />
       </picture>
     </div>
 
-    <div class="wrap hero__content">
+    <div class="wrap hero__content" data-parallax-layer="3">
       <div class="hero__lead">
         <p class="eyebrow hero__role hero__in" style="--i:0"><b>&lt;{h.role}&gt;</b><span class="hero__brand"> · WillNet</span></p>
         <h1 class="display hero__title hero__in" style="--i:1">{h.h1}</h1>
@@ -123,9 +106,6 @@ const homeFaq = faqFor(lang, true);
     <PriceList lang={lang} />
   </section>
 
-  <!-- PROCESO (opción B) -->
-  <Process lang={lang} eyebrow={h.processEyebrow} title={h.processTitle} />
-
   <!-- RESULTADOS MEDIDOS (cifras reales de los casos) -->
   <ResultsStrip lang={lang} />
 
@@ -172,6 +152,9 @@ const homeFaq = faqFor(lang, true);
     </div>
   </section>
 
+  <!-- PROCESO: la línea de tiempo que estaba en Servicios (ronda 21; el proceso B pasó a Servicios) -->
+  <ProcessTimeline lang={lang} eyebrow={h.processEyebrow} title={h.processTitle} />
+
   <!-- PREGUNTAS -->
   <section class="wrap grid gap-10 py-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1fr_1.6fr]" aria-labelledby="faq-title">
     <div>
@@ -184,10 +167,10 @@ const homeFaq = faqFor(lang, true);
 </Base>
 
 <style>
-  /* ---------- HERO (ronda 21): foto recortada + texto ----------
-     A (por defecto) y B: escritorio con el texto a la izquierda y la foto a la derecha, apoyada abajo.
-     C y todas las pantallas de menos de 1100 px: la foto arriba al centro y el texto centrado debajo.
-     --vis-h es el alto de la foto: nunca más de 700 px, para que en retina no se estire (la foto mide 1408) */
+  /* ---------- HERO (ronda 21): foto recortada + contorno de la W ----------
+     Escritorio: texto a la izquierda y la foto a la derecha, apoyada abajo. Menos de 1100 px: la foto
+     arriba al centro y el texto centrado debajo. --vis-h es el alto de la foto: nunca más de 700 px,
+     para que en retina no se estire (la foto mide 1408) */
   .hero {
     --vis-h: min(84svh, 700px);
     position: relative;
@@ -208,14 +191,34 @@ const homeFaq = faqFor(lang, true);
     isolation: isolate;
     pointer-events: none;
   }
-  /* Halo lima suave detrás de la cabeza */
-  .hero__visual::before {
-    content: "";
+  /* Capa 1 (fondo): halo lima suave detrás de la cabeza */
+  .hero__halo {
     position: absolute;
     inset: -6% -14% 18%;
     z-index: -2;
     background: radial-gradient(closest-side at 50% 42%, color-mix(in oklab, var(--accent) 20%, transparent), transparent);
   }
+  /* Capa 2: contorno de la W de la marca detrás de los hombros */
+  .hero__deco {
+    position: absolute;
+    z-index: -1;
+    left: -6%;
+    top: 16%;
+    width: 112%;
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+    opacity: 0.8;
+  }
+  .hero__deco path {
+    vector-effect: non-scaling-stroke;
+  }
+  :global([data-theme="light"]) .hero__deco {
+    stroke: var(--link);
+    opacity: 0.6;
+  }
+  /* Capa 4 (frente): la foto */
   .hero__pic {
     display: block;
     height: 100%;
@@ -232,73 +235,8 @@ const homeFaq = faqFor(lang, true);
     mask-image: linear-gradient(to top, transparent, #000 18%), linear-gradient(to left, transparent, #000 13%);
     mask-composite: intersect;
   }
-  .hero__deco {
-    position: absolute;
-    z-index: -1;
-  }
-  /* A · contorno de la W de la marca detrás de los hombros */
-  .hero__deco--w {
-    left: -6%;
-    top: 16%;
-    width: 112%;
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 1.4;
-    stroke-linejoin: round;
-    vector-effect: non-scaling-stroke;
-    opacity: 0.8;
-  }
-  .hero__deco--w path {
-    vector-effect: non-scaling-stroke;
-  }
-  :global([data-theme="light"]) .hero__deco--w {
-    stroke: var(--link);
-    opacity: 0.6;
-  }
-  /* C · disco lima detrás de la cabeza */
-  .hero__deco--sun {
-    display: none;
-    left: 13%;
-    top: 4%;
-    width: 74%;
-    aspect-ratio: 1;
-    border-radius: 50%;
-    background: var(--accent);
-  }
-  /* B · el nombre gigante en contorno, detrás de la foto */
-  .hero__name {
-    display: none;
-    position: absolute;
-    inset-inline: 0;
-    top: calc(var(--header-h) + 2svh);
-    z-index: 0;
-    pointer-events: none;
-  }
-  .hero__name svg {
-    display: block;
-    width: 100%;
-    overflow: visible;
-  }
-  /* La letra variable tiene contornos que se cruzan por dentro: se rellena con el color del fondo
-     encima del trazo (paint-order) para que solo se vea el borde de afuera */
-  .hero__name text {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 168px;
-    fill: var(--bg);
-    stroke: var(--wire);
-    stroke-width: 3.2;
-    paint-order: stroke fill;
-  }
-  :global(html[data-hero-v="b"]) .hero__name,
-  :global(html[data-hero-v="c"]) .hero__deco--sun {
-    display: block;
-  }
-  :global(html[data-hero-v="b"]) .hero__deco--w,
-  :global(html[data-hero-v="c"]) .hero__deco--w {
-    display: none;
-  }
 
+  /* Capa 3: el texto */
   .hero__content {
     position: relative;
     z-index: 2;
@@ -331,7 +269,6 @@ const homeFaq = faqFor(lang, true);
     font-size: var(--text-step-5);
     max-width: 14ch;
   }
-  /* Escritorio (A y B): el texto ocupa la columna izquierda y la foto la derecha */
   @media (min-width: 1100px) {
     .hero__title {
       max-width: min(50vw, 15ch);
@@ -346,7 +283,7 @@ const homeFaq = faqFor(lang, true);
     color: var(--text);
   }
 
-  /* Pantallas de menos de 1100 px (todas las versiones): foto arriba al centro, texto centrado debajo */
+  /* Menos de 1100 px: foto arriba al centro, texto centrado debajo */
   @media (max-width: 1099px) {
     .hero {
       --vis-h: min(48svh, 480px);
@@ -363,6 +300,11 @@ const homeFaq = faqFor(lang, true);
       -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
       mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
     }
+    .hero__deco {
+      left: -8%;
+      top: 6%;
+      width: 116%;
+    }
     .hero__content {
       padding-top: calc(var(--vis-h) * 0.8);
       padding-bottom: 6.5rem;
@@ -375,14 +317,6 @@ const homeFaq = faqFor(lang, true);
     .hero__actions {
       justify-content: center;
     }
-    .hero__name {
-      top: calc(var(--header-h) + var(--vis-h) * 0.1);
-    }
-    .hero__deco--w {
-      left: -8%;
-      top: 6%;
-      width: 116%;
-    }
   }
   @media (max-width: 767px) {
     .hero {
@@ -390,37 +324,6 @@ const homeFaq = faqFor(lang, true);
     }
     .hero__title {
       max-width: 13ch;
-    }
-  }
-  /* C en escritorio: la misma composición centrada, con la foto más baja para que quepa el texto */
-  @media (min-width: 1100px) {
-    :global(html[data-hero-v="c"]) .hero {
-      --vis-h: min(56svh, 560px);
-      align-items: start;
-    }
-    :global(html[data-hero-v="c"]) .hero__visual {
-      top: var(--header-h);
-      bottom: auto;
-      right: auto;
-      left: 50%;
-      translate: -50% 0;
-    }
-    :global(html[data-hero-v="c"]) .hero__pic img {
-      -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 34%), linear-gradient(to left, transparent, #000 12%);
-      mask-image: linear-gradient(to top, transparent 4%, #000 34%), linear-gradient(to left, transparent, #000 12%);
-    }
-    :global(html[data-hero-v="c"]) .hero__content {
-      padding-top: calc(var(--vis-h) * 0.78);
-      padding-bottom: 6rem;
-      justify-items: center;
-      text-align: center;
-    }
-    :global(html[data-hero-v="c"]) .hero__title {
-      max-width: 22ch;
-      font-size: clamp(2.6rem, 1rem + 2.6vw, 4.4rem);
-    }
-    :global(html[data-hero-v="c"]) .hero__actions {
-      justify-content: center;
     }
   }
 
@@ -454,7 +357,8 @@ const homeFaq = faqFor(lang, true);
       animation: heroIn 700ms var(--ease-out-expo) both;
       animation-delay: calc(var(--i) * 60ms);
     }
-    .hero__pic {
+    /* La entrada va en la imagen y el parallax en <picture>: así no se pisan los transform */
+    .hero__pic img {
       animation: heroIn 1100ms var(--ease-out-expo) both;
     }
   }

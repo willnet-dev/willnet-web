@@ -7,7 +7,7 @@ import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import ServiceBento from "../components/services/ServiceBento.astro";
 import ServiceStack from "../components/services/ServiceStack.astro";
-import ProcessTimeline from "../components/services/ProcessTimeline.astro";
+import Process from "../components/Process.astro";
 import { r, servicePath, type Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
 import { services } from "../data/services";
@@ -43,7 +43,8 @@ const schema = [
     <div class="svc-desktop"><ServiceBento lang={lang} /></div>
     <div class="svc-mobile"><ServiceStack lang={lang} /></div>
   </section>
-  <ProcessTimeline lang={lang} eyebrow={copy.home.processEyebrow} title={copy.home.processTitle} />
+  <!-- Proceso B (el wireframe que se construye con el scroll), que estaba en el inicio (ronda 21) -->
+  <Process lang={lang} eyebrow={copy.home.processEyebrow} title={copy.home.processTitle} />
   <section class="wrap pb-[clamp(4rem,10vh,8rem)]">
     <div class="grid gap-6 rounded-3xl border border-line bg-surface shadow-card p-[clamp(1.5rem,4vw,3.5rem)] md:grid-cols-[1.4fr_auto] md:items-center" data-reveal>
       <div>

@@ -1,10 +1,8 @@
 ---
 // Sección «3D y movimiento» del inicio (ronda 21, 2026-11-16): muestra lo que WillNet hace con 3D,
-// efectos visuales e interacción con el scroll. La W 3D que estaba en el hero vive aquí.
-// Tres maneras de presentarla para que Willder elija (?seccion3d=a|b|c, ver HomeView.astro):
-//   A · escenario fijo: la W se queda quieta a un lado mientras pasan los cuatro puntos y gira con el scroll
-//   B · escenario central: la W grande al centro y los cuatro puntos debajo
-//   C · bento: la W en la tarjeta grande y cuatro tarjetas con una demo pequeña cada una
+// efectos visuales e interacción con el scroll. La W 3D que estaba en el hero vive aquí, grande al
+// centro, y los cuatro puntos van debajo (versión B, elegida por Willder entre tres).
+// La W se arma, se separa, da una vuelta y se vuelve a armar mientras pasa por la pantalla (WScene.tsx).
 // Sin JavaScript o con movimiento reducido queda la W estática (SVG).
 import WStage from "./three/WStage.tsx";
 import { t } from "../i18n/ui";
@@ -18,7 +16,7 @@ const copy = t(lang);
 const lab = copy.home.lab;
 ---
 
-<section class="lab" data-lab aria-labelledby="lab-title">
+<section class="lab" aria-labelledby="lab-title">
   <div class="wrap lab__head">
     <p class="eyebrow mb-4" data-reveal>{lab.eyebrow}</p>
     <h2 id="lab-title" class="display text-[length:var(--text-step-4)]" data-reveal>{lab.title}</h2>
@@ -26,7 +24,7 @@ const lab = copy.home.lab;
   </div>
 
   <div class="wrap lab__body">
-    <div class="lab__stage">
+    <div class="lab__stage" data-w-stage>
       <div class="lab__fallback" data-w-fallback aria-hidden="true">
         <svg viewBox="0 0 416 290" class="lab__w">
           <defs>
@@ -48,35 +46,10 @@ const lab = copy.home.lab;
     <ol class="lab__list">
       {
         lab.items.map((item, i) => (
-          <li class="lab__item" data-lab-item>
+          <li class="lab__item" data-reveal style={`--delay:${i * 80}ms`}>
             <span class="lab__num">{String(i + 1).padStart(2, "0")}</span>
             <h3 class="lab__title">{item.title}</h3>
             <p class="lab__text text-muted">{item.text}</p>
-            {/* Demos pequeñas (solo en la versión C) */}
-            <div class={`lab__demo lab__demo--${i}`} aria-hidden="true">
-              {i === 0 && (
-                <div class="cube">
-                  {[0, 1, 2, 3, 4, 5].map(() => (
-                    <span />
-                  ))}
-                </div>
-              )}
-              {i === 1 && (
-                <div class="bar">
-                  <span />
-                </div>
-              )}
-              {i === 2 && (
-                <span class="btn btn-primary" data-magnetic data-magnetic-strength="0.45">
-                  <span class="btn-label">{lab.tryMe}</span>
-                </span>
-              )}
-              {i === 3 && (
-                <svg viewBox="0 0 200 40" class="wave">
-                  <path d="M0 20 Q 25 0 50 20 T 100 20 T 150 20 T 200 20" pathLength="100" />
-                </svg>
-              )}
-            </div>
           </li>
         ))
       }
@@ -84,52 +57,15 @@ const lab = copy.home.lab;
   </div>
 </section>
 
-<script>
-  // Avance del scroll de la sección (--lab-p, para la barra de la versión C) y el punto activo
-  // (versión A: se resalta el punto que está en el centro de la pantalla)
-  function initLab() {
-    const lab = document.querySelector<HTMLElement>("[data-lab]");
-    if (!lab) return;
-    const pinned = (document.documentElement.dataset.labV ?? "a") === "a";
-    if (pinned) lab.dataset.wProgress = "pin";
-    else delete lab.dataset.wProgress;
-
-    let raf = 0;
-    const update = () => {
-      raf = 0;
-      const r = lab.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight + r.height)));
-      lab.style.setProperty("--lab-p", p.toFixed(3));
-    };
-    const onScroll = () => {
-      if (!raf) raf = requestAnimationFrame(update);
-    };
-    addEventListener("scroll", onScroll, { passive: true });
-    update();
-
-    const io = new IntersectionObserver((entries) => entries.forEach((e) => e.target.classList.toggle("is-active", e.isIntersecting)), {
-      rootMargin: "-50% 0px -30% 0px",
-    });
-    lab.querySelectorAll("[data-lab-item]").forEach((el) => io.observe(el));
-
-    document.addEventListener(
-      "astro:before-swap",
-      () => {
-        removeEventListener("scroll", onScroll);
-        io.disconnect();
-      },
-      { once: true },
-    );
-  }
-  document.addEventListener("astro:page-load", initLab);
-</script>
-
 <style>
   .lab {
     padding-block: clamp(4rem, 10vh, 8rem);
   }
   .lab__head {
     margin-bottom: clamp(2.5rem, 6vh, 4rem);
+    display: grid;
+    justify-items: center;
+    text-align: center;
   }
   .lab__head h2 {
     max-width: 16ch;
@@ -139,10 +75,17 @@ const lab = copy.home.lab;
     max-width: 52ch;
     font-size: var(--text-step-1);
   }
+  .lab__body {
+    display: grid;
+    gap: 2.5rem;
+  }
   .lab__stage {
     position: relative;
     overflow: hidden;
     isolation: isolate;
+    height: min(62svh, 560px);
+    border-radius: 28px;
+    background: radial-gradient(120% 90% at 50% 40%, var(--surface), var(--bg) 70%);
   }
   /* Halo lima detrás de la W */
   .lab__stage::before {
@@ -188,6 +131,13 @@ const lab = copy.home.lab;
     list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+    gap: 0 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .lab__item {
+    padding: 1.75rem 0;
+    border-bottom: 1px solid var(--line);
   }
   .lab__num {
     display: block;
@@ -205,256 +155,25 @@ const lab = copy.home.lab;
     margin-top: 0.6rem;
     max-width: 40ch;
   }
-  .lab__demo {
-    display: none;
-  }
-
-  /* ---------- A · escenario fijo (por defecto) ---------- */
-  .lab__body {
-    display: grid;
-  }
-  /* En el celular el escenario se fija arriba del todo (la cabecera se esconde al bajar) */
-  .lab__stage {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    height: 46svh;
-    background: var(--bg);
-    -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent);
-    mask-image: linear-gradient(to bottom, #000 82%, transparent);
-  }
-  .lab__item {
-    padding: 2.25rem 0;
-    border-top: 1px solid var(--line);
-    transition: opacity 400ms var(--ease-out-expo);
-  }
-  :global(html.js:not([data-lab-v="b"]):not([data-lab-v="c"])) .lab__item:not(.is-active) {
-    opacity: 0.4;
-  }
-  .lab__item:last-child {
-    margin-bottom: 20svh;
-  }
-  @media (max-width: 899px) {
-    :global(html:not([data-lab-v="b"]):not([data-lab-v="c"])) .lab__hint {
-      display: none;
-    }
-  }
-  @media (min-width: 900px) {
-    .lab__body {
-      grid-template-columns: 1fr 1.15fr;
-      gap: clamp(2rem, 5vw, 5rem);
-      align-items: start;
-    }
-    .lab__list {
-      order: -1;
-      padding-block: 18svh;
-    }
-    .lab__item {
-      min-height: 52svh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .lab__item:last-child {
-      margin-bottom: 0;
-    }
-    .lab__stage {
-      top: calc(var(--header-h) + 4svh);
-      height: calc(100svh - var(--header-h) - 8svh);
-      -webkit-mask-image: none;
-      mask-image: none;
-    }
-    .lab__title {
-      font-size: var(--text-step-3);
-    }
-  }
-
-  /* ---------- B · escenario central ---------- */
-  :global(html[data-lab-v="b"]) .lab__head {
-    text-align: center;
-    display: grid;
-    justify-items: center;
-  }
-  :global(html[data-lab-v="b"]) .lab__body {
-    gap: 2.5rem;
-    grid-template-columns: 1fr;
-  }
-  :global(html[data-lab-v="b"]) .lab__stage {
-    position: relative;
-    top: auto;
-    height: min(62svh, 560px);
-    border-radius: 28px;
-    background: radial-gradient(120% 90% at 50% 40%, var(--surface), var(--bg) 70%);
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  :global(html[data-lab-v="b"]) .lab__list {
-    display: grid;
-    gap: 0 2rem;
-    order: 0;
-    padding-block: 0;
-    border-top: 1px solid var(--line);
-  }
-  :global(html[data-lab-v="b"]) .lab__title,
-  :global(html[data-lab-v="c"]) .lab__title {
-    font-size: var(--text-step-2);
-  }
-  :global(html[data-lab-v="b"]) .lab__item {
-    opacity: 1;
-    min-height: 0;
-    margin: 0;
-    padding: 1.75rem 0;
-    border-top: 0;
-    border-bottom: 1px solid var(--line);
-    display: block;
-  }
   @media (min-width: 640px) {
-    :global(html[data-lab-v="b"]) .lab__list {
+    .lab__list {
       grid-template-columns: repeat(2, 1fr);
     }
   }
   @media (min-width: 1100px) {
-    :global(html[data-lab-v="b"]) .lab__stage {
+    .lab__stage {
       height: min(72svh, 680px);
     }
-    :global(html[data-lab-v="b"]) .lab__list {
+    .lab__list {
       grid-template-columns: repeat(4, 1fr);
-      border-bottom: 0;
     }
-    :global(html[data-lab-v="b"]) .lab__item {
+    .lab__item {
       border-bottom: 0;
       padding: 2rem 2rem 0 0;
     }
-    :global(html[data-lab-v="b"]) .lab__item + .lab__item {
+    .lab__item + .lab__item {
       padding-left: 2rem;
       border-left: 1px solid var(--line);
-    }
-  }
-
-  /* ---------- C · bento con demos ---------- */
-  :global(html[data-lab-v="c"]) .lab__body {
-    gap: 0.9rem;
-    grid-template-columns: 1fr;
-    align-items: stretch;
-  }
-  :global(html[data-lab-v="c"]) .lab__list {
-    display: contents;
-  }
-  :global(html[data-lab-v="c"]) .lab__stage,
-  :global(html[data-lab-v="c"]) .lab__item {
-    border-radius: 24px;
-    background: var(--surface);
-    box-shadow: var(--card-shadow);
-  }
-  :global(html[data-lab-v="c"]) .lab__stage {
-    position: relative;
-    top: auto;
-    height: min(56svh, 460px);
-    -webkit-mask-image: none;
-    mask-image: none;
-  }
-  :global(html[data-lab-v="c"]) .lab__item {
-    opacity: 1;
-    min-height: 0;
-    margin: 0;
-    padding: 1.5rem;
-    border: 0;
-    display: flex;
-    flex-direction: column;
-  }
-  :global(html[data-lab-v="c"]) .lab__demo {
-    display: grid;
-    place-items: center;
-    height: 110px;
-    margin-top: auto;
-    padding-top: 1.25rem;
-  }
-  @media (min-width: 640px) {
-    :global(html[data-lab-v="c"]) .lab__body {
-      grid-template-columns: repeat(2, 1fr);
-    }
-    :global(html[data-lab-v="c"]) .lab__stage {
-      grid-column: 1 / -1;
-    }
-  }
-  @media (min-width: 1100px) {
-    :global(html[data-lab-v="c"]) .lab__body {
-      grid-template-columns: 1.1fr 1.1fr 1fr 1fr;
-      grid-template-rows: auto auto;
-    }
-    :global(html[data-lab-v="c"]) .lab__stage {
-      grid-column: 1 / 3;
-      grid-row: 1 / 3;
-      height: auto;
-      min-height: 620px;
-    }
-  }
-
-  /* Demos */
-  .lab__demo--0 {
-    perspective: 420px;
-  }
-  .cube {
-    --s: 56px;
-    position: relative;
-    width: var(--s);
-    height: var(--s);
-    transform-style: preserve-3d;
-    animation: cubeSpin 9s linear infinite;
-  }
-  .cube span {
-    position: absolute;
-    inset: 0;
-    border: 1.5px solid var(--text);
-    background: color-mix(in oklab, var(--accent) 12%, transparent);
-  }
-  .cube span:nth-child(1) { transform: translateZ(calc(var(--s) / 2)); }
-  .cube span:nth-child(2) { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
-  .cube span:nth-child(3) { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
-  .cube span:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
-  .cube span:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); border-color: var(--accent); }
-  .cube span:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
-  @keyframes cubeSpin {
-    from { transform: rotateX(-24deg) rotateY(0deg); }
-    to { transform: rotateX(-24deg) rotateY(360deg); }
-  }
-  .bar {
-    width: 100%;
-    height: 10px;
-    border-radius: 99px;
-    background: var(--bg);
-    overflow: hidden;
-  }
-  .bar span {
-    display: block;
-    height: 100%;
-    background: var(--accent);
-    transform-origin: left;
-    transform: scaleX(calc(0.08 + var(--lab-p, 0) * 0.92));
-  }
-  .wave {
-    width: 100%;
-    height: 48px;
-    overflow: visible;
-  }
-  .wave path {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: 3;
-    stroke-linecap: round;
-    stroke-dasharray: 40 60;
-    animation: waveRun 2.4s linear infinite;
-  }
-  :global([data-theme="light"]) .wave path {
-    stroke: var(--link);
-  }
-  @keyframes waveRun {
-    to { stroke-dashoffset: -100; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .cube,
-    .wave path {
-      animation: none;
     }
   }
 </style>

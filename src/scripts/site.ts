@@ -429,6 +429,17 @@ function initScroll() {
       );
     });
 
+    // Parallax por capas del hero (referencia: osmo.supply, «Parallax Image Layers»): mientras el hero sale
+    // de la pantalla cada capa baja un poco respecto al scroll. La 1 (fondo) es la que más se queda atrás
+    // y la 4 (la foto) casi acompaña al scroll: eso da la sensación de profundidad.
+    const LAYER_SHIFT: Record<string, number> = { "1": 60, "2": 40, "3": 22, "4": 8 };
+    gsap.utils.toArray<HTMLElement>("[data-parallax-layers]").forEach((root) => {
+      const tl = gsap.timeline({ scrollTrigger: { trigger: root, start: "top top", end: "bottom top", scrub: true } });
+      root.querySelectorAll<HTMLElement>("[data-parallax-layer]").forEach((layer) => {
+        tl.to(layer, { yPercent: LAYER_SHIFT[layer.dataset.parallaxLayer ?? ""] ?? 0, ease: "none" }, 0);
+      });
+    });
+
     // Proceso (B): el wireframe se construye paso a paso mientras se leen los pasos (también en móvil)
     const process = document.querySelector<HTMLElement>("[data-process]");
     if (process) {

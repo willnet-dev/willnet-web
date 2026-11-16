@@ -170,7 +170,6 @@ const en = {
         { title: "Micro-interactions", text: "Magnetic buttons, hover effects and page transitions that make every click feel good." },
         { title: "Smooth and fast", text: "Smooth scrolling at 60 fps, and a calm version for people who prefer less motion." },
       ],
-      tryMe: "Try me",
     },
   },
   process: [
@@ -456,7 +455,6 @@ const es: typeof en = {
         { title: "Microinteracciones", text: "Botones magnéticos, efectos al pasar el mouse y transiciones entre páginas que hacen agradable cada clic." },
         { title: "Fluido y rápido", text: "Scroll suave a 60 fps y una versión tranquila para quien prefiere menos movimiento." },
       ],
-      tryMe: "Pruébame",
     },
   },
   process: [

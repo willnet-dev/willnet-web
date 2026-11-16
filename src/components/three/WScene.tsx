@@ -33,17 +33,22 @@ function pieceGeometry(points: [number, number][]) {
   return geo;
 }
 
-// Avance del scroll (0 → 1) en la sección. Con data-w-progress="pin" el escenario se queda fijo
-// mientras la sección pasa: el avance va de cuando se fija a cuando se suelta. Si no, va de cuando
-// la sección asoma por abajo a cuando sale por arriba.
-function sectionProgress(el: HTMLElement | null) {
+// Avance de la animación (0 → 1) según dónde está el centro del escenario en la pantalla.
+// Empieza cuando el centro sube al 80 % de la altura (la W ya se ve entera, todavía armada) y termina
+// cuando llega al 25 % (la W sigue a la vista, otra vez armada): así se ve la secuencia completa
+// —armada, se separa y da una vuelta, se vuelve a armar— y nunca entra en pantalla ya desarmada.
+const START = 0.8;
+const END = 0.25;
+function stageProgress(el: HTMLElement | null) {
   if (!el) return 0;
   const r = el.getBoundingClientRect();
-  const p = el.dataset.wProgress === "pin" ? -r.top / Math.max(1, r.height - innerHeight) : (innerHeight - r.top) / (innerHeight + r.height);
-  return THREE.MathUtils.clamp(p, 0, 1);
+  const center = (r.top + r.height / 2) / innerHeight;
+  return THREE.MathUtils.clamp((START - center) / (START - END), 0, 1);
 }
+// Suaviza el principio y el final del recorrido
+const ease = (t: number) => t * t * (3 - 2 * t);
 
-function W({ sectionEl }: { sectionEl: HTMLElement | null }) {
+function W({ stageEl }: { stageEl: HTMLElement | null }) {
   const group = useRef<THREE.Group>(null);
   const refs = [useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null), useRef<THREE.Mesh>(null)];
   const geos = useMemo(() => PIECES.map(pieceGeometry), []);
@@ -68,12 +73,13 @@ function W({ sectionEl }: { sectionEl: HTMLElement | null }) {
   useFrame((state, delta) => {
     const g = group.current;
     if (!g) return;
-    const p = sectionProgress(sectionEl);
+    const p = ease(stageProgress(stageEl));
     const sep = Math.sin(p * Math.PI); // 0 → 1 → 0: se separan y se vuelven a unir
     const t = state.clock.elapsedTime;
     const k = 1 - Math.pow(0.002, delta);
 
-    g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, pointer.current.x * 0.45 + sep * Math.PI * 1.1, k);
+    // Una vuelta completa en el recorrido: termina de frente, igual que empezó
+    g.rotation.y = THREE.MathUtils.lerp(g.rotation.y, pointer.current.x * 0.45 + p * Math.PI * 2, k);
     g.rotation.x = THREE.MathUtils.lerp(g.rotation.x, pointer.current.y * 0.25 + Math.sin(t * 0.6) * 0.04, k);
     g.position.y = Math.sin(t * 0.8) * 0.06;
 
@@ -111,7 +117,7 @@ function W({ sectionEl }: { sectionEl: HTMLElement | null }) {
 }
 
 export default function WScene({ running, mobile }: { running: boolean; mobile: boolean }) {
-  const sectionEl = document.querySelector<HTMLElement>("[data-lab]");
+  const stageEl = document.querySelector<HTMLElement>("[data-w-stage]");
   return (
     <Canvas
       className="!absolute inset-0"
@@ -123,7 +129,7 @@ export default function WScene({ running, mobile }: { running: boolean; mobile: 
       aria-hidden="true"
     >
       <ambientLight intensity={0.2} />
-      <W sectionEl={sectionEl} />
+      <W stageEl={stageEl} />
       <StudioEnv size={mobile ? 128 : 256} />
     </Canvas>
   );

@@ -21,7 +21,8 @@ const p = copy.workPage;
 const all = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
 // Lista con los celulares 3D: los casos marcados para la vitrina. El resto (y los casos con
 // inShowcase: false, como Mastermind) va en la cuadrícula de abajo
-const inShowcase = (x: (typeof all)[number]) => x.data.hasCase && x.data.inShowcase;
+// (!== false: si el campo falta, el caso va en la vitrina, como antes)
+const inShowcase = (x: (typeof all)[number]) => x.data.hasCase && x.data.inShowcase !== false;
 const cases = all.filter(inShowcase);
 const rest = all.filter((x) => !inShowcase(x));
 const restCats = ["events", "design", "learning"] as const;
