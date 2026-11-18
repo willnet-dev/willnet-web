@@ -53,27 +53,31 @@ html[data-skin="resend"][data-theme="dark"] {
 }
 
 /* ---------- Tema claro (decisiones de Willder, 2026-11-18) ----------
-   Espejo del oscuro: fondo casi blanco #FAFAFA, tarjetas blancas con borde gris muy fino, texto casi negro
-   y botón principal negro. Los mismos efectos que en oscuro (luces por sección, luz en tarjetas, bordes
+   Fondo Gris Porcelana #E4E3DE (elegido por Willder en vez del casi blanco), tarjetas de un porcelana más
+   claro con borde fino, texto casi negro, títulos de negro a Toupe Seta #8B7E71 y botón principal negro. Los mismos efectos que en oscuro (luces por sección, luz en tarjetas, bordes
    arcoíris e íconos animados), con los colores de sección más intensos para que se noten sobre blanco. */
 html[data-skin^="resend"][data-theme="light"] {
-  --bg: #fafafa;
-  --page-bg: #fafafa;
-  --surface: #ffffff;
-  --surface-2: #f4f4f5;
-  --line: rgb(9 9 11 / 0.1);
+  /* Gris Porcelana (Willder, 2026-11-18) */
+  --bg: #e4e3de;
+  --page-bg: #e4e3de;
+  /* Tarjetas: el mismo porcelana, más claro, para que se separen del fondo sin verse blancas */
+  --surface: #f2f1ed;
+  --surface-2: #ebeae5;
+  --line: rgb(30 26 22 / 0.13);
   --text: #111113;
-  /* 6,4:1 sobre #FAFAFA */
-  --muted: #55585e;
-  --wire: #c9ccd1;
+  /* Gris cálido: 5,6:1 sobre el porcelana */
+  --muted: #55504a;
+  --wire: #c4c1b9;
   --card-shadow: 0 0 0 1px rgb(9 9 11 / 0.02), 0 1px 2px rgb(9 9 11 / 0.04), 0 14px 32px -18px rgb(9 9 11 / 0.22);
-  --rs-glass: linear-gradient(180deg, #ffffff, #f6f6f7);
-  --rs-title: linear-gradient(to right bottom, #111113 30%, rgb(17 17 19 / 0.6));
+  --rs-glass: linear-gradient(180deg, #f7f6f3, #eeede8);
+  /* Títulos y textos grandes: de negro a Toupe Seta #8B7E71 (Willder, 2026-11-18; 3:1 sobre el porcelana,
+     suficiente para texto grande) */
+  --rs-title: linear-gradient(to right bottom, #111113 30%, #8b7e71);
   --rs-hero-a: rgb(61 158 255 / 0.1);
   --rs-hero-b: rgb(155 86 251 / 0.08);
   --rs-beam: rgb(255 255 255 / 0.7);
   --rs-beam-2: rgb(255 255 255 / 0.25);
-  --rs-tag-fill: #ffffff;
+  --rs-tag-fill: #f2f1ed;
   --rs-line-mix: rgb(9 9 11 / 0.12);
   --rs-glow-pct: 10%;
   --rs-spark: rgb(9 9 11 / 0.45);
@@ -84,9 +88,9 @@ html[data-skin^="resend"][data-theme="light"] {
   --rs-rb-1: rgb(0 168 181 / 0.85);
   --rs-rb-2: rgb(224 138 0 / 0.85);
   --rs-rb-3: rgb(138 43 226 / 0.85);
-  --rs-tile-bg: linear-gradient(160deg, #ffffff, #eef0f2 62%);
+  --rs-tile-bg: linear-gradient(160deg, #fbfaf8, #ebeae5 62%);
   --rs-tile-ring: rgb(9 9 11 / 0.08);
-  --rs-tile-hi: #ffffff;
+  --rs-tile-hi: rgb(255 255 255 / 0.9);
   --rs-tile-drop: rgb(9 9 11 / 0.2);
 }
 html[data-skin="resend"][data-theme="light"] {
@@ -104,16 +108,16 @@ html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="lab-t
 html[data-skin^="resend"][data-theme="light"] section[aria-labelledby="why-title"] { --rs-c: #008573; }
 html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="timeline-title"], [aria-labelledby="process-title"]) { --rs-c: #ab6400; }
 html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="faq-title"], [aria-labelledby="sfaq-title"], [aria-labelledby="book-title"]) { --rs-c: #0d74ce; }
-/* Escenario final en claro: un gris apenas más oscuro que la página (como en oscuro, donde es casi negro
+/* Escenario final en claro: un porcelana apenas más oscuro que la página (como en oscuro, donde es casi negro
    sobre negro), tarjetas blancas, botón negro y luz roja suave arriba */
 html[data-skin^="resend"][data-theme="light"] .stage {
-  --bg: #f0f0f1;
-  --surface: #ffffff;
-  --surface-2: #f7f7f8;
-  --line: rgb(9 9 11 / 0.1);
+  --bg: #d8d6cf;
+  --surface: #f2f1ed;
+  --surface-2: #ebeae5;
+  --line: rgb(30 26 22 / 0.14);
   --text: #111113;
-  --muted: #55585e;
-  --wire: #c9ccd1;
+  --muted: #4d4842;
+  --wire: #bdb9b0;
   --rs-c: #ce2c31;
 }
 html[data-skin="resend"][data-theme="light"] .stage {
@@ -144,6 +148,16 @@ html[data-skin^="resend"][data-theme="light"] .btn-primary {
    el color de cada sección) */
 html[data-skin^="resend"][data-theme="light"] .rs-tile {
   color: var(--rs-c, #111113);
+  /* Sin la luz de color de abajo (Willder, 2026-11-18: en fondo claro se veía mal): cuadro claro con
+     sombra neutra */
+  background: var(--rs-tile-bg);
+  box-shadow:
+    inset 0 1px 0 var(--rs-tile-hi),
+    0 0 0 1px var(--rs-tile-ring),
+    0 10px 24px -12px rgb(30 26 22 / 0.3);
+}
+html[data-skin^="resend"][data-theme="light"] .rs-tile::before {
+  display: none;
 }
 /* El punto del menú: el lima no se ve sobre blanco, va el oliva del logo */
 html[data-skin^="resend"][data-theme="light"] .nav-link::after {
