@@ -1,12 +1,11 @@
 ---
 // Página de inicio (EN y ES). Las rutas src/pages/index.astro y src/pages/es/index.astro solo la llaman.
-import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import MotionLab from "../components/MotionLab.astro";
 import ProcessTimeline from "../components/services/ProcessTimeline.astro";
 import PriceList from "../components/PriceList.astro";
 import FaqList from "../components/FaqList.astro";
-import ProjectCard from "../components/ProjectCard.astro";
+import LayeredSlider from "../components/LayeredSlider.astro";
 import ResultsStrip from "../components/ResultsStrip.astro";
 import RsTile from "../components/RsTile.astro";
 import { r, type Lang } from "../i18n/routes";
@@ -14,6 +13,7 @@ import { t } from "../i18n/ui";
 import { services } from "../data/services";
 import { faqFor } from "../data/faq";
 import { faqPage } from "../lib/schema";
+import { showcaseSliderItems } from "../lib/caseSlider";
 
 interface Props {
   lang: Lang;
@@ -21,7 +21,8 @@ interface Props {
 const { lang } = Astro.props;
 const copy = t(lang);
 const h = copy.home;
-const featured = (await getCollection("work")).filter((p) => p.data.featured).sort((a, b) => a.data.order - b.data.order);
+// «Selected work»: los mismos casos del slider de Work (src/lib/caseSlider.ts)
+const cases = await showcaseSliderItems(lang);
 const homeFaq = faqFor(lang, true);
 ---
 
@@ -123,29 +124,20 @@ const homeFaq = faqFor(lang, true);
        El HTML sigue el orden del celular (trabajo primero) para que el teclado y los lectores de pantalla vayan
        en el mismo orden que se ve en la pantalla principal (teléfono primero) -->
   <div class="flex flex-col">
-    <!-- TRABAJO DESTACADO con parallax. En el celular va justo debajo de «What I do» (Willder, 2026-11-16);
-         desde 768 px vuelve debajo de «Why WillNet» con md:order-last -->
-    <section class="wrap py-[clamp(4rem,10vh,8rem)] md:order-last" aria-labelledby="work-title" data-parallax-root>
-      <div class="rs-head mb-12 flex flex-wrap items-end justify-between gap-6">
+    <!-- TRABAJO DESTACADO: el slider por capas de Work (Osmo), con los mismos casos, en teléfono y escritorio
+         (Willder, 2026-11-18; antes eran tarjetas en 2 columnas con parallax). El título va en el ancho de la
+         página y el slider de borde a borde. En el celular va justo debajo de «What I do» (Willder,
+         2026-11-16); desde 768 px vuelve debajo de «Why WillNet» con md:order-last -->
+    <section class="py-[clamp(4rem,10vh,8rem)] md:order-last" aria-labelledby="work-title">
+      <div class="wrap rs-head mb-12 flex flex-wrap items-end justify-between gap-6">
         <div>
           <RsTile icon="layers" />
           <p class="eyebrow mb-4" data-reveal>{h.workEyebrow}</p>
           <h2 id="work-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.workTitle}</h2>
         </div>
-        <a href={r("work", lang)} class="btn" data-magnetic><span class="btn-label">{copy.common.allWork} →</span></a>
+        <a href={r("work", lang)} class="btn btn--neutral" data-magnetic><span class="btn-label">{copy.common.allWork} →</span></a>
       </div>
-      <!-- Móvil: 2 columnas (4 proyectos); escritorio: 2 columnas desfasadas -->
-      <div class="grid grid-cols-2 gap-x-3 gap-y-10 md:gap-x-8 md:gap-y-14">
-        {
-          featured.map((p, i) => (
-            <div class:list={[{ "md:mt-24": i % 2 === 1 }]} data-reveal>
-              <div data-speed={i % 2 === 1 ? "0.12" : "-0.06"}>
-                <ProjectCard project={p} lang={lang} size="lg" mobileCompact />
-              </div>
-            </div>
-          ))
-        }
-      </div>
+      <LayeredSlider lang={lang} items={cases} />
     </section>
 
     <!-- RESULTADOS MEDIDOS (cifras reales de los casos) -->

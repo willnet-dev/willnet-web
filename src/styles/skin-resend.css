@@ -300,6 +300,17 @@ html[data-skin^="resend"][data-theme="light"] .contact-card[data-calendly] {
   --card-fill: #111113;
   --card-fill-fg: #ffffff;
 }
+/* Excepción: botones con relleno neutro al pasar el mouse (blanco en oscuro, negro en claro) en vez del
+   color de su sección. Se marcan con la clase btn--neutral; por ahora, «All work» de «Selected work» en el
+   inicio (pedido de Willder, 2026-11-18) */
+html[data-skin^="resend"] .btn--neutral {
+  --btn-fill: #f0f0f0;
+  --btn-fill-fg: #000000;
+}
+html[data-skin^="resend"][data-theme="light"] .btn--neutral {
+  --btn-fill: #111113;
+  --btn-fill-fg: #ffffff;
+}
 
 /* Escenario final («Let's work together» y pie): un gris casi negro, para que el telón negro se distinga */
 html[data-skin^="resend"][data-theme="dark"] .stage {

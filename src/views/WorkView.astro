@@ -2,12 +2,12 @@
 // Portafolio. Arriba, los casos de estudio en un slider por capas (LayeredSlider.astro; reemplazó a los
 // dispositivos 3D el 2026-11-16, pedido de Willder). Abajo, el resto de proyectos con filtros en una fila
 // arrastrable sin fin (WorkCarousel.astro, 2026-11-17).
-import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import WorkCarousel from "../components/WorkCarousel.astro";
 import LayeredSlider from "../components/LayeredSlider.astro";
-import { r, workPath, type Lang } from "../i18n/routes";
+import { r, type Lang } from "../i18n/routes";
+import { allWork, inShowcase, sliderItems as toSliderItems } from "../lib/caseSlider";
 import { t } from "../i18n/ui";
 import { breadcrumbs } from "../lib/schema";
 
@@ -17,23 +17,13 @@ interface Props {
 const { lang } = Astro.props;
 const copy = t(lang);
 const p = copy.workPage;
-const all = (await getCollection("work")).sort((a, b) => a.data.order - b.data.order);
-// Slider de arriba: los casos marcados para la vitrina. El resto (y los casos con
-// inShowcase: false, como Mastermind) va en la cuadrícula de abajo
-// (!== false: si el campo falta, el caso va en la vitrina, como antes)
-const inShowcase = (x: (typeof all)[number]) => x.data.hasCase && x.data.inShowcase !== false;
+const all = await allWork();
+// Slider de arriba: los casos de la vitrina (src/lib/caseSlider.ts, los mismos del inicio). El resto
+// (y los casos con inShowcase: false, como Mastermind) va en la fila de abajo
 const cases = all.filter(inShowcase);
 const rest = all.filter((x) => !inShowcase(x));
 const restCats = ["events", "design", "learning"] as const;
-
-const sliderItems = cases.map((c) => ({
-  href: workPath(c.id, lang),
-  title: c.data[lang].title,
-  type: c.data[lang].type,
-  year: c.data.year,
-  desktop: lang === "es" ? c.data.image.es : c.data.image.en,
-  mobile: lang === "es" ? c.data.image.mobileEs : c.data.image.mobileEn,
-}));
+const sliderItems = toSliderItems(cases, lang);
 ---
 
 <Base
