@@ -8,6 +8,9 @@
 //   3. Debajo de la última ya está la web de verdad, en miniatura: la ventana es un hueco en la pantalla de carga
 //      (el fondo oscuro es la sombra de la ventana) y <body> se escala para llenarla.
 //   4. Tras una pausa corta, la ventana crece hasta llenar la pantalla, la web crece con ella y empuja las letras.
+// Estilo Resend (2026-11-18): las letras llevan el degradado de los títulos (--rs-title) y arriba cae la misma
+// luz que en el hero (--rs-hero-a/b, --rs-beam), que se apaga al crecer la ventana. Los colores salen de los
+// tokens de skin-resend.css; sin ellos (otra rama), letras del color del texto y sin luz.
 // Miniaturas: public/img/loader/*.webp, creadas con `npm run loader-images`.
 const extras = ["acl", "imola", "pavlove"];
 ---
@@ -29,6 +32,7 @@ const extras = ["acl", "imola", "pavlove"];
       </span>
     </div>
   </div>
+  <span class="sl__light" data-sl-light></span>
 </div>
 
 <style>
@@ -46,7 +50,7 @@ const extras = ["acl", "imola", "pavlove"];
     display: block;
     overflow: hidden;
     background: var(--bg);
-    color: var(--ink);
+    color: var(--text);
   }
   /* Sin scroll mientras carga. El hueco de la barra de desplazamiento queda reservado (scrollbar-gutter en
      global.css), así que al quitarlo la página no salta de ancho */
@@ -55,7 +59,7 @@ const extras = ["acl", "imola", "pavlove"];
   }
   /* Hasta que el JavaScript la toma, solo se ve el fondo: así las letras no aparecen y luego saltan abajo.
      Cuando la toma, el fondo pasa a ser la sombra de la ventana (abajo, .sl__img) */
-  .site-loader:not(.is-active) .sl__word {
+  .site-loader:not(.is-active) :is(.sl__word, .sl__light) {
     visibility: hidden;
   }
   .site-loader.is-active {
@@ -96,6 +100,18 @@ const extras = ["acl", "imola", "pavlove"];
     display: flex;
     overflow: hidden;
     padding-block: 0.06em;
+    /* Degradado de los títulos (blanco → 50 % en oscuro; negro → Toupe Seta en claro), recortado a las letras.
+       Mide lo que WILL y NET juntas (--sl-word, lo pone site.ts) y NET toma la parte derecha: se lee como un
+       solo degradado aunque la ventana las separe */
+    background-image: var(--rs-title, linear-gradient(var(--text), var(--text)));
+    background-size: var(--sl-word, 100%) 100%;
+    background-repeat: no-repeat;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .sl__half[data-sl-half="end"] {
+    background-position: right top;
   }
   .sl__letter {
     display: block;
@@ -131,5 +147,37 @@ const extras = ["acl", "imola", "pavlove"];
   }
   .sl__extra {
     object-fit: cover;
+  }
+  /* La luz del hero (skin-resend.css, [data-hero]): un foco desde arriba y un haz diagonal que respira. Va encima
+     del fondo para que caiga también sobre las letras; no recibe clics */
+  .sl__light {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 70% 55% at 30% -12%, var(--rs-hero-a, transparent), transparent 70%),
+      radial-gradient(ellipse 40% 40% at 85% 10%, var(--rs-hero-b, transparent), transparent 70%);
+  }
+  .sl__light::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(118deg, transparent 38%, var(--rs-beam, transparent) 47%, var(--rs-beam-2, transparent) 53%, transparent 60%);
+    animation: slBeam 9s ease-in-out infinite alternate;
+  }
+  /* En claro el hero no lleva el haz (skin-resend.css): aquí tampoco, solo el foco de arriba */
+  :global(html[data-theme="light"]) .sl__light::after {
+    display: none;
+  }
+  @keyframes slBeam {
+    from {
+      opacity: 0.55;
+      transform: translateX(-4%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(4%);
+    }
   }
 </style>

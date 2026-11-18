@@ -301,6 +301,7 @@ function initLoader() {
   const img = el.querySelector<HTMLElement>("[data-sl-img]")!;
   // De arriba abajo: la de encima es la primera que se quita
   const extras = q<HTMLElement>("[data-sl-extra]").reverse();
+  const light = el.querySelector<HTMLElement>("[data-sl-light]");
 
   // La web en miniatura: <body> se escala y se mueve para llenar justo la ventana (como object-fit: cover).
   // Se recalcula en cada fotograma con la medida real de la ventana, así siguen juntas mientras crece.
@@ -337,8 +338,11 @@ function initLoader() {
 
   const tl = gsap.timeline({ paused: true, defaults: { ease: "expo.inOut" }, onUpdate: follow, onComplete: done });
   el.classList.add("is-active");
-  // 1. Las letras suben
+  // El degradado de las letras abarca WILL y NET juntas, como si fueran una sola palabra (ver SiteLoader.astro)
+  el.style.setProperty("--sl-word", `${start.offsetWidth + finishHalf.offsetWidth}px`);
+  // 1. Las letras suben y la luz de arriba se enciende
   tl.from(letters, { yPercent: 110, duration: 0.9, stagger: 0.04, ease: "expo.out" });
+  if (light) tl.from(light, { opacity: 0, duration: 1.2, ease: "power2.out" }, 0);
   // 2. Se abre la ventana entre WILL y NET y las mitades se separan un poco. WILL es más ancho que NET, así que
   //    la ventana quedaría a la derecha del centro (≈ 47 px en escritorio) y la web, al aparecer y crecer, se
   //    deslizaba de la derecha al centro. Mientras se abre, la palabra se corre lo justo para que la ventana
@@ -355,6 +359,8 @@ function initLoader() {
   tl.add(finish, "+=0.6")
     .to(img, { width: "100vw", height: "100dvh", borderRadius: 0, duration: 1.1 }, "<")
     .to(box, { width: "110vw", duration: 1.1 }, "<");
+  // La luz se apaga mientras la ventana crece: el hero ya tiene la suya en el mismo sitio y se sumarían
+  if (light) tl.to(light, { opacity: 0, duration: 0.8, ease: "power2.inOut" }, "<");
 
   // Un toque o una tecla la acelera para quien no quiera esperar
   const hurry = () => tl.timeScale(3.5);
