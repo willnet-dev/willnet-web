@@ -3,6 +3,9 @@
 // tema oscuro/claro, transiciones entre páginas, cabecera, bloque «Let's work together» y pie.
 import { ClientRouter } from "astro:transitions";
 import "../styles/global.css";
+// PRUEBA (rama prueba-resend): estilo inspirado en resend.com y su botonera para comparar
+import "../styles/skin-resend.css";
+import SkinSwitch from "../components/dev/SkinSwitch.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import WorkTogether from "../components/WorkTogether.astro";
@@ -104,6 +107,10 @@ const org = {
           try { saved = localStorage.getItem("theme"); } catch {}
           const theme = saved || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
           doc.documentElement.dataset.theme = theme;
+          // PRUEBA: estilo de la rama prueba-resend (por defecto, el de Resend)
+          let skin = null;
+          try { skin = localStorage.getItem("skin"); } catch {}
+          doc.documentElement.dataset.skin = skin || "resend";
           doc.documentElement.classList.add("js");
           // La entrada del botón de WhatsApp solo se anima la primera vez en la sesión
           try { if (sessionStorage.getItem("wa-seen")) doc.documentElement.classList.add("wa-seen"); } catch {}
@@ -139,6 +146,7 @@ const org = {
     </div>
 
     <WhatsAppFab lang={lang} />
+    <SkinSwitch />
 
     <button type="button" class="back-top" data-back-top aria-label={copy.nav.backToTop} hidden>
       <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>

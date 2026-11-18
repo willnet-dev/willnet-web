@@ -1,0 +1,242 @@
+/* ==========================================================================
+   PRUEBA (rama prueba-resend, 2026-11-18): estilo inspirado en resend.com
+   Solo se activa con data-skin en <html> y en el tema oscuro. Con data-skin="actual" la web queda igual
+   que en producción. Variantes:
+     - resend       → negro puro, blancos y grises fríos; el acento pasa a blanco (como Resend)
+     - resend-lima  → la misma luz y los mismos efectos, pero con el lima de WillNet como acento
+   Lo que se toma de Resend: negro profundo (#000), bordes de luz casi transparentes, títulos con
+   degradado blanco, botones de cristal, borde arcoíris en la etiqueta del hero, luz que cae desde
+   arriba, íconos «de app» con brillo de color y entradas con desenfoque.
+   ========================================================================== */
+
+/* ---------- Colores ---------- */
+html[data-skin^="resend"][data-theme="dark"] {
+  --bg: #000000;
+  --page-bg: #000000;
+  --surface: #0b0b0c;
+  --surface-2: #151618;
+  /* Borde de Resend: azul muy claro casi transparente (slate-6 de Radix) */
+  --line: rgb(214 235 253 / 0.14);
+  --text: #f0f0f0;
+  --muted: #a1a4a5;
+  --wire: #3a3d40;
+  /* Tarjeta «iluminada desde arriba»: filo de luz en el borde superior y sombra profunda */
+  --card-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.09), 0 0 0 1px rgb(214 235 253 / 0.04), 0 30px 60px -30px rgb(0 0 0 / 0.9);
+  --rs-glass: linear-gradient(104deg, rgb(253 253 253 / 0.05) 5%, rgb(240 240 228 / 0.1) 100%);
+}
+
+html[data-skin="resend"][data-theme="dark"] {
+  --accent: #f0f0f0;
+  --accent-ink: #000000;
+  --link: #ffffff;
+  --logo-accent: #f0f0f0;
+}
+
+/* Escenario final («Let's work together» y pie): un gris casi negro, para que el telón negro se distinga */
+html[data-skin^="resend"][data-theme="dark"] .stage {
+  --bg: #0b0b0c;
+  --surface: #121315;
+  --surface-2: #1a1b1e;
+  --line: rgb(214 235 253 / 0.12);
+  --text: #f0f0f0;
+  --muted: #a1a4a5;
+}
+html[data-skin="resend"][data-theme="dark"] .stage {
+  --accent: #f0f0f0;
+  --accent-ink: #000000;
+  --link: #ffffff;
+  --logo-accent: #f0f0f0;
+}
+html[data-skin^="resend"][data-theme="dark"] .stage::before {
+  /* Luz que cae sobre el escenario cuando el telón se levanta */
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 60vh;
+  pointer-events: none;
+  background: radial-gradient(ellipse 55% 60% at 50% 0%, rgb(255 255 255 / 0.07), transparent 70%);
+}
+
+/* ---------- Títulos con degradado blanco (Resend: blanco al 100 % → 50 %) ---------- */
+html[data-skin^="resend"][data-theme="dark"] main .display,
+html[data-skin^="resend"][data-theme="dark"] .stage .display {
+  background-image: linear-gradient(to right bottom, #ffffff 30%, rgb(255 255 255 / 0.5));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---------- Luz del hero: un foco desde arriba y un haz diagonal que respira ---------- */
+html[data-skin^="resend"][data-theme="dark"] [data-hero]::before,
+html[data-skin^="resend"][data-theme="dark"] [data-hero]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+html[data-skin^="resend"][data-theme="dark"] [data-hero]::before {
+  background:
+    radial-gradient(ellipse 70% 55% at 30% -12%, rgb(255 255 255 / 0.13), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 85% 10%, rgb(214 235 253 / 0.06), transparent 70%);
+}
+html[data-skin^="resend"][data-theme="dark"] [data-hero]::after {
+  background: linear-gradient(118deg, transparent 38%, rgb(255 255 255 / 0.045) 47%, rgb(255 255 255 / 0.015) 53%, transparent 60%);
+  animation: rsBeam 9s ease-in-out infinite alternate;
+}
+@keyframes rsBeam {
+  from {
+    opacity: 0.55;
+    transform: translateX(-4%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(4%);
+  }
+}
+/* El contorno de la W y el halo, más discretos: aquí la luz manda */
+html[data-skin^="resend"][data-theme="dark"] .hero__deco {
+  opacity: 0.35;
+}
+
+/* ---------- Etiqueta del hero con borde arcoíris (como «What you missed at Resend Forward») ---------- */
+@property --rs-angle {
+  syntax: "<angle>";
+  initial-value: 23deg;
+  inherits: false;
+}
+html[data-skin^="resend"][data-theme="dark"] .hero__role {
+  display: inline-flex;
+  padding: 0.5em 1.05em;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background:
+    linear-gradient(#050506, #050506) padding-box,
+    linear-gradient(var(--rs-angle), rgb(2 252 239 / 0.55), rgb(255 181 43 / 0.55) 50%, rgb(160 43 254 / 0.55)) border-box;
+  color: var(--text);
+  animation: rsSpin 8s linear infinite;
+}
+@keyframes rsSpin {
+  to {
+    --rs-angle: 383deg;
+  }
+}
+
+/* ---------- Líneas de luz arriba de cada sección ---------- */
+html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby] {
+  position: relative;
+}
+html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::before,
+html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% 0;
+  pointer-events: none;
+}
+html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::before {
+  width: min(70%, 760px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.32), transparent);
+}
+html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::after {
+  z-index: -1;
+  width: min(80%, 900px);
+  height: 180px;
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, rgb(255 255 255 / 0.06), transparent 70%);
+}
+/* El marquee pierde sus bordes rectos: la luz ya separa las secciones */
+html[data-skin^="resend"][data-theme="dark"] main > .border-y {
+  border-color: rgb(214 235 253 / 0.08);
+}
+
+/* ---------- Botones de cristal (Resend: degradado blanco al 5–10 %, borde fino y desenfoque) ---------- */
+html[data-skin^="resend"][data-theme="dark"] .btn:not(.btn-orb, .social-icon) {
+  border-radius: 16px;
+}
+html[data-skin^="resend"][data-theme="dark"] .btn:not(.btn-primary) {
+  border-color: rgb(255 255 255 / 0.08);
+  background-image: var(--rs-glass);
+  -webkit-backdrop-filter: blur(25px);
+  backdrop-filter: blur(25px);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.06), 0 1px 3px rgb(0 0 0 / 0.1);
+}
+/* Principal: blanco sólido con texto negro (en la variante lima sigue lima) y un brillo suave debajo */
+html[data-skin^="resend"][data-theme="dark"] .btn-primary {
+  --btn-fill: #d6d8da;
+  --btn-fill-fg: #000000;
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 8px 30px -6px color-mix(in oklab, var(--accent) 45%, transparent);
+}
+html[data-skin="resend-lima"][data-theme="dark"] .btn-primary {
+  --btn-fill: #f0f0f0;
+}
+
+/* ---------- Íconos «de app» (RsTile.astro): cuadro negro brillante con luz de color debajo ---------- */
+.rs-tile {
+  display: none;
+}
+html[data-skin^="resend"][data-theme="dark"] .rs-tile {
+  --hue: 30 100% 60%;
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 1.5rem;
+  border-radius: 18px;
+  background:
+    radial-gradient(120% 90% at 50% 120%, hsl(var(--hue) / 0.55), transparent 60%),
+    linear-gradient(160deg, #2a2b2e, #0c0c0d 60%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 -1px 0 rgb(0 0 0 / 0.6),
+    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 14px 30px -10px hsl(var(--hue) / 0.55),
+    0 20px 40px -20px rgb(0 0 0);
+  color: #fff;
+}
+html[data-skin^="resend"][data-theme="dark"] .rs-tile::after {
+  /* Reflejo de cristal en la mitad de arriba */
+  content: "";
+  position: absolute;
+  inset: 1px 1px 50%;
+  border-radius: 17px 17px 40% 40% / 17px 17px 12px 12px;
+  background: linear-gradient(rgb(255 255 255 / 0.12), transparent);
+  pointer-events: none;
+}
+html[data-skin^="resend"][data-theme="dark"] .rs-tile svg {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 0 6px hsl(var(--hue) / 0.9));
+}
+
+/* ---------- Tarjetas con luz que sigue al puntero (skin-resend.ts marca las tarjetas con .rs-glow) ---------- */
+html[data-skin^="resend"][data-theme="dark"] .rs-glow {
+  background-image: radial-gradient(480px circle at var(--mx, 50%) var(--my, -30%), rgb(255 255 255 / 0.075), transparent 45%);
+}
+
+/* ---------- Entradas con desenfoque (Resend: aparece subiendo y enfocándose) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  html[data-skin^="resend"].js [data-reveal] {
+    filter: blur(10px);
+  }
+  html[data-skin^="resend"].js [data-reveal].is-in {
+    filter: blur(0);
+    transition:
+      opacity var(--dur-slow) var(--ease-out-expo),
+      transform var(--dur-slow) var(--ease-out-expo),
+      filter var(--dur-slow) var(--ease-out-expo);
+    transition-delay: var(--delay, 0ms);
+  }
+  html[data-skin^="resend"] .hero__in {
+    animation-name: rsIn;
+  }
+}
+@keyframes rsIn {
+  from {
+    transform: translateY(24px);
+    filter: blur(12px);
+    opacity: 0;
+  }
+}
