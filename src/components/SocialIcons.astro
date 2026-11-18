@@ -17,7 +17,7 @@ const { magnetic = false, class: cls = "" } = Astro.props;
   {
     socials.map((s) => (
       <li>
-        <a href={s.href} target="_blank" rel="noopener" class="btn social-icon" aria-label={s.name} data-magnetic={magnetic ? "" : undefined}>
+        <a href={s.href} target="_blank" rel="noopener" class="btn social-icon" data-brand={s.icon} aria-label={s.name} data-magnetic={magnetic ? "" : undefined}>
           <span class="btn-label">
             <Icon name={s.icon} size={20} />
           </span>

@@ -9,6 +9,7 @@ import { r, type Lang } from "../i18n/routes";
 import { site, t } from "../i18n/ui";
 import { breadcrumbs } from "../lib/schema";
 import { selfScore } from "../data/results";
+import { tools } from "../data/tools";
 
 interface Props {
   lang: Lang;
@@ -26,7 +27,6 @@ const stats = [
   // 100 solo si accesibilidad y SEO están los dos en 100 (src/data/results.ts)
   { value: Math.min(selfScore("accessibility"), selfScore("seo")), unit: "/100", label: a.statScore },
 ];
-const tools = ["HTML", "CSS", "JavaScript", "Tailwind CSS", "Astro", "React", "Three.js", "GSAP", "Node.js", "WordPress", "WooCommerce", "Stripe", "Cloudflare", "Git", "GitHub", "Figma", "Canva", "Claude Code"];
 
 const person = {
   "@context": "https://schema.org",
@@ -153,22 +153,78 @@ const person = {
 
   <section class="border-y border-line py-6" aria-label={a.toolsTitle}>
     <p class="wrap eyebrow mb-4">// {a.toolsTitle}</p>
-    <div class="marquee" aria-hidden="true">
+    <!-- Logos de las herramientas (src/data/tools.ts): gris y con el color de la marca al pasar el mouse;
+         la franja se detiene mientras el mouse está encima (pedido de Willder, 2026-11-18) -->
+    <div class="marquee tools-marquee" aria-hidden="true">
       {
         [0, 1].map(() => (
           <div class="marquee__track">
             {tools.map((tool) => (
-              <span class="font-mono text-[length:var(--text-step-1)] whitespace-nowrap text-muted">{tool}</span>
+              <span class="tool" style={`--tool-c:${tool.color}`} data-mono={tool.color === "#ffffff" ? "" : undefined} title={tool.name}>
+                {tool.path ? (
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d={tool.path} fill="currentColor" />
+                  </svg>
+                ) : (
+                  <span class="tool__word">{tool.name}</span>
+                )}
+              </span>
             ))}
           </div>
         ))
       }
     </div>
-    <p class="sr-only">{tools.join(", ")}</p>
+    <p class="sr-only">{tools.map((tool) => tool.name).join(", ")}</p>
   </section>
 </Base>
 
 <style>
+  /* ---------- Franja de herramientas con logos ---------- */
+  .tool {
+    display: inline-grid;
+    place-items: center;
+    height: clamp(2.25rem, 1.9rem + 1.5vw, 3rem);
+    color: var(--muted);
+    transition:
+      color var(--dur-base) var(--ease-out-expo),
+      transform var(--dur-base) var(--ease-out-expo),
+      filter var(--dur-base) var(--ease-out-expo);
+  }
+  .tool svg {
+    height: 100%;
+    width: auto;
+    aspect-ratio: 1;
+  }
+  .tool__word {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: var(--text-step-2);
+    letter-spacing: -0.03em;
+  }
+  @media (hover: hover) {
+    .tools-marquee:hover :global(.marquee__track) {
+      animation-play-state: paused;
+    }
+    .tool:hover {
+      color: var(--tool-c);
+      transform: translateY(-3px) scale(1.08);
+      filter: drop-shadow(0 6px 18px color-mix(in oklab, var(--tool-c) 45%, transparent));
+    }
+    .tool:has(.tool__word):hover {
+      filter: drop-shadow(0 6px 18px rgb(125 42 232 / 0.45));
+    }
+    .tool:hover .tool__word {
+      background: var(--tool-c);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    /* Tema claro: las marcas que en oscuro van en blanco (GitHub, Three.js) usan el color del texto */
+    :global([data-theme="light"]) .tool[data-mono]:hover {
+      color: var(--text);
+    }
+  }
+
   .about-photo {
     max-width: 520px;
   }

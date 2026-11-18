@@ -97,9 +97,9 @@ const homeFaq = faqFor(lang, true);
 
   <!-- SERVICIOS Y PRECIOS -->
   <section id="services" class="wrap py-[clamp(5rem,12vh,9rem)]" aria-labelledby="services-title">
-    <div class="mb-12 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
+    <div class="rs-head mb-12 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
       <div>
-        <RsTile icon="code" hue="24 100% 58%" />
+        <RsTile icon="code" />
         <p class="eyebrow mb-4" data-reveal>{h.servicesEyebrow}</p>
         <h2 id="services-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.servicesTitle}</h2>
       </div>
@@ -115,9 +115,9 @@ const homeFaq = faqFor(lang, true);
     <!-- TRABAJO DESTACADO con parallax. En el celular va justo debajo de «What I do» (Willder, 2026-11-16);
          desde 768 px vuelve debajo de «Why WillNet» con md:order-last -->
     <section class="wrap py-[clamp(4rem,10vh,8rem)] md:order-last" aria-labelledby="work-title" data-parallax-root>
-      <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
+      <div class="rs-head mb-12 flex flex-wrap items-end justify-between gap-6">
         <div>
-          <RsTile icon="layers" hue="265 95% 66%" />
+          <RsTile icon="layers" />
           <p class="eyebrow mb-4" data-reveal>{h.workEyebrow}</p>
           <h2 id="work-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.workTitle}</h2>
         </div>
@@ -145,9 +145,11 @@ const homeFaq = faqFor(lang, true);
 
     <!-- POR QUÉ WILLNET -->
     <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="why-title">
-      <RsTile icon="spark" hue="168 90% 50%" />
-      <p class="eyebrow mb-4" data-reveal>{h.whyEyebrow}</p>
-      <h2 id="why-title" class="display mb-12 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{h.whyTitle}</h2>
+      <div class="rs-head">
+        <RsTile icon="spark" />
+        <p class="eyebrow mb-4" data-reveal>{h.whyEyebrow}</p>
+        <h2 id="why-title" class="display mb-12 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{h.whyTitle}</h2>
+      </div>
       <div class="grid border-t border-line md:grid-cols-3">
         {
           h.why.map((w, i) => (
@@ -167,8 +169,8 @@ const homeFaq = faqFor(lang, true);
 
   <!-- PREGUNTAS -->
   <section class="wrap grid gap-10 py-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1fr_1.6fr]" aria-labelledby="faq-title">
-    <div>
-      <RsTile icon="chat" hue="210 100% 62%" />
+    <div class="rs-head">
+      <RsTile icon="chat" />
       <p class="eyebrow mb-4" data-reveal>{h.faqEyebrow}</p>
       <h2 id="faq-title" class="display text-[length:var(--text-step-4)]" data-reveal>{h.faqTitle}</h2>
       <a href={r("faq", lang)} class="btn mt-8" data-magnetic><span class="btn-label">{h.faqMore} →</span></a>

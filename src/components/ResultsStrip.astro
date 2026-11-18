@@ -6,6 +6,7 @@ import type { Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
 import { selfResults } from "../data/results";
 import { formatNumber } from "../lib/format";
+import RsTile from "./dev/RsTile.astro";
 
 interface Props {
   lang: Lang;
@@ -15,8 +16,9 @@ const h = t(lang).home;
 ---
 
 <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="results-title">
-  <div class="mb-12 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
+  <div class="rs-head mb-12 grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
     <div>
+      <RsTile icon="chart" />
       <p class="eyebrow mb-4" data-reveal>{h.resultsEyebrow}</p>
       <h2 id="results-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.resultsTitle}</h2>
     </div>

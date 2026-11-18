@@ -1,12 +1,12 @@
 /* ==========================================================================
    PRUEBA (rama prueba-resend, 2026-11-18): estilo inspirado en resend.com
-   Solo se activa con data-skin en <html> y en el tema oscuro. Con data-skin="actual" la web queda igual
-   que en producción. Variantes:
-     - resend       → negro puro, blancos y grises fríos; el acento pasa a blanco (como Resend)
+   Solo se activa con data-skin en <html> y casi todo, solo en el tema oscuro (el claro no cambia en esta
+   ronda: decisión de Willder). Con data-skin="actual" la web queda igual que en producción. Variantes:
+     - resend       → negro puro, blancos y grises fríos; el acento pasa a blanco (ELEGIDA por Willder)
      - resend-lima  → la misma luz y los mismos efectos, pero con el lima de WillNet como acento
    Lo que se toma de Resend: negro profundo (#000), bordes de luz casi transparentes, títulos con
-   degradado blanco, botones de cristal, borde arcoíris en la etiqueta del hero, luz que cae desde
-   arriba, íconos «de app» con brillo de color y entradas con desenfoque.
+   degradado blanco, botones de cristal, bordes arcoíris, luz que cae desde arriba, íconos «de app» con
+   brillo de color y entradas con desenfoque. Encargo completo: docs/prompt-ronda-resend.md (fuera del repo).
    ========================================================================== */
 
 /* ---------- Colores ---------- */
@@ -23,14 +23,26 @@ html[data-skin^="resend"][data-theme="dark"] {
   /* Tarjeta «iluminada desde arriba»: filo de luz en el borde superior y sombra profunda */
   --card-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.09), 0 0 0 1px rgb(214 235 253 / 0.04), 0 30px 60px -30px rgb(0 0 0 / 0.9);
   --rs-glass: linear-gradient(104deg, rgb(253 253 253 / 0.05) 5%, rgb(240 240 228 / 0.1) 100%);
+  /* El lima de WillNet se queda en pocos detalles (pedido de Willder, 2026-11-18) */
+  --lime: #d4ff3a;
+  --logo-accent: var(--lime);
 }
 
 html[data-skin="resend"][data-theme="dark"] {
   --accent: #f0f0f0;
   --accent-ink: #000000;
   --link: #ffffff;
-  --logo-accent: #f0f0f0;
 }
+
+/* ---------- Un color de luz por sección (paleta de resend.com / Radix Colors) ----------
+   El ícono y la línea de luz de cada sección leen --rs-c. Para cambiar un color, solo aquí. */
+html[data-skin^="resend"] section[aria-labelledby="services-title"] { --rs-c: #ff7e29; }
+html[data-skin^="resend"] section[aria-labelledby="work-title"] { --rs-c: #9b56fb; }
+html[data-skin^="resend"] section[aria-labelledby="results-title"] { --rs-c: #46fea5; }
+html[data-skin^="resend"] section[aria-labelledby="lab-title"] { --rs-c: #baa7ff; }
+html[data-skin^="resend"] section[aria-labelledby="why-title"] { --rs-c: #0df2c4; }
+html[data-skin^="resend"] section[aria-labelledby="timeline-title"] { --rs-c: #ffca16; }
+html[data-skin^="resend"] section[aria-labelledby="faq-title"] { --rs-c: #3d9eff; }
 
 /* Escenario final («Let's work together» y pie): un gris casi negro, para que el telón negro se distinga */
 html[data-skin^="resend"][data-theme="dark"] .stage {
@@ -40,26 +52,29 @@ html[data-skin^="resend"][data-theme="dark"] .stage {
   --line: rgb(214 235 253 / 0.12);
   --text: #f0f0f0;
   --muted: #a1a4a5;
+  --logo-accent: var(--lime);
+  --rs-c: #ff9592;
 }
 html[data-skin="resend"][data-theme="dark"] .stage {
   --accent: #f0f0f0;
   --accent-ink: #000000;
   --link: #ffffff;
-  --logo-accent: #f0f0f0;
 }
 html[data-skin^="resend"][data-theme="dark"] .stage::before {
-  /* Luz que cae sobre el escenario cuando el telón se levanta */
+  /* Luz que cae sobre el escenario cuando el telón se levanta: blanca con un toque de rojo suave */
   content: "";
   position: absolute;
   inset: 0 0 auto;
   height: 60vh;
   pointer-events: none;
-  background: radial-gradient(ellipse 55% 60% at 50% 0%, rgb(255 255 255 / 0.07), transparent 70%);
+  background:
+    radial-gradient(ellipse 55% 60% at 50% 0%, rgb(255 255 255 / 0.06), transparent 70%),
+    radial-gradient(ellipse 30% 40% at 50% 0%, color-mix(in oklab, var(--rs-c) 12%, transparent), transparent 70%);
 }
 
-/* ---------- Títulos con degradado blanco (Resend: blanco al 100 % → 50 %) ---------- */
-html[data-skin^="resend"][data-theme="dark"] main .display,
-html[data-skin^="resend"][data-theme="dark"] .stage .display {
+/* ---------- Títulos con degradado blanco (Resend: blanco al 100 % → 50 %) ----------
+   Solo h1 y h2: los h3 de las tarjetas de servicios tienen su propio efecto de pintura en el teléfono */
+html[data-skin^="resend"][data-theme="dark"] :is(main, .stage) :is(h1, h2).display {
   background-image: linear-gradient(to right bottom, #ffffff 30%, rgb(255 255 255 / 0.5));
   -webkit-background-clip: text;
   background-clip: text;
@@ -94,20 +109,19 @@ html[data-skin^="resend"][data-theme="dark"] [data-hero]::after {
     transform: translateX(4%);
   }
 }
-/* El contorno de la W y el halo, más discretos: aquí la luz manda */
+/* El contorno de la W, más discreto: aquí la luz manda */
 html[data-skin^="resend"][data-theme="dark"] .hero__deco {
   opacity: 0.35;
 }
 
-/* ---------- Etiqueta del hero con borde arcoíris (como «What you missed at Resend Forward») ---------- */
+/* ---------- Bordes arcoíris animados (como «What you missed at Resend Forward») ----------
+   La etiqueta del hero y las etiquetas de «How it works» (Free, Clear price, You review, 30 days support) */
 @property --rs-angle {
   syntax: "<angle>";
   initial-value: 23deg;
   inherits: false;
 }
-html[data-skin^="resend"][data-theme="dark"] .hero__role {
-  display: inline-flex;
-  padding: 0.5em 1.05em;
+html[data-skin^="resend"][data-theme="dark"] :is(.hero__role, .tl__tag) {
   border: 1px solid transparent;
   border-radius: 999px;
   background:
@@ -116,13 +130,24 @@ html[data-skin^="resend"][data-theme="dark"] .hero__role {
   color: var(--text);
   animation: rsSpin 8s linear infinite;
 }
+html[data-skin^="resend"][data-theme="dark"] .hero__role {
+  display: inline-flex;
+  padding: 0.5em 1.05em;
+}
+html[data-skin^="resend"][data-theme="dark"] .tl__tag {
+  padding: 0.3rem 0.8rem;
+}
+/* Cada etiqueta empieza en otro punto del giro, para que no se muevan todas iguales */
+html[data-skin^="resend"][data-theme="dark"] .tl__step:nth-child(2) .tl__tag { animation-delay: -2s; }
+html[data-skin^="resend"][data-theme="dark"] .tl__step:nth-child(3) .tl__tag { animation-delay: -4s; }
+html[data-skin^="resend"][data-theme="dark"] .tl__step:nth-child(4) .tl__tag { animation-delay: -6s; }
 @keyframes rsSpin {
   to {
     --rs-angle: 383deg;
   }
 }
 
-/* ---------- Líneas de luz arriba de cada sección ---------- */
+/* ---------- Líneas de luz arriba de cada sección, con el color de la sección ---------- */
 html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby] {
   position: relative;
 }
@@ -138,15 +163,14 @@ html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::afte
 html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::before {
   width: min(70%, 760px);
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.32), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--rs-c, #fff) 55%, rgb(255 255 255 / 0.35)), transparent);
 }
 html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::after {
   z-index: -1;
   width: min(80%, 900px);
-  height: 180px;
-  background: radial-gradient(ellipse 50% 100% at 50% 0%, rgb(255 255 255 / 0.06), transparent 70%);
+  height: 200px;
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, color-mix(in oklab, var(--rs-c, #fff) 9%, transparent), transparent 70%);
 }
-/* El marquee pierde sus bordes rectos: la luz ya separa las secciones */
 html[data-skin^="resend"][data-theme="dark"] main > .border-y {
   border-color: rgb(214 235 253 / 0.08);
 }
@@ -172,46 +196,233 @@ html[data-skin="resend-lima"][data-theme="dark"] .btn-primary {
   --btn-fill: #f0f0f0;
 }
 
-/* ---------- Íconos «de app» (RsTile.astro): cuadro negro brillante con luz de color debajo ---------- */
+/* ---------- El lima que se queda (pedido de Willder, 2026-11-18) ----------
+   Centro de la W del logo (--logo-accent, arriba), punto del menú, flecha de «What I do» y «+» de las preguntas */
+html[data-skin^="resend"][data-theme="dark"] .nav-link::after {
+  background: var(--lime);
+  box-shadow: 0 0 8px rgb(212 255 58 / 0.6);
+}
+@media (hover: hover) {
+  html[data-skin^="resend"][data-theme="dark"] .price-row:hover .price-row__arrow,
+  html[data-skin^="resend"][data-theme="dark"] .faq__q:hover .faq__icon {
+    background: var(--lime);
+    border-color: var(--lime);
+    color: #000;
+    box-shadow: 0 0 18px -2px rgb(212 255 58 / 0.55);
+  }
+}
+html[data-skin^="resend"][data-theme="dark"] .faq[open] .faq__icon {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: #000;
+}
+
+/* ---------- Redes: cada ícono toma el color de su marca al pasar el mouse ---------- */
+html[data-skin^="resend"] .social-icon[data-brand] {
+  --btn-fill-fg: #ffffff;
+}
+html[data-skin^="resend"] .social-icon[data-brand="linkedin"] { --btn-fill: #0a66c2; }
+html[data-skin^="resend"] .social-icon[data-brand="facebook"] { --btn-fill: #0866ff; }
+html[data-skin^="resend"] .social-icon[data-brand="instagram"] {
+  --btn-fill: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%);
+}
+/* GitHub y X: blanco con el ícono negro (como en su modo oscuro) */
+html[data-skin^="resend"] .social-icon:is([data-brand="github"], [data-brand="x"]) {
+  --btn-fill: #ffffff;
+  --btn-fill-fg: #000000;
+}
+/* TikTok: negro con el ícono en su cian y rosa */
+html[data-skin^="resend"] .social-icon[data-brand="tiktok"] {
+  --btn-fill: #000000;
+}
+@media (hover: hover) {
+  html[data-skin^="resend"] .social-icon[data-brand]:hover {
+    border-color: transparent;
+  }
+  html[data-skin^="resend"] .social-icon[data-brand="tiktok"]:hover {
+    border-color: rgb(255 255 255 / 0.25);
+  }
+  html[data-skin^="resend"] .social-icon[data-brand="tiktok"]:hover svg {
+    filter: drop-shadow(-1.5px -1px 0 #25f4ee) drop-shadow(1.5px 1px 0 #fe2c55);
+  }
+}
+
+/* ---------- WhatsApp flotante: siempre con el verde de WhatsApp (pedido de Willder, 2026-11-18) ---------- */
+html[data-skin^="resend"] .wa-fab {
+  background: #25d366;
+  border-color: #25d366;
+  color: #ffffff;
+  box-shadow: 0 10px 30px -6px rgb(37 211 102 / 0.45), 0 4px 12px rgb(0 0 0 / 0.35);
+}
+html[data-skin^="resend"] .wa-fab__label {
+  color: #ffffff;
+}
+html[data-skin^="resend"] .wa-fab::after {
+  border-color: #25d366;
+}
+@media (hover: hover) and (pointer: fine) {
+  html[data-skin^="resend"] .wa-fab:hover {
+    border-color: #ffffff;
+  }
+}
+
+/* ---------- Íconos «de app» animados (RsTile.astro) ----------
+   Cuadro negro brillante con la luz del color de la sección debajo; el trazo se dibuja al entrar y luego
+   cada ícono tiene su movimiento. Siguiente paso posible: videos 3D como los de Resend. */
 .rs-tile {
   display: none;
 }
 html[data-skin^="resend"][data-theme="dark"] .rs-tile {
-  --hue: 30 100% 60%;
   position: relative;
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 1.5rem;
-  border-radius: 18px;
+  width: 88px;
+  height: 88px;
+  margin-bottom: 1.75rem;
+  border-radius: 24px;
   background:
-    radial-gradient(120% 90% at 50% 120%, hsl(var(--hue) / 0.55), transparent 60%),
-    linear-gradient(160deg, #2a2b2e, #0c0c0d 60%);
+    radial-gradient(120% 80% at 50% 125%, color-mix(in oklab, var(--rs-c, #fff) 60%, transparent), transparent 62%),
+    linear-gradient(160deg, #2b2c30, #0c0c0d 62%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.22),
     inset 0 -1px 0 rgb(0 0 0 / 0.6),
     0 0 0 1px rgb(255 255 255 / 0.06),
-    0 14px 30px -10px hsl(var(--hue) / 0.55),
-    0 20px 40px -20px rgb(0 0 0);
-  color: #fff;
+    0 18px 40px -12px color-mix(in oklab, var(--rs-c, #fff) 55%, transparent),
+    0 24px 48px -24px #000;
+  color: #ffffff;
+}
+html[data-skin^="resend"][data-theme="dark"] .rs-tile::before {
+  /* Luz de color que respira debajo del cuadro */
+  content: "";
+  position: absolute;
+  inset: auto 12% -18%;
+  height: 40%;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--rs-c, #fff) 70%, transparent);
+  filter: blur(18px);
+  opacity: 0.55;
+  z-index: -1;
 }
 html[data-skin^="resend"][data-theme="dark"] .rs-tile::after {
   /* Reflejo de cristal en la mitad de arriba */
   content: "";
   position: absolute;
-  inset: 1px 1px 50%;
-  border-radius: 17px 17px 40% 40% / 17px 17px 12px 12px;
-  background: linear-gradient(rgb(255 255 255 / 0.12), transparent);
+  inset: 1px 1px 52%;
+  border-radius: 23px 23px 40% 40% / 23px 23px 14px 14px;
+  background: linear-gradient(rgb(255 255 255 / 0.13), transparent);
   pointer-events: none;
 }
 html[data-skin^="resend"][data-theme="dark"] .rs-tile svg {
   position: relative;
   z-index: 1;
-  filter: drop-shadow(0 0 6px hsl(var(--hue) / 0.9));
+  overflow: visible;
+  filter: drop-shadow(0 0 6px color-mix(in oklab, var(--rs-c, #fff) 85%, transparent));
+}
+html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
-/* ---------- Tarjetas con luz que sigue al puntero (skin-resend.ts marca las tarjetas con .rs-glow) ---------- */
+@media (prefers-reduced-motion: no-preference) {
+  /* El cuadro aparece con la entrada normal (data-reveal); el trazo se dibuja después */
+  html[data-skin^="resend"][data-theme="dark"].js .rs-tile [pathLength] {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+  html[data-skin^="resend"][data-theme="dark"].js .rs-tile.is-in [pathLength] {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset 1.1s var(--ease-out-expo) 250ms;
+  }
+  html[data-skin^="resend"][data-theme="dark"].js .rs-tile.is-in .rs-b { transition-delay: 450ms; }
+  html[data-skin^="resend"][data-theme="dark"].js .rs-tile.is-in .rs-c { transition-delay: 650ms; }
+
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in::before {
+    animation: rsBreath 3.2s ease-in-out 1.2s infinite;
+  }
+  /* Código: los corchetes se abren y la barra se inclina */
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="code"] .rs-a { animation: rsNudgeL 3s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="code"] .rs-b { animation: rsNudgeR 3s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="code"] .rs-c { animation: rsTilt 3s ease-in-out 1.4s infinite; }
+  /* Capas: se separan y vuelven */
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="layers"] .rs-a { animation: rsUp 3.2s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="layers"] .rs-c { animation: rsDown 3.2s ease-in-out 1.4s infinite; }
+  /* Estadísticas: las barras crecen una tras otra */
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chart"] :is(.rs-a, .rs-b, .rs-c) {
+    transform-origin: bottom;
+    animation: rsBar 2.8s var(--ease-out-expo) 1.4s infinite;
+  }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chart"] .rs-b { animation-delay: 1.55s; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chart"] .rs-c { animation-delay: 1.7s; }
+  /* Destello: gira y late; el pequeño parpadea */
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="spark"] .rs-a { animation: rsTwinkle 4s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="spark"] .rs-b { animation: rsBlink 2s ease-in-out 1.6s infinite; }
+  /* Chat: los tres puntos «escriben» */
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile[data-icon="chat"] :is(.rs-d1, .rs-d2, .rs-d3) { opacity: 0; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chat"] :is(.rs-d1, .rs-d2, .rs-d3) { animation: rsType 1.4s ease-in-out 1.3s infinite; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chat"] .rs-d2 { animation-delay: 1.5s; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chat"] .rs-d3 { animation-delay: 1.7s; }
+  /* Ruta: el punto viaja por el camino (animateMotion en el SVG); se ve cuando ya se dibujó */
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile[data-icon="route"] .rs-dot { opacity: 0; transition: opacity 0.4s 1.2s; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="route"] .rs-dot { opacity: 1; }
+  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="route"] .rs-c { animation: rsBlink 3s ease-in-out 1.4s infinite; }
+}
+/* Con movimiento reducido el punto de la ruta no viaja: se oculta y el ícono queda completo y quieto */
+@media (prefers-reduced-motion: reduce) {
+  .rs-tile .rs-dot {
+    display: none;
+  }
+}
+@keyframes rsBreath {
+  50% { opacity: 0.9; scale: 1.15; }
+}
+@keyframes rsNudgeL {
+  50% { translate: -1.5px 0; }
+}
+@keyframes rsNudgeR {
+  50% { translate: 1.5px 0; }
+}
+@keyframes rsTilt {
+  50% { rotate: 10deg; }
+}
+@keyframes rsUp {
+  50% { translate: 0 -1.6px; }
+}
+@keyframes rsDown {
+  50% { translate: 0 1.6px; }
+}
+@keyframes rsBar {
+  0% { scale: 1 0.25; }
+  35%, 80% { scale: 1 1; }
+  100% { scale: 1 0.25; }
+}
+@keyframes rsTwinkle {
+  0%, 100% { rotate: 0deg; scale: 1; }
+  50% { rotate: 45deg; scale: 0.88; }
+}
+@keyframes rsBlink {
+  50% { opacity: 0.25; scale: 0.7; }
+}
+@keyframes rsType {
+  0%, 100% { opacity: 0.25; translate: 0 0; }
+  40% { opacity: 1; translate: 0 -1.5px; }
+}
+
+/* ---------- Cabeceras centradas en el teléfono (como resend.com; decisión de Willder, 2026-11-18) ----------
+   Ícono, etiqueta, título, introducción y botón al centro; tarjetas, listas y preguntas siguen a la izquierda */
+@media (max-width: 767px) {
+  html[data-skin^="resend"][data-theme="dark"] .rs-head,
+  html[data-skin^="resend"][data-theme="dark"] .rs-head > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  html[data-skin^="resend"][data-theme="dark"] .rs-head :is(h2, p) {
+    margin-inline: auto;
+  }
+}
+
+/* ---------- Tarjetas con luz que sigue al puntero (SkinSwitch.astro marca las tarjetas con .rs-glow) ---------- */
 html[data-skin^="resend"][data-theme="dark"] .rs-glow {
   background-image: radial-gradient(480px circle at var(--mx, 50%) var(--my, -30%), rgb(255 255 255 / 0.075), transparent 45%);
 }

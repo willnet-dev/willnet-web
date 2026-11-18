@@ -4,6 +4,7 @@
 // en tableta y móvil (en 4 columnas de tableta no caben palabras como «Presupuesto»).
 import type { Lang } from "../../i18n/routes";
 import { t } from "../../i18n/ui";
+import RsTile from "../dev/RsTile.astro";
 
 interface Props {
   lang: Lang;
@@ -15,8 +16,11 @@ const copy = t(lang);
 ---
 
 <section class="wrap py-[clamp(5rem,12vh,9rem)]" aria-labelledby="timeline-title">
-  <p class="eyebrow mb-4" data-reveal>{eyebrow}</p>
-  <h2 id="timeline-title" class="display mb-16 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{title}</h2>
+  <div class="rs-head">
+    <RsTile icon="route" />
+    <p class="eyebrow mb-4" data-reveal>{eyebrow}</p>
+    <h2 id="timeline-title" class="display mb-16 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{title}</h2>
+  </div>
   <div class="tl" data-timeline>
     <div class="tl__rail" aria-hidden="true"><span class="tl__fill" data-timeline-fill></span></div>
     <ol class="tl__steps">
