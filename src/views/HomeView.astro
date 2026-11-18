@@ -243,9 +243,15 @@ const homeFaq = faqFor(lang, true);
     opacity: 0.6;
   }
   /* Capa 4 (frente): la foto */
+  /* Las dos máscaras van en elementos distintos y se multiplican solas: la vertical en la foto y la
+     horizontal en <picture>. Con las dos capas en la misma imagen (mask-composite: intersect), el navegador
+     integrado no las cruzaba y en el tema claro el borde de abajo de la foto dejaba una línea detrás del
+     botón (Willder, 2026-11-18) */
   .hero__pic {
     display: block;
     height: 100%;
+    -webkit-mask-image: linear-gradient(to left, transparent, #000 13%);
+    mask-image: linear-gradient(to left, transparent, #000 13%);
   }
   .hero__pic img {
     display: block;
@@ -254,10 +260,8 @@ const homeFaq = faqFor(lang, true);
     object-fit: contain;
     object-position: bottom center;
     /* Abajo se funde con el fondo; a la derecha, donde la foto corta el hombro, también */
-    -webkit-mask-image: linear-gradient(to top, transparent, #000 18%), linear-gradient(to left, transparent, #000 13%);
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(to top, transparent, #000 18%), linear-gradient(to left, transparent, #000 13%);
-    mask-composite: intersect;
+    -webkit-mask-image: linear-gradient(to top, transparent, #000 18%);
+    mask-image: linear-gradient(to top, transparent, #000 18%);
   }
 
   /* Capa 3: el texto */
@@ -321,8 +325,8 @@ const homeFaq = faqFor(lang, true);
       translate: -50% 0;
     }
     .hero__pic img {
-      -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
-      mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
+      -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 38%);
+      mask-image: linear-gradient(to top, transparent 4%, #000 38%);
     }
     .hero__deco {
       left: -8%;
@@ -366,8 +370,8 @@ const homeFaq = faqFor(lang, true);
     /* Tema claro: el texto es oscuro, así que la camiseta (oscura) se funde con el fondo antes de
        llegar al texto para que se lea bien */
     :global([data-theme="light"]) .hero__pic img {
-      -webkit-mask-image: linear-gradient(to top, transparent 12%, #000 56%), linear-gradient(to left, transparent, #000 12%);
-      mask-image: linear-gradient(to top, transparent 12%, #000 56%), linear-gradient(to left, transparent, #000 12%);
+      -webkit-mask-image: linear-gradient(to top, transparent 12%, #000 56%);
+      mask-image: linear-gradient(to top, transparent 12%, #000 56%);
     }
     .hero__title {
       position: absolute;

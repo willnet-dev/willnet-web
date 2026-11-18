@@ -1,7 +1,7 @@
 /* ==========================================================================
    PRUEBA (rama prueba-resend, 2026-11-18): estilo inspirado en resend.com
-   Solo se activa con data-skin en <html> y casi todo, solo en el tema oscuro (el claro no cambia en esta
-   ronda: decisión de Willder). Con data-skin="actual" la web queda igual que en producción. Variantes:
+   Solo se activa con data-skin en <html>, en los dos temas: los efectos son los mismos y los colores salen
+   de tokens (--rs-*) que cada tema define. Con data-skin="actual" la web queda igual que en producción. Variantes:
      - resend       → negro puro, blancos y grises fríos; el acento pasa a blanco (ELEGIDA por Willder)
      - resend-lima  → la misma luz y los mismos efectos, pero con el lima de WillNet como acento
    Lo que se toma de Resend: negro profundo (#000), bordes de luz casi transparentes, títulos con
@@ -26,12 +26,133 @@ html[data-skin^="resend"][data-theme="dark"] {
   /* El lima de WillNet se queda en pocos detalles (pedido de Willder, 2026-11-18) */
   --lime: #d4ff3a;
   --logo-accent: var(--lime);
+  /* Tokens de los efectos: el tema claro (más abajo) los redefine */
+  --rs-title: linear-gradient(to right bottom, #ffffff 30%, rgb(255 255 255 / 0.5));
+  --rs-hero-a: rgb(255 255 255 / 0.13);
+  --rs-hero-b: rgb(214 235 253 / 0.06);
+  --rs-beam: rgb(255 255 255 / 0.045);
+  --rs-beam-2: rgb(255 255 255 / 0.015);
+  --rs-tag-fill: #050506;
+  --rs-line-mix: rgb(255 255 255 / 0.35);
+  --rs-glow-pct: 9%;
+  --rs-spark: rgb(255 255 255 / 0.8);
+  --rs-ink: #000000;
+  --rs-darken: 0%;
+  --rs-glow-c: rgb(255 255 255 / 0.075);
+  --rs-tile-bg: linear-gradient(160deg, #2b2c30, #0c0c0d 62%);
+  --rs-tile-fg: #ffffff;
+  --rs-tile-ring: rgb(255 255 255 / 0.06);
+  --rs-tile-hi: rgb(255 255 255 / 0.22);
+  --rs-tile-drop: #000;
 }
 
 html[data-skin="resend"][data-theme="dark"] {
   --accent: #f0f0f0;
   --accent-ink: #000000;
   --link: #ffffff;
+}
+
+/* ---------- Tema claro (decisiones de Willder, 2026-11-18) ----------
+   Espejo del oscuro: fondo casi blanco #FAFAFA, tarjetas blancas con borde gris muy fino, texto casi negro
+   y botón principal negro. Los mismos efectos que en oscuro (luces por sección, luz en tarjetas, bordes
+   arcoíris e íconos animados), con los colores de sección más intensos para que se noten sobre blanco. */
+html[data-skin^="resend"][data-theme="light"] {
+  --bg: #fafafa;
+  --page-bg: #fafafa;
+  --surface: #ffffff;
+  --surface-2: #f4f4f5;
+  --line: rgb(9 9 11 / 0.1);
+  --text: #111113;
+  /* 6,4:1 sobre #FAFAFA */
+  --muted: #55585e;
+  --wire: #c9ccd1;
+  --card-shadow: 0 0 0 1px rgb(9 9 11 / 0.02), 0 1px 2px rgb(9 9 11 / 0.04), 0 14px 32px -18px rgb(9 9 11 / 0.22);
+  --rs-glass: linear-gradient(180deg, #ffffff, #f6f6f7);
+  --rs-title: linear-gradient(to right bottom, #111113 30%, rgb(17 17 19 / 0.6));
+  --rs-hero-a: rgb(61 158 255 / 0.1);
+  --rs-hero-b: rgb(155 86 251 / 0.08);
+  --rs-beam: rgb(255 255 255 / 0.7);
+  --rs-beam-2: rgb(255 255 255 / 0.25);
+  --rs-tag-fill: #ffffff;
+  --rs-line-mix: rgb(9 9 11 / 0.12);
+  --rs-glow-pct: 10%;
+  --rs-spark: rgb(9 9 11 / 0.45);
+  --rs-ink: #ffffff;
+  /* La luz de las tarjetas (cian → ámbar → morado) se oscurece un 25 % para verse sobre blanco */
+  --rs-darken: 25%;
+  --rs-glow-c: rgb(9 9 11 / 0.035);
+  --rs-rb-1: rgb(0 168 181 / 0.85);
+  --rs-rb-2: rgb(224 138 0 / 0.85);
+  --rs-rb-3: rgb(138 43 226 / 0.85);
+  --rs-tile-bg: linear-gradient(160deg, #ffffff, #eef0f2 62%);
+  --rs-tile-ring: rgb(9 9 11 / 0.08);
+  --rs-tile-hi: #ffffff;
+  --rs-tile-drop: rgb(9 9 11 / 0.2);
+}
+html[data-skin="resend"][data-theme="light"] {
+  --accent: #111113;
+  --accent-ink: #ffffff;
+  --link: #111113;
+}
+/* Colores de sección para fondo claro: los mismos tonos, más oscuros (paso 11 de Radix Colors), así las
+   luces se ven y el texto blanco sobre los rellenos cumple el contraste */
+html[data-skin^="resend"][data-theme="light"] section[aria-labelledby="services-title"],
+html[data-skin^="resend"][data-theme="light"] :is(.bento, .stack) { --rs-c: #cc4e00; }
+html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="work-title"], [aria-labelledby="more-title"], [aria-labelledby="related-title"], [aria-labelledby="gallery-title"]) { --rs-c: #8145b5; }
+html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="results-title"], [aria-labelledby="metrics-title"], [aria-labelledby="measure-title"]) { --rs-c: #218358; }
+html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="lab-title"], [aria-labelledby="skills-title"]) { --rs-c: #5753c6; }
+html[data-skin^="resend"][data-theme="light"] section[aria-labelledby="why-title"] { --rs-c: #008573; }
+html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="timeline-title"], [aria-labelledby="process-title"]) { --rs-c: #ab6400; }
+html[data-skin^="resend"][data-theme="light"] section:is([aria-labelledby="faq-title"], [aria-labelledby="sfaq-title"], [aria-labelledby="book-title"]) { --rs-c: #0d74ce; }
+/* Escenario final en claro: un gris apenas más oscuro que la página (como en oscuro, donde es casi negro
+   sobre negro), tarjetas blancas, botón negro y luz roja suave arriba */
+html[data-skin^="resend"][data-theme="light"] .stage {
+  --bg: #f0f0f1;
+  --surface: #ffffff;
+  --surface-2: #f7f7f8;
+  --line: rgb(9 9 11 / 0.1);
+  --text: #111113;
+  --muted: #55585e;
+  --wire: #c9ccd1;
+  --rs-c: #ce2c31;
+}
+html[data-skin="resend"][data-theme="light"] .stage {
+  --accent: #111113;
+  --accent-ink: #ffffff;
+  --link: #111113;
+}
+html[data-skin^="resend"][data-theme="light"] .stage::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 60vh;
+  pointer-events: none;
+  background: radial-gradient(ellipse 35% 45% at 50% 0%, color-mix(in oklab, var(--rs-c) 10%, transparent), transparent 70%);
+}
+/* Botones: blancos con borde fino; el principal negro, y al pasar el mouse un gris oscuro */
+html[data-skin^="resend"][data-theme="light"] .btn:not(.btn-primary) {
+  border-color: rgb(9 9 11 / 0.12);
+  background-image: var(--rs-glass);
+  box-shadow: 0 1px 2px rgb(9 9 11 / 0.06), inset 0 1px 0 #ffffff;
+}
+html[data-skin^="resend"][data-theme="light"] .btn-primary {
+  --btn-fill: #3a3b3f;
+  --btn-fill-fg: #ffffff;
+  box-shadow: 0 0 0 1px rgb(9 9 11 / 0.06), 0 8px 24px -8px color-mix(in oklab, var(--accent) 45%, transparent);
+}
+/* Íconos «de app»: cuadro blanco y el trazo del color de la sección (en una variable de html no tomaría
+   el color de cada sección) */
+html[data-skin^="resend"][data-theme="light"] .rs-tile {
+  color: var(--rs-c, #111113);
+}
+/* El punto del menú: el lima no se ve sobre blanco, va el oliva del logo */
+html[data-skin^="resend"][data-theme="light"] .nav-link::after {
+  background: var(--logo-accent);
+}
+/* GitHub y X: en claro, negro con el ícono blanco (el blanco no se vería sobre el fondo) */
+html[data-skin^="resend"][data-theme="light"] .social-icon:is([data-brand="github"], [data-brand="x"]) {
+  --btn-fill: #000000;
+  --btn-fill-fg: #ffffff;
 }
 
 /* ---------- Un color de luz por sección (paleta de resend.com / Radix Colors) ----------
@@ -53,7 +174,7 @@ html[data-skin^="resend"] section[aria-labelledby="skills-title"] { --rs-c: #baa
 
 /* En «Resend puro», dentro de cada sección el acento (relleno de botones al pasar el mouse, línea del
    proceso, «+» abierto…) toma el color de la sección en vez del blanco (pedido de Willder, 2026-11-18) */
-html[data-skin="resend"][data-theme="dark"] main section[aria-labelledby] {
+html[data-skin="resend"] main section[aria-labelledby] {
   --accent: var(--rs-c, #f0f0f0);
 }
 
@@ -87,29 +208,29 @@ html[data-skin^="resend"][data-theme="dark"] .stage::before {
 
 /* ---------- Títulos con degradado blanco (Resend: blanco al 100 % → 50 %) ----------
    Solo h1 y h2: los h3 de las tarjetas de servicios tienen su propio efecto de pintura en el teléfono */
-html[data-skin^="resend"][data-theme="dark"] :is(main, .stage) :is(h1, h2).display {
-  background-image: linear-gradient(to right bottom, #ffffff 30%, rgb(255 255 255 / 0.5));
+html[data-skin^="resend"] :is(main, .stage) :is(h1, h2).display {
+  background-image: var(--rs-title);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
 
 /* ---------- Luz del hero: un foco desde arriba y un haz diagonal que respira ---------- */
-html[data-skin^="resend"][data-theme="dark"] [data-hero]::before,
-html[data-skin^="resend"][data-theme="dark"] [data-hero]::after {
+html[data-skin^="resend"] [data-hero]::before,
+html[data-skin^="resend"] [data-hero]::after {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 }
-html[data-skin^="resend"][data-theme="dark"] [data-hero]::before {
+html[data-skin^="resend"] [data-hero]::before {
   background:
-    radial-gradient(ellipse 70% 55% at 30% -12%, rgb(255 255 255 / 0.13), transparent 70%),
-    radial-gradient(ellipse 40% 40% at 85% 10%, rgb(214 235 253 / 0.06), transparent 70%);
+    radial-gradient(ellipse 70% 55% at 30% -12%, var(--rs-hero-a), transparent 70%),
+    radial-gradient(ellipse 40% 40% at 85% 10%, var(--rs-hero-b), transparent 70%);
 }
-html[data-skin^="resend"][data-theme="dark"] [data-hero]::after {
-  background: linear-gradient(118deg, transparent 38%, rgb(255 255 255 / 0.045) 47%, rgb(255 255 255 / 0.015) 53%, transparent 60%);
+html[data-skin^="resend"] [data-hero]::after {
+  background: linear-gradient(118deg, transparent 38%, var(--rs-beam) 47%, var(--rs-beam-2) 53%, transparent 60%);
   animation: rsBeam 9s ease-in-out infinite alternate;
 }
 @keyframes rsBeam {
@@ -123,7 +244,7 @@ html[data-skin^="resend"][data-theme="dark"] [data-hero]::after {
   }
 }
 /* El contorno de la W, más discreto: aquí la luz manda */
-html[data-skin^="resend"][data-theme="dark"] .hero__deco {
+html[data-skin^="resend"] .hero__deco {
   opacity: 0.35;
 }
 
@@ -135,38 +256,38 @@ html[data-skin^="resend"][data-theme="dark"] .hero__deco {
   initial-value: 23deg;
   inherits: false;
 }
-html[data-skin^="resend"][data-theme="dark"] :is(.hero__role, .tl__tag, .pcard .tag) {
+html[data-skin^="resend"] :is(.hero__role, .tl__tag, .pcard .tag) {
   border: 1px solid transparent;
   border-radius: 999px;
   background:
-    linear-gradient(var(--rs-fill, #050506), var(--rs-fill, #050506)) padding-box,
-    linear-gradient(var(--rs-angle), rgb(2 252 239 / 0.55), rgb(255 181 43 / 0.55) 50%, rgb(160 43 254 / 0.55)) border-box;
+    linear-gradient(var(--rs-fill, var(--rs-tag-fill)), var(--rs-fill, var(--rs-tag-fill))) padding-box,
+    linear-gradient(var(--rs-angle), var(--rs-rb-1, rgb(2 252 239 / 0.55)), var(--rs-rb-2, rgb(255 181 43 / 0.55)) 50%, var(--rs-rb-3, rgb(160 43 254 / 0.55))) border-box;
   color: var(--text);
   animation: rsSpin 8s linear infinite;
 }
-html[data-skin^="resend"][data-theme="dark"] .pcard .tag {
+html[data-skin^="resend"] .pcard .tag {
   --rs-fill: var(--surface);
 }
 /* Desfase para que las etiquetas no giren todas a la vez */
-html[data-skin^="resend"][data-theme="dark"] .pcard .tag + .tag { animation-delay: -3s; }
-html[data-skin^="resend"][data-theme="dark"] :nth-child(2n) > * > .pcard .tag { animation-delay: -5s; }
+html[data-skin^="resend"] .pcard .tag + .tag { animation-delay: -3s; }
+html[data-skin^="resend"] :nth-child(2n) > * > .pcard .tag { animation-delay: -5s; }
 
 /* Mouse del hero: el contorno en arcoíris (degradado #rs-mouse-grad del SVG, que gira despacio) */
-html[data-skin^="resend"][data-theme="dark"] .mouse__outline {
+html[data-skin^="resend"] .mouse__outline {
   stroke: url(#rs-mouse-grad);
   stroke-opacity: 1;
 }
-html[data-skin^="resend"][data-theme="dark"] .hero__role {
+html[data-skin^="resend"] .hero__role {
   display: inline-flex;
   padding: 0.5em 1.05em;
 }
-html[data-skin^="resend"][data-theme="dark"] .tl__tag {
+html[data-skin^="resend"] .tl__tag {
   padding: 0.3rem 0.8rem;
 }
 /* Cada etiqueta empieza en otro punto del giro, para que no se muevan todas iguales */
-html[data-skin^="resend"][data-theme="dark"] .tl__step:nth-child(2) .tl__tag { animation-delay: -2s; }
-html[data-skin^="resend"][data-theme="dark"] .tl__step:nth-child(3) .tl__tag { animation-delay: -4s; }
-html[data-skin^="resend"][data-theme="dark"] .tl__step:nth-child(4) .tl__tag { animation-delay: -6s; }
+html[data-skin^="resend"] .tl__step:nth-child(2) .tl__tag { animation-delay: -2s; }
+html[data-skin^="resend"] .tl__step:nth-child(3) .tl__tag { animation-delay: -4s; }
+html[data-skin^="resend"] .tl__step:nth-child(4) .tl__tag { animation-delay: -6s; }
 @keyframes rsSpin {
   to {
     --rs-angle: 383deg;
@@ -174,11 +295,11 @@ html[data-skin^="resend"][data-theme="dark"] .tl__step:nth-child(4) .tl__tag { a
 }
 
 /* ---------- Líneas de luz arriba de cada sección, con el color de la sección ---------- */
-html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby] {
+html[data-skin^="resend"] main section[aria-labelledby] {
   position: relative;
 }
-html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::before,
-html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::after {
+html[data-skin^="resend"] main section[aria-labelledby]::before,
+html[data-skin^="resend"] main section[aria-labelledby]::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -186,23 +307,23 @@ html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::afte
   translate: -50% 0;
   pointer-events: none;
 }
-html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::before {
+html[data-skin^="resend"] main section[aria-labelledby]::before {
   width: min(70%, 760px);
   height: 1px;
-  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--rs-c, #fff) 55%, rgb(255 255 255 / 0.35)), transparent);
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--rs-c, #fff) 55%, var(--rs-line-mix)), transparent);
 }
-html[data-skin^="resend"][data-theme="dark"] main section[aria-labelledby]::after {
+html[data-skin^="resend"] main section[aria-labelledby]::after {
   z-index: -1;
   width: min(80%, 900px);
   height: 200px;
-  background: radial-gradient(ellipse 50% 100% at 50% 0%, color-mix(in oklab, var(--rs-c, #fff) 9%, transparent), transparent 70%);
+  background: radial-gradient(ellipse 50% 100% at 50% 0%, color-mix(in oklab, var(--rs-c, #fff) var(--rs-glow-pct), transparent), transparent 70%);
 }
 html[data-skin^="resend"][data-theme="dark"] main > .border-y {
   border-color: rgb(214 235 253 / 0.08);
 }
 
 /* ---------- Botones de cristal (Resend: degradado blanco al 5–10 %, borde fino y desenfoque) ---------- */
-html[data-skin^="resend"][data-theme="dark"] .btn:not(.btn-orb, .social-icon) {
+html[data-skin^="resend"] .btn:not(.btn-orb, .social-icon) {
   border-radius: 16px;
 }
 html[data-skin^="resend"][data-theme="dark"] .btn:not(.btn-primary) {
@@ -230,18 +351,18 @@ html[data-skin^="resend"][data-theme="dark"] .nav-link::after {
   box-shadow: 0 0 8px rgb(212 255 58 / 0.6);
 }
 @media (hover: hover) {
-  html[data-skin^="resend"][data-theme="dark"] .price-row:hover .price-row__arrow,
-  html[data-skin^="resend"][data-theme="dark"] .faq__q:hover .faq__icon {
+  html[data-skin^="resend"] .price-row:hover .price-row__arrow,
+  html[data-skin^="resend"] .faq__q:hover .faq__icon {
     background: var(--rs-c, var(--lime));
     border-color: var(--rs-c, var(--lime));
-    color: #000;
+    color: var(--rs-ink);
     box-shadow: 0 0 18px -2px color-mix(in oklab, var(--rs-c, var(--lime)) 60%, transparent);
   }
 }
-html[data-skin^="resend"][data-theme="dark"] .faq[open] .faq__icon {
+html[data-skin^="resend"] .faq[open] .faq__icon {
   background: var(--rs-c, var(--lime));
   border-color: var(--rs-c, var(--lime));
-  color: #000;
+  color: var(--rs-ink);
 }
 
 /* ---------- Redes: cada ícono toma el color de su marca al pasar el mouse ---------- */
@@ -296,11 +417,11 @@ html[data-skin^="resend"] .footer-list a:is([data-brand="github"], [data-brand="
 /* ---------- Telón del cambio de página: gris muy oscuro en vez de blanco (pedido de Willder, 2026-11-18) ----------
    Negro puro no se distinguiría del fondo (#000): el gris #111113 se nota al subir, y la línea de arriba,
    con un brillo suave al centro, marca el borde del telón como las secciones. El texto va en blanco */
-html[data-skin^="resend"][data-theme="dark"] .curtain {
+html[data-skin^="resend"] .curtain {
   background:
     radial-gradient(ellipse 50% 35% at 50% 0%, rgb(255 255 255 / 0.06), transparent 70%),
     #111113;
-  color: var(--text);
+  color: #f0f0f0;
   border-top: 1px solid rgb(255 255 255 / 0.12);
 }
 
@@ -329,7 +450,7 @@ html[data-skin^="resend"] .wa-fab::after {
 .rs-tile {
   display: none;
 }
-html[data-skin^="resend"][data-theme="dark"] .rs-tile {
+html[data-skin^="resend"] .rs-tile {
   position: relative;
   display: grid;
   place-items: center;
@@ -339,16 +460,16 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile {
   border-radius: 24px;
   background:
     radial-gradient(120% 80% at 50% 125%, color-mix(in oklab, var(--rs-c, #fff) 60%, transparent), transparent 62%),
-    linear-gradient(160deg, #2b2c30, #0c0c0d 62%);
+    var(--rs-tile-bg);
   box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 0.22),
+    inset 0 1px 0 var(--rs-tile-hi),
     inset 0 -1px 0 rgb(0 0 0 / 0.6),
-    0 0 0 1px rgb(255 255 255 / 0.06),
+    0 0 0 1px var(--rs-tile-ring),
     0 18px 40px -12px color-mix(in oklab, var(--rs-c, #fff) 55%, transparent),
-    0 24px 48px -24px #000;
-  color: #ffffff;
+    0 24px 48px -24px var(--rs-tile-drop);
+  color: var(--rs-tile-fg);
 }
-html[data-skin^="resend"][data-theme="dark"] .rs-tile::before {
+html[data-skin^="resend"] .rs-tile::before {
   /* Luz de color que respira debajo del cuadro */
   content: "";
   position: absolute;
@@ -360,7 +481,7 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile::before {
   opacity: 0.55;
   z-index: -1;
 }
-html[data-skin^="resend"][data-theme="dark"] .rs-tile::after {
+html[data-skin^="resend"] .rs-tile::after {
   /* Reflejo de cristal en la mitad de arriba */
   content: "";
   position: absolute;
@@ -369,59 +490,59 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile::after {
   background: linear-gradient(rgb(255 255 255 / 0.13), transparent);
   pointer-events: none;
 }
-html[data-skin^="resend"][data-theme="dark"] .rs-tile svg {
+html[data-skin^="resend"] .rs-tile svg {
   position: relative;
   z-index: 1;
   overflow: visible;
   filter: drop-shadow(0 0 6px color-mix(in oklab, var(--rs-c, #fff) 85%, transparent));
 }
-html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
+html[data-skin^="resend"] .rs-tile :is(path, circle) {
   transform-box: fill-box;
   transform-origin: center;
 }
 
 @media (prefers-reduced-motion: no-preference) {
   /* El cuadro aparece con la entrada normal (data-reveal); el trazo se dibuja después */
-  html[data-skin^="resend"][data-theme="dark"].js .rs-tile [pathLength] {
+  html[data-skin^="resend"].js .rs-tile [pathLength] {
     stroke-dasharray: 100;
     stroke-dashoffset: 100;
   }
-  html[data-skin^="resend"][data-theme="dark"].js .rs-tile.is-in [pathLength] {
+  html[data-skin^="resend"].js .rs-tile.is-in [pathLength] {
     stroke-dashoffset: 0;
     transition: stroke-dashoffset 1.1s var(--ease-out-expo) 250ms;
   }
-  html[data-skin^="resend"][data-theme="dark"].js .rs-tile.is-in .rs-b { transition-delay: 450ms; }
-  html[data-skin^="resend"][data-theme="dark"].js .rs-tile.is-in .rs-c { transition-delay: 650ms; }
+  html[data-skin^="resend"].js .rs-tile.is-in .rs-b { transition-delay: 450ms; }
+  html[data-skin^="resend"].js .rs-tile.is-in .rs-c { transition-delay: 650ms; }
 
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in::before {
+  html[data-skin^="resend"] .rs-tile.is-in::before {
     animation: rsBreath 3.2s ease-in-out 1.2s infinite;
   }
   /* Código: los corchetes se abren y la barra se inclina */
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="code"] .rs-a { animation: rsNudgeL 3s ease-in-out 1.4s infinite; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="code"] .rs-b { animation: rsNudgeR 3s ease-in-out 1.4s infinite; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="code"] .rs-c { animation: rsTilt 3s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="code"] .rs-a { animation: rsNudgeL 3s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="code"] .rs-b { animation: rsNudgeR 3s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="code"] .rs-c { animation: rsTilt 3s ease-in-out 1.4s infinite; }
   /* Capas: se separan y vuelven */
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="layers"] .rs-a { animation: rsUp 3.2s ease-in-out 1.4s infinite; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="layers"] .rs-c { animation: rsDown 3.2s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="layers"] .rs-a { animation: rsUp 3.2s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="layers"] .rs-c { animation: rsDown 3.2s ease-in-out 1.4s infinite; }
   /* Estadísticas: las barras crecen una tras otra */
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chart"] :is(.rs-a, .rs-b, .rs-c) {
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="chart"] :is(.rs-a, .rs-b, .rs-c) {
     transform-origin: bottom;
     animation: rsBar 2.8s var(--ease-out-expo) 1.4s infinite;
   }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chart"] .rs-b { animation-delay: 1.55s; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chart"] .rs-c { animation-delay: 1.7s; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="chart"] .rs-b { animation-delay: 1.55s; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="chart"] .rs-c { animation-delay: 1.7s; }
   /* Destello: gira y late; el pequeño parpadea */
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="spark"] .rs-a { animation: rsTwinkle 4s ease-in-out 1.4s infinite; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="spark"] .rs-b { animation: rsBlink 2s ease-in-out 1.6s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="spark"] .rs-a { animation: rsTwinkle 4s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="spark"] .rs-b { animation: rsBlink 2s ease-in-out 1.6s infinite; }
   /* Chat: los tres puntos «escriben» */
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile[data-icon="chat"] :is(.rs-d1, .rs-d2, .rs-d3) { opacity: 0; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chat"] :is(.rs-d1, .rs-d2, .rs-d3) { animation: rsType 1.4s ease-in-out 1.3s infinite; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chat"] .rs-d2 { animation-delay: 1.5s; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="chat"] .rs-d3 { animation-delay: 1.7s; }
+  html[data-skin^="resend"] .rs-tile[data-icon="chat"] :is(.rs-d1, .rs-d2, .rs-d3) { opacity: 0; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="chat"] :is(.rs-d1, .rs-d2, .rs-d3) { animation: rsType 1.4s ease-in-out 1.3s infinite; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="chat"] .rs-d2 { animation-delay: 1.5s; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="chat"] .rs-d3 { animation-delay: 1.7s; }
   /* Ruta: el punto viaja por el camino (animateMotion en el SVG); se ve cuando ya se dibujó */
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile[data-icon="route"] .rs-dot { opacity: 0; transition: opacity 0.4s 1.2s; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="route"] .rs-dot { opacity: 1; }
-  html[data-skin^="resend"][data-theme="dark"] .rs-tile.is-in[data-icon="route"] .rs-c { animation: rsBlink 3s ease-in-out 1.4s infinite; }
+  html[data-skin^="resend"] .rs-tile[data-icon="route"] .rs-dot { opacity: 0; transition: opacity 0.4s 1.2s; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="route"] .rs-dot { opacity: 1; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="route"] .rs-c { animation: rsBlink 3s ease-in-out 1.4s infinite; }
 }
 /* Con movimiento reducido el punto de la ruta no viaja: se oculta y el ícono queda completo y quieto */
 @media (prefers-reduced-motion: reduce) {
@@ -472,46 +593,46 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
    (--rs-trace-delay) evita que todas las líneas se enciendan a la vez. Sin movimiento: no hay luz. */
 @media (prefers-reduced-motion: no-preference) {
   /* Líneas de arriba: listas de servicios, cifras, 3D, «Why», preguntas, y los border-t del resto de la web */
-  html[data-skin^="resend"][data-theme="dark"] :is(main, .stage) :is(.border-t.border-line, .results, .lab__list) {
-    background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+  html[data-skin^="resend"] :is(main, .stage) :is(.border-t.border-line, .results, .lab__list) {
+    background-image: linear-gradient(90deg, transparent, var(--rs-c, var(--rs-spark)), transparent);
     background-size: 28% 1px;
     background-repeat: no-repeat;
     background-origin: border-box;
     animation: rsTraceTop 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
   }
   /* Líneas de abajo: cada pregunta, cada cifra, cada efecto 3D (en columna) y cada servicio (escritorio) */
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .lab__item) {
-    background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+  html[data-skin^="resend"] main :is(.faq, .lab__item) {
+    background-image: linear-gradient(90deg, transparent, var(--rs-c, var(--rs-spark)), transparent);
     background-size: 28% 1px;
     background-repeat: no-repeat;
     background-origin: border-box;
     animation: rsTraceBottom 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
   }
   /* Franja del marquee (arriba y abajo, en sentidos contrarios) */
-  html[data-skin^="resend"][data-theme="dark"] main > .border-y.border-line,
-  html[data-skin^="resend"][data-theme="dark"] main section.border-y.border-line {
+  html[data-skin^="resend"] main > .border-y.border-line,
+  html[data-skin^="resend"] main section.border-y.border-line {
     background-image:
-      linear-gradient(90deg, transparent, rgb(255 255 255 / 0.8), transparent),
-      linear-gradient(90deg, transparent, rgb(255 255 255 / 0.8), transparent);
+      linear-gradient(90deg, transparent, var(--rs-spark), transparent),
+      linear-gradient(90deg, transparent, var(--rs-spark), transparent);
     background-size: 22% 1px, 22% 1px;
     background-repeat: no-repeat;
     background-origin: border-box;
     animation: rsTraceBoth 6s linear infinite;
   }
   /* Desfase: cada elemento de una lista empieza un poco después que el anterior */
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .lab__item, .why):nth-child(2) { --rs-trace-delay: 0.3s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .lab__item, .why):nth-child(3) { --rs-trace-delay: 0.6s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .lab__item, .why):nth-child(4) { --rs-trace-delay: 0.9s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .lab__item):nth-child(5) { --rs-trace-delay: 1.2s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .lab__item):nth-child(6) { --rs-trace-delay: 1.5s; }
+  html[data-skin^="resend"] main :is(.faq, .lab__item, .why):nth-child(2) { --rs-trace-delay: 0.3s; }
+  html[data-skin^="resend"] main :is(.faq, .lab__item, .why):nth-child(3) { --rs-trace-delay: 0.6s; }
+  html[data-skin^="resend"] main :is(.faq, .lab__item, .why):nth-child(4) { --rs-trace-delay: 0.9s; }
+  html[data-skin^="resend"] main :is(.faq, .lab__item):nth-child(5) { --rs-trace-delay: 1.2s; }
+  html[data-skin^="resend"] main :is(.faq, .lab__item):nth-child(6) { --rs-trace-delay: 1.5s; }
 
   /* Measured results: cada cifra tiene su línea de abajo y, en una fila, varias luces se cortaban en la
      misma línea. Ahora la primera cifra de cada fila lleva una sola luz que cruza la fila entera
      (2 cifras por fila en el teléfono y la tableta, 4 en escritorio; pedido de Willder, 2026-11-18) */
-  html[data-skin^="resend"][data-theme="dark"] main .results > .result {
+  html[data-skin^="resend"] main .results > .result {
     position: relative;
   }
-  html[data-skin^="resend"][data-theme="dark"] main .results > .result:nth-child(odd)::after {
+  html[data-skin^="resend"] main .results > .result:nth-child(odd)::after {
     content: "";
     position: absolute;
     left: 0;
@@ -519,16 +640,16 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
     width: 200%;
     height: 1px;
     pointer-events: none;
-    background: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent) no-repeat;
+    background: linear-gradient(90deg, transparent, var(--rs-c, var(--rs-spark)), transparent) no-repeat;
     background-size: 28% 1px;
     animation: rsTraceTop 4.5s ease-in-out infinite;
   }
-  html[data-skin^="resend"][data-theme="dark"] main .results > .result:nth-child(3)::after { animation-delay: 0.6s; }
+  html[data-skin^="resend"] main .results > .result:nth-child(3)::after { animation-delay: 0.6s; }
   @media (min-width: 1024px) {
-    html[data-skin^="resend"][data-theme="dark"] main .results > .result:nth-child(odd)::after {
+    html[data-skin^="resend"] main .results > .result:nth-child(odd)::after {
       content: none;
     }
-    html[data-skin^="resend"][data-theme="dark"] main .results > .result:nth-child(4n + 1)::after {
+    html[data-skin^="resend"] main .results > .result:nth-child(4n + 1)::after {
       content: "";
       width: 400%;
       background-size: 18% 1px;
@@ -537,67 +658,67 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
 
   /* Escritorio: las columnas de «Why» y de 3D se separan con líneas verticales; la luz baja por ellas */
   @media (min-width: 768px) {
-    html[data-skin^="resend"][data-theme="dark"] main .why + .why {
-      background-image: linear-gradient(180deg, transparent, var(--rs-c, #fff), transparent);
+    html[data-skin^="resend"] main .why + .why {
+      background-image: linear-gradient(180deg, transparent, var(--rs-c, var(--rs-spark)), transparent);
       background-size: 1px 35%;
       background-repeat: no-repeat;
       background-origin: border-box;
       animation: rsTraceLeft 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
     }
     /* Servicios: la línea de cada fila la dibuja su ::after; la luz va en el borde (transparente) de abajo */
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li {
-      background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+    html[data-skin^="resend"] main .price-list > li {
+      background-image: linear-gradient(90deg, transparent, var(--rs-c, var(--rs-spark)), transparent);
       background-size: 22% 1px;
       background-repeat: no-repeat;
       background-origin: border-box;
       animation: rsTraceBottom 5s ease-in-out var(--rs-trace-delay, 0s) infinite;
     }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(2n) { --rs-trace-delay: 0.4s; }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(3n) { --rs-trace-delay: 0.8s; }
+    html[data-skin^="resend"] main .price-list > li:nth-child(2n) { --rs-trace-delay: 0.4s; }
+    html[data-skin^="resend"] main .price-list > li:nth-child(3n) { --rs-trace-delay: 0.8s; }
   }
   @media (min-width: 1100px) {
-    html[data-skin^="resend"][data-theme="dark"] main .lab__item + .lab__item {
-      background-image: linear-gradient(180deg, transparent, var(--rs-c, #fff), transparent);
+    html[data-skin^="resend"] main .lab__item + .lab__item {
+      background-image: linear-gradient(180deg, transparent, var(--rs-c, var(--rs-spark)), transparent);
       background-size: 1px 35%;
       animation-name: rsTraceLeft;
     }
-    html[data-skin^="resend"][data-theme="dark"] main .lab__item:first-child {
+    html[data-skin^="resend"] main .lab__item:first-child {
       background-image: none;
     }
   }
 
   /* Teléfono: la lista de servicios y el pie no tienen línea arriba (border-top: 0), así que tampoco luz */
   @media (max-width: 767px) {
-    html[data-skin^="resend"][data-theme="dark"] :is(.price-list, footer.border-t) {
+    html[data-skin^="resend"] :is(.price-list, footer.border-t) {
       background-image: none;
     }
     /* Tarjetas de «What I do»: una sola luz da la vuelta completa al borde, cambiando de color
        (ver «Luz que rodea las tarjetas» más abajo; pedido de Willder, 2026-11-18) */
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li {
+    html[data-skin^="resend"] main .price-list > li {
       border-color: transparent;
       background:
         linear-gradient(var(--surface), var(--surface)) padding-box,
-        conic-gradient(from var(--rs-angle), transparent 0deg 285deg, var(--rs-light) 352deg, transparent 360deg) border-box,
+        conic-gradient(from var(--rs-angle), transparent 0deg 285deg, color-mix(in oklab, var(--rs-light), #000 var(--rs-darken)) 352deg, transparent 360deg) border-box,
         linear-gradient(var(--line), var(--line)) border-box;
       animation: rsOrbit 6s linear infinite;
     }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(2) { animation-delay: -1s; }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(3) { animation-delay: -2s; }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(4) { animation-delay: -3s; }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(5) { animation-delay: -4s; }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(6) { animation-delay: -5s; }
+    html[data-skin^="resend"] main .price-list > li:nth-child(2) { animation-delay: -1s; }
+    html[data-skin^="resend"] main .price-list > li:nth-child(3) { animation-delay: -2s; }
+    html[data-skin^="resend"] main .price-list > li:nth-child(4) { animation-delay: -3s; }
+    html[data-skin^="resend"] main .price-list > li:nth-child(5) { animation-delay: -4s; }
+    html[data-skin^="resend"] main .price-list > li:nth-child(6) { animation-delay: -5s; }
   }
 
   /* Línea del proceso: además de llenarse con el scroll, un destello la recorre */
-  html[data-skin^="resend"][data-theme="dark"] .tl__rail {
-    background-image: linear-gradient(180deg, transparent, var(--rs-c, #fff), transparent);
+  html[data-skin^="resend"] .tl__rail {
+    background-image: linear-gradient(180deg, transparent, var(--rs-c, var(--rs-spark)), transparent);
     background-size: 100% 20%;
     background-repeat: no-repeat;
     animation: rsTraceRail 3.5s ease-in-out infinite;
   }
   @media (min-width: 1024px) {
-    html[data-skin^="resend"][data-theme="dark"] .tl__rail {
-      background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+    html[data-skin^="resend"] .tl__rail {
+      background-image: linear-gradient(90deg, transparent, var(--rs-c, var(--rs-spark)), transparent);
       background-size: 20% 100%;
       animation-name: rsTraceRailX;
     }
@@ -634,7 +755,7 @@ html[data-skin^="resend"] :is(.bento, .stack) { --rs-c: #ff7e29; }
 /* Al pasar el mouse, el mosaico se rellena con el acento (blanco en «Resend», lima en «Resend + lima»);
    el título llevaba el degradado blanco de los h2 y casi desaparecía: pasa a tinta oscura */
 @media (hover: hover) {
-  html[data-skin^="resend"][data-theme="dark"] .bento__link:hover h2.display {
+  html[data-skin^="resend"] .bento__link:hover h2.display {
     background-image: none;
     color: var(--accent-ink);
   }
@@ -660,19 +781,19 @@ html[data-skin^="resend"] :is(.bento, .stack) { --rs-c: #ff7e29; }
 @media (prefers-reduced-motion: no-preference) {
   /* Escritorio y tableta (bento): el borde es el padding de 1 px del mosaico; la luz se suma a su fondo,
      sin quitar el brillo que sigue al mouse */
-  html[data-skin^="resend"][data-theme="dark"] .bento__tile {
+  html[data-skin^="resend"] .bento__tile {
     background:
-      conic-gradient(from var(--rs-angle), transparent 0deg 285deg, var(--rs-light) 352deg, transparent 360deg),
+      conic-gradient(from var(--rs-angle), transparent 0deg 285deg, color-mix(in oklab, var(--rs-light), #000 var(--rs-darken)) 352deg, transparent 360deg),
       radial-gradient(260px circle at var(--mx, -999px) var(--my, -999px), var(--accent), transparent 70%),
       var(--line);
     animation: rsOrbit 7s linear infinite;
   }
   /* Teléfono (tarjetas apiladas) */
-  html[data-skin^="resend"][data-theme="dark"] .stack__card {
+  html[data-skin^="resend"] .stack__card {
     border-color: transparent;
     background:
       linear-gradient(var(--surface), var(--surface)) padding-box,
-      conic-gradient(from var(--rs-angle), transparent 0deg 285deg, var(--rs-light) 352deg, transparent 360deg) border-box,
+      conic-gradient(from var(--rs-angle), transparent 0deg 285deg, color-mix(in oklab, var(--rs-light), #000 var(--rs-darken)) 352deg, transparent 360deg) border-box,
       linear-gradient(var(--line), var(--line)) border-box;
     animation: rsOrbit 6s linear infinite;
   }
@@ -686,21 +807,21 @@ html[data-skin^="resend"] :is(.bento, .stack) { --rs-c: #ff7e29; }
 /* ---------- Cabeceras centradas en el teléfono (como resend.com; decisión de Willder, 2026-11-18) ----------
    Ícono, etiqueta, título, introducción y botón al centro; tarjetas, listas y preguntas siguen a la izquierda */
 @media (max-width: 767px) {
-  html[data-skin^="resend"][data-theme="dark"] .rs-head,
-  html[data-skin^="resend"][data-theme="dark"] .rs-head > div {
+  html[data-skin^="resend"] .rs-head,
+  html[data-skin^="resend"] .rs-head > div {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
-  html[data-skin^="resend"][data-theme="dark"] .rs-head :is(h2, p) {
+  html[data-skin^="resend"] .rs-head :is(h2, p) {
     margin-inline: auto;
   }
 }
 
 /* ---------- Tarjetas con luz que sigue al puntero (SkinSwitch.astro marca las tarjetas con .rs-glow) ---------- */
-html[data-skin^="resend"][data-theme="dark"] .rs-glow {
-  background-image: radial-gradient(480px circle at var(--mx, 50%) var(--my, -30%), rgb(255 255 255 / 0.075), transparent 45%);
+html[data-skin^="resend"] .rs-glow {
+  background-image: radial-gradient(480px circle at var(--mx, 50%) var(--my, -30%), var(--rs-glow-c), transparent 45%);
 }
 
 /* ---------- Entradas con desenfoque (Resend: aparece subiendo y enfocándose) ---------- */
