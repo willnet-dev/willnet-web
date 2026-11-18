@@ -293,6 +293,17 @@ html[data-skin^="resend"] .footer-list a:is([data-brand="github"], [data-brand="
   }
 }
 
+/* ---------- Telón del cambio de página: gris muy oscuro en vez de blanco (pedido de Willder, 2026-11-18) ----------
+   Negro puro no se distinguiría del fondo (#000): el gris #111113 se nota al subir, y la línea de arriba,
+   con un brillo suave al centro, marca el borde del telón como las secciones. El texto va en blanco */
+html[data-skin^="resend"][data-theme="dark"] .curtain {
+  background:
+    radial-gradient(ellipse 50% 35% at 50% 0%, rgb(255 255 255 / 0.06), transparent 70%),
+    #111113;
+  color: var(--text);
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+}
+
 /* ---------- WhatsApp flotante: siempre con el verde de WhatsApp (pedido de Willder, 2026-11-18) ---------- */
 html[data-skin^="resend"] .wa-fab {
   background: #25d366;
