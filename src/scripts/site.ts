@@ -555,6 +555,8 @@ function initFilters() {
       bar.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
       items.forEach((it) => (it.hidden = f !== "all" && it.dataset.category !== f));
       if (note) note.hidden = !(f === "all" || f === "learning");
+      // La fila de «All work» (WorkCarousel.astro) se reconstruye con las tarjetas que quedan
+      document.dispatchEvent(new CustomEvent("work:filtered"));
       ScrollTrigger.refresh();
     });
   });

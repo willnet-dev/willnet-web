@@ -218,6 +218,7 @@ const en = {
     filters: { all: "All", web: "Websites", events: "Events", design: "Design", learning: "Practice" },
     learningNote: "Practice projects from my training, kept to show how I've grown.",
     count: "projects",
+    slider: { label: "Case studies", of: "of", prev: "Previous project", next: "Next project", pause: "Pause the slideshow", play: "Play the slideshow" },
   },
   case: {
     challenge: "The challenge",
@@ -504,6 +505,7 @@ const es: typeof en = {
     filters: { all: "Todo", web: "Webs", events: "Eventos", design: "Diseño", learning: "Práctica" },
     learningNote: "Proyectos de práctica de mi formación, que muestran cómo he ido creciendo.",
     count: "proyectos",
+    slider: { label: "Casos de estudio", of: "de", prev: "Proyecto anterior", next: "Proyecto siguiente", pause: "Pausar la presentación", play: "Reanudar la presentación" },
   },
   case: {
     challenge: "El reto",

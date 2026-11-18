@@ -1,0 +1,636 @@
+---
+// Slider por capas de los casos de estudio en Work (pedido de Willder, 2026-11-16; reemplaza los celulares 3D).
+// Ocupa toda la pantalla, de borde a borde, como la demo de Osmo (antes iba dentro de una tarjeta).
+// Todos los controles van arriba, debajo del espacio del header: abajo quedan libres las esquinas para
+// los botones flotantes de WhatsApp y de volver arriba.
+// Idea tomada de la demo «Layered Image Slider» de Osmo (osmo.supply), escrita de nuevo para esta web.
+// Tres capas que se mueven juntas:
+//   1. Fondo a todo lo ancho: la captura de escritorio desenfocada (en el teléfono, la del celular), con fundido.
+//   2. Fila de títulos: el activo al centro y los vecinos asomando a los lados.
+//   3. Ventana completa debajo del título: la otra captura (celular en escritorio, escritorio en el
+//      teléfono), que se desliza dentro del marco al mismo ritmo.
+// Avanza solo cada 6 s (con barra y botón de pausa), con flechas, arrastrando, con las teclas ← → o
+// tocando un título vecino. Se pausa al pasar el mouse, con el foco dentro o fuera de pantalla.
+// Movimiento reducido: sin avance automático y cambios sin animación. Sin JavaScript: lista de enlaces.
+import { workImg } from "../lib/img";
+import { t } from "../i18n/ui";
+import type { Lang } from "../i18n/routes";
+
+export interface SliderItem {
+  href: string;
+  title: string;
+  type: string;
+  year: string | number;
+  desktop: string; // archivo original de escritorio (p. ej. pavlove-en.jpg)
+  mobile: string; // archivo original del celular
+}
+interface Props {
+  lang: Lang;
+  items: SliderItem[];
+}
+const { lang, items } = Astro.props;
+const copy = t(lang);
+const s = copy.workPage.slider;
+const n = items.length;
+const pad = (x: number) => String(x).padStart(2, "0");
+const fondo = (file: string) => workImg(file).replace(/\.webp$/, "-fondo.webp");
+---
+
+<section class="ls" data-ls data-ls-autoplay="6" aria-roledescription="carousel" aria-label={s.label}>
+  <div class="ls__stage" data-ls-stage>
+    <!-- Capa 1: fondos -->
+    <div class="ls__bgs" aria-hidden="true">
+      {
+        items.map((it, i) => (
+          <picture class="ls__bg" data-ls-bg>
+            <source media="(max-width: 767px)" srcset={fondo(it.mobile)} width="585" height="1266" />
+            <img src={fondo(it.desktop)} alt="" width="1600" height="900" loading={i === 0 ? "eager" : "lazy"} decoding="async" />
+          </picture>
+        ))
+      }
+    </div>
+    <div class="ls__shade" aria-hidden="true"></div>
+
+    <!-- Arriba: pausa, contador y barra del avance automático -->
+    <div class="ls__top">
+      <button type="button" class="ls__btn ls__toggle" data-ls-toggle aria-label={s.pause} data-pause={s.pause} data-play={s.play} hidden>
+        <svg class="ls__icon-pause" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"></path></svg>
+        <svg class="ls__icon-play" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"></path></svg>
+      </button>
+      <div class="ls__count" aria-hidden="true">
+        <p><span data-ls-current>01</span> / {pad(n)}</p>
+        <span class="ls__bar"><span class="ls__fill" data-ls-fill></span></span>
+      </div>
+    </div>
+
+    <!-- Títulos, botón y ventana van en una columna: el teléfono se ve completo (Willder, 2026-11-16) -->
+    <div class="ls__body">
+    <!-- Capa 2: títulos (cada uno es un enlace al caso; sin JavaScript se ven en lista) -->
+    <div class="ls__center">
+      <ol class="ls__track" data-ls-track>
+        {
+          items.map((it, i) => (
+            <li class="ls__slide" data-ls-title role="group" aria-roledescription="slide" aria-label={`${i + 1} ${s.of} ${n}`}>
+              <a href={it.href} class="ls__title display" draggable="false">
+                {it.title}
+              </a>
+              <span class="ls__meta">
+                {it.type} · {it.year}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+      <a href={items[0]?.href} class="btn btn-primary ls__cta" data-ls-cta data-label={copy.common.viewCase} aria-label={`${copy.common.viewCase}: ${items[0]?.title}`} draggable="false">
+        <span class="btn-label">{copy.common.viewCase} →</span>
+      </a>
+    </div>
+
+    <!-- Capa 3: la ventana con la otra captura -->
+    <div class="ls__mask" data-ls-mask aria-hidden="true">
+      {
+        items.map((it) => (
+          <picture class="ls__mask-item" data-ls-mask-item>
+            <source media="(max-width: 767px)" srcset={workImg(it.desktop)} width="1200" height="675" />
+            <img src={workImg(it.mobile)} alt="" width="585" height="1266" loading="lazy" decoding="async" />
+          </picture>
+        ))
+      }
+    </div>
+    </div>
+
+    <div class="ls__nav">
+      <button type="button" class="ls__btn" data-ls-prev aria-label={s.prev}>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+      <button type="button" class="ls__btn" data-ls-next aria-label={s.next}>
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+      </button>
+    </div>
+
+    <!-- Aviso para lectores de pantalla, solo cuando la persona cambia de proyecto -->
+    <p class="sr-only" aria-live="polite" data-ls-live></p>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "gsap";
+  import { Observer } from "gsap/Observer";
+  import { CustomEase } from "gsap/CustomEase";
+
+  gsap.registerPlugin(Observer, CustomEase);
+  // Arranca suave y frena largo: el cambio se nota decidido pero no brusco
+  const EASE = CustomEase.create("lsEase", "M0,0 C0.62,0.04 0.04,1 1,1");
+  const DURATION = 1.1;
+
+  let cleanups: Array<() => void> = [];
+
+  function initSlider(root: HTMLElement) {
+    const stage = root.querySelector<HTMLElement>("[data-ls-stage]")!;
+    const titles = [...root.querySelectorAll<HTMLElement>("[data-ls-title]")];
+    const n = titles.length;
+    if (n < 2) return;
+    const bgs = [...root.querySelectorAll<HTMLElement>("[data-ls-bg]")];
+    const maskItems = [...root.querySelectorAll<HTMLElement>("[data-ls-mask-item]")];
+    const mask = root.querySelector<HTMLElement>("[data-ls-mask]")!;
+    const track = root.querySelector<HTMLElement>("[data-ls-track]")!;
+    const current = root.querySelector<HTMLElement>("[data-ls-current]")!;
+    const fill = root.querySelector<HTMLElement>("[data-ls-fill]")!;
+    const cta = root.querySelector<HTMLAnchorElement>("[data-ls-cta]")!;
+    const live = root.querySelector<HTMLElement>("[data-ls-live]")!;
+    const toggle = root.querySelector<HTMLButtonElement>("[data-ls-toggle]")!;
+    const links = titles.map((el) => el.querySelector<HTMLAnchorElement>("a")!);
+    const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const autoplaySecs = reduced ? 0 : parseFloat(root.dataset.lsAutoplay ?? "0");
+
+    root.classList.add("is-ready");
+    gsap.set(titles, { xPercent: -50 });
+
+    // Distancia con signo al centro, dando la vuelta (el último queda a la izquierda del primero)
+    const around = (d: number) => d - n * Math.round(d / n);
+    const clamp01 = gsap.utils.clamp(0, 1);
+
+    let titleStep = 0;
+    let maskStep = 0;
+    const measure = () => {
+      const w = stage.clientWidth;
+      const widest = Math.max(...titles.map((el) => el.offsetWidth));
+      const tallest = Math.max(...titles.map((el) => el.offsetHeight));
+      // Los vecinos quedan a media pantalla del centro, o más lejos si el título es largo (sin encimarse)
+      titleStep = Math.max(w * 0.5, widest + 48);
+      maskStep = mask.clientWidth;
+      track.style.height = `${tallest}px`;
+    };
+
+    const pos = { p: 0 };
+    let target = 0;
+    let active = -1;
+    let announce = false;
+
+    const setActive = (i: number) => {
+      if (i === active) return;
+      active = i;
+      titles.forEach((el, k) => {
+        const on = k === i;
+        el.toggleAttribute("data-active", on);
+        el.setAttribute("aria-hidden", on ? "false" : "true");
+        // Con el teclado se llega al caso por el botón «View case»; los títulos son para el mouse y el dedo
+        links[k].tabIndex = -1;
+      });
+      current.textContent = String(i + 1).padStart(2, "0");
+      const title = links[i].textContent?.trim() ?? "";
+      cta.setAttribute("href", links[i].getAttribute("href") ?? "");
+      cta.setAttribute("aria-label", `${cta.dataset.label}: ${title}`);
+      if (announce) live.textContent = `${titles[i].getAttribute("aria-label")}: ${title}`;
+    };
+
+    const render = (p: number) => {
+      for (let i = 0; i < n; i++) {
+        const off = around(i - p);
+        const dist = Math.abs(off);
+        const show = clamp01(1 - dist);
+        if (bgs[i]) gsap.set(bgs[i], { opacity: show, zIndex: Math.round(show * 10) });
+        gsap.set(titles[i], { x: off * titleStep, opacity: 1 - 0.6 * clamp01(dist) });
+        if (maskItems[i]) gsap.set(maskItems[i], { x: off * maskStep });
+      }
+      setActive((((Math.round(p) % n) + n) % n));
+    };
+
+    // Avance automático: la barra se llena y, al terminar, pasa al siguiente
+    let fillTween: gsap.core.Tween | null = null;
+    let userPaused = false;
+    const holds = new Set<string>();
+    const syncAuto = () => {
+      if (!fillTween) return;
+      if (userPaused || holds.size) fillTween.pause();
+      else fillTween.resume();
+    };
+    if (autoplaySecs > 0) {
+      toggle.hidden = false;
+      gsap.set(fill, { scaleX: 0 });
+      fillTween = gsap.to(fill, { scaleX: 1, duration: autoplaySecs, ease: "none", paused: true, onComplete: () => go(1, false) });
+    }
+    const restartAuto = () => {
+      if (!fillTween) return;
+      fillTween.restart();
+      syncAuto();
+    };
+
+    let slideTween: gsap.core.Tween | null = null;
+    function go(delta: number, byUser = true) {
+      announce = byUser;
+      target += delta;
+      slideTween?.kill();
+      slideTween = gsap.to(pos, {
+        p: target,
+        duration: reduced ? 0 : DURATION,
+        ease: EASE,
+        onUpdate: () => render(pos.p),
+        onComplete: () => render(pos.p),
+      });
+      restartAuto();
+    }
+    const goToIndex = (i: number) => {
+      const d = around(i - target);
+      if (d) go(d);
+    };
+
+    // Arrastrar o deslizar en horizontal (el desplazamiento vertical de la página sigue normal)
+    let dragged = false;
+    let dragAt = 0;
+    const observer = Observer.create({
+      target: stage,
+      type: "touch,pointer",
+      dragMinimum: 10,
+      tolerance: 30,
+      lockAxis: true,
+      onDragStart: () => {
+        dragged = false;
+      },
+      onLeft: () => {
+        if (!dragged) {
+          dragged = true;
+          dragAt = performance.now();
+          go(1);
+        }
+      },
+      onRight: () => {
+        if (!dragged) {
+          dragged = true;
+          dragAt = performance.now();
+          go(-1);
+        }
+      },
+    });
+    // Un arrastre no debe abrir el enlace que quedó debajo del dedo
+    const onClickCapture = (e: MouseEvent) => {
+      if (performance.now() - dragAt < 400) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    };
+    stage.addEventListener("click", onClickCapture, true);
+
+    // Tocar un título vecino lo trae al centro; el del centro abre el caso
+    const onTitleClick = (e: MouseEvent) => {
+      const i = links.indexOf(e.currentTarget as HTMLAnchorElement);
+      if (i === active) return;
+      e.preventDefault();
+      goToIndex(i);
+    };
+    links.forEach((a) => a.addEventListener("click", onTitleClick));
+
+    const prev = root.querySelector<HTMLButtonElement>("[data-ls-prev]")!;
+    const next = root.querySelector<HTMLButtonElement>("[data-ls-next]")!;
+    const onPrev = () => go(-1);
+    const onNext = () => go(1);
+    prev.addEventListener("click", onPrev);
+    next.addEventListener("click", onNext);
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") (e.preventDefault(), go(-1));
+      else if (e.key === "ArrowRight") (e.preventDefault(), go(1));
+    };
+    root.addEventListener("keydown", onKey);
+
+    const onToggle = () => {
+      userPaused = !userPaused;
+      toggle.classList.toggle("is-paused", userPaused);
+      toggle.setAttribute("aria-label", (userPaused ? toggle.dataset.play : toggle.dataset.pause) ?? "");
+      syncAuto();
+    };
+    toggle.addEventListener("click", onToggle);
+
+    // Pausas: mouse encima, foco dentro, fuera de pantalla o pestaña oculta
+    const hold = (key: string, on: boolean) => {
+      if (on) holds.add(key);
+      else holds.delete(key);
+      syncAuto();
+    };
+    const onEnter = () => hold("hover", true);
+    const onLeave = () => hold("hover", false);
+    const onFocusIn = () => hold("focus", true);
+    const onFocusOut = (e: FocusEvent) => {
+      if (!root.contains(e.relatedTarget as Node)) hold("focus", false);
+    };
+    const onVisibility = () => hold("hidden", document.hidden);
+    const hoverable = matchMedia("(hover: hover)").matches;
+    if (hoverable) {
+      stage.addEventListener("pointerenter", onEnter);
+      stage.addEventListener("pointerleave", onLeave);
+    }
+    root.addEventListener("focusin", onFocusIn);
+    root.addEventListener("focusout", onFocusOut);
+    document.addEventListener("visibilitychange", onVisibility);
+    const io = new IntersectionObserver(([entry]) => hold("offscreen", !entry.isIntersecting), { threshold: 0.25 });
+    io.observe(stage);
+
+    const ro = new ResizeObserver(() => {
+      measure();
+      render(pos.p);
+    });
+    ro.observe(stage);
+    // Los títulos cambian de ancho cuando carga la fuente
+    document.fonts?.ready.then(() => {
+      measure();
+      render(pos.p);
+    });
+
+    measure();
+    render(0);
+    restartAuto();
+
+    cleanups.push(() => {
+      observer.kill();
+      slideTween?.kill();
+      fillTween?.kill();
+      ro.disconnect();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
+    });
+  }
+
+  document.addEventListener("astro:page-load", () => {
+    document.querySelectorAll<HTMLElement>("[data-ls]").forEach(initSlider);
+  });
+  document.addEventListener("astro:before-swap", () => {
+    cleanups.forEach((fn) => fn());
+    cleanups = [];
+  });
+</script>
+
+<style>
+  /* El escenario es siempre oscuro (como una foto), en los dos temas: el texto va en blanco */
+  .ls__stage {
+    --ls-ink: #fff;
+    --ls-soft: rgb(255 255 255 / 0.78);
+    --ls-line: rgb(255 255 255 / 0.28);
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    --ls-edge: max(1rem, calc((100% - 1320px) / 2));
+    height: max(560px, 100svh);
+    background: #0a0a0b;
+    color: var(--ls-ink);
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Capa 1 */
+  .ls__bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+  }
+  .ls__bg:first-child {
+    opacity: 1;
+  }
+  .ls__bg img {
+    /* Un poco más grande para que el borde desenfocado no se vea */
+    transform: scale(1.06);
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+  /* Oscurece la captura para que el título blanco se lea (contraste ≥ 4.5:1 aun sobre blanco) */
+  .ls__shade {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+    background:
+      radial-gradient(70% 45% at 50% 42%, rgb(10 10 11 / 0.35), transparent 75%),
+      linear-gradient(to bottom, rgb(10 10 11 / 0.62), rgb(10 10 11 / 0.5) 35%, rgb(10 10 11 / 0.55) 60%, rgb(10 10 11 / 0.82));
+  }
+
+  /* Arriba */
+  .ls__top {
+    position: absolute;
+    z-index: 30;
+    top: calc(var(--header-h) + 0.75rem);
+    left: var(--ls-edge);
+    right: var(--ls-edge);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 44px;
+    padding-left: 56px;
+  }
+  .ls__toggle {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  .ls__count {
+    display: grid;
+    justify-items: start;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-step--1);
+    color: var(--ls-soft);
+  }
+  .ls__bar {
+    display: block;
+    width: 96px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ls-line);
+    overflow: hidden;
+  }
+  .ls__fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: left center;
+    transform: scaleX(0);
+  }
+
+  /* Columna central: títulos, botón y ventana, centrados entre la barra de arriba y el borde de abajo */
+  .ls__body {
+    position: absolute;
+    z-index: 30;
+    inset: calc(var(--header-h) + 4.5rem) 1rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(1.5rem, 4vh, 2.5rem);
+  }
+
+  /* Capa 2 */
+  .ls__center {
+    width: 100%;
+    display: grid;
+    justify-items: center;
+    gap: 1.25rem;
+  }
+  .ls__track {
+    position: relative;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ls__slide {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: max-content;
+    max-width: 58%;
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    text-align: center;
+    will-change: transform, opacity;
+  }
+  .ls__title {
+    /* Más pequeño que al principio (era hasta 5.5rem) para que el teléfono quepa completo */
+    font-size: clamp(2rem, 3.6vw, 3.6rem);
+    line-height: 1;
+    text-wrap: balance;
+    color: var(--ls-ink);
+    text-decoration: none;
+    cursor: pointer;
+    -webkit-user-drag: none;
+  }
+  .ls__meta {
+    font-family: var(--font-mono);
+    font-size: var(--text-step--1);
+    color: var(--ls-soft);
+  }
+  .ls__cta {
+    position: relative;
+  }
+
+  /* Capa 3: en escritorio, un teléfono completo (misma proporción que la captura, 585 × 1266) */
+  .ls__mask {
+    position: relative;
+    flex: 0 1 auto;
+    min-height: 0;
+    height: min(58%, 460px);
+    aspect-ratio: 585 / 1266;
+    overflow: hidden;
+    border: 6px solid #1f2125;
+    border-radius: 28px;
+    background: #1f2125;
+    box-shadow: 0 30px 70px -25px rgb(0 0 0 / 0.75);
+  }
+  .ls__mask-item {
+    position: absolute;
+    inset: 0;
+    will-change: transform;
+  }
+  .ls__mask-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+    border-radius: 22px;
+  }
+
+  /* Flechas */
+  .ls__nav {
+    position: absolute;
+    z-index: 30;
+    top: calc(var(--header-h) + 0.75rem);
+    right: var(--ls-edge);
+    display: flex;
+    gap: 0.5rem;
+  }
+  .ls__btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid var(--ls-line);
+    background: rgb(10 10 11 / 0.45);
+    color: var(--ls-ink);
+    backdrop-filter: blur(8px);
+    cursor: pointer;
+    transition:
+      background var(--dur-fast),
+      color var(--dur-fast),
+      border-color var(--dur-fast);
+  }
+  .ls__btn:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .ls__btn[hidden] {
+    display: none;
+  }
+  @media (hover: hover) {
+    .ls__btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #0a0a0b;
+    }
+  }
+  .ls__icon-play,
+  .ls__toggle.is-paused .ls__icon-pause {
+    display: none;
+  }
+  .ls__toggle.is-paused .ls__icon-play {
+    display: block;
+  }
+
+  /* Teléfono: fondo con la captura del celular y ventana horizontal con la de escritorio */
+  @media (max-width: 767px) {
+    .ls__stage {
+      height: max(540px, 100svh);
+    }
+    .ls__body {
+      inset: calc(var(--header-h) + 4.25rem) 0.75rem 1.5rem;
+      gap: 1.5rem;
+    }
+    .ls__center {
+      gap: 1rem;
+    }
+    .ls__slide {
+      max-width: 86%;
+    }
+    .ls__title {
+      font-size: clamp(1.6rem, 7.5vw, 2.1rem);
+    }
+    /* Ventana horizontal completa con la captura de escritorio (1200 × 675) */
+    .ls__mask {
+      height: auto;
+      width: 86%;
+      aspect-ratio: 16 / 9;
+      border-width: 5px;
+      border-radius: 16px;
+    }
+    .ls__mask-item img {
+      border-radius: 11px;
+    }
+  }
+
+  /* Sin JavaScript: lista de enlaces sobre el primer fondo (sin ventana, contador ni flechas) */
+  .ls:not(.is-ready) .ls__stage {
+    height: auto;
+    min-height: 420px;
+  }
+  .ls:not(.is-ready) .ls__body {
+    position: relative;
+    inset: auto;
+    padding: 4rem 1.5rem;
+  }
+  .ls:not(.is-ready) .ls__track {
+    display: grid;
+    gap: 2.5rem;
+  }
+  .ls:not(.is-ready) .ls__slide {
+    position: static;
+    max-width: none;
+    width: auto;
+  }
+  .ls:not(.is-ready) :is(.ls__top, .ls__nav, .ls__mask, .ls__cta) {
+    display: none;
+  }
+</style>
