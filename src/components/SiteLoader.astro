@@ -108,11 +108,8 @@ const extras = ["acl", "imola", "pavlove"];
     border-radius: 0.06em;
     /* El hueco: una sombra enorme del color del fondo tapa toda la pantalla menos la ventana, que queda
        transparente y deja ver la página real. Crece con la ventana sin que haya que mover nada más.
-       El primer anillo (1 px lima) marca el borde: si detrás hay una zona oscura de la página, se sigue leyendo
-       como una ventana y no como un hueco vacío. Al llenar la pantalla queda fuera de la vista */
-    box-shadow:
-      0 0 0 1px var(--accent),
-      0 0 0 200vmax var(--bg);
+       Sin borde: Willder prefirió la ventana limpia (2026-11-18) */
+    box-shadow: 0 0 0 200vmax var(--bg);
   }
   .sl__extra {
     position: absolute;
