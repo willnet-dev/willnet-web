@@ -2,12 +2,16 @@
 // El script y la hoja de estilos de Calendly se descargan solo al primer clic en un enlace con
 // data-calendly: así quien no agenda no descarga nada de Calendly (velocidad y cookies).
 // Sin JavaScript, o si Calendly no carga, el enlace abre la página de Calendly en otra pestaña.
-// Colores: el enlace trae los del tema oscuro; en el tema claro se cambian por los del sitio
-// (fondo #f1f3f4, texto #1c1d20, oliva #3d5500, porque el lima no se lee sobre gris claro).
+// Colores: el color neutro de los botones de la web (Willder, 2026-11-18): negro en claro y blanco en
+// oscuro, sobre el gris de las tarjetas de cada tema. El enlace trae los del oscuro (calendlyHref, ui.ts)
+// y aquí se ponen los del tema actual. Calendly elige solo el texto de sus botones.
 
 const WIDGET_JS = "https://assets.calendly.com/assets/external/widget.js";
 const WIDGET_CSS = "https://assets.calendly.com/assets/external/widget.css";
-const LIGHT = { background_color: "f1f3f4", text_color: "1c1d20", primary_color: "3d5500" };
+const COLORS = {
+  light: { background_color: "f2f1ed", text_color: "111113", primary_color: "111113" },
+  dark: { background_color: "0b0b0c", text_color: "f0f0f0", primary_color: "f0f0f0" },
+};
 
 type CalendlyApi = { initPopupWidget: (opts: { url: string }) => void };
 declare global {
@@ -48,9 +52,8 @@ function loadCalendly(): Promise<CalendlyApi> {
 
 function themedUrl(href: string) {
   const url = new URL(href);
-  if (document.documentElement.dataset.theme === "light") {
-    for (const [k, v] of Object.entries(LIGHT)) url.searchParams.set(k, v);
-  }
+  const colors = COLORS[document.documentElement.dataset.theme === "light" ? "light" : "dark"];
+  for (const [k, v] of Object.entries(colors)) url.searchParams.set(k, v);
   return url.toString();
 }
 

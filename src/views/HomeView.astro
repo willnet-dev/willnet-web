@@ -8,6 +8,7 @@ import PriceList from "../components/PriceList.astro";
 import FaqList from "../components/FaqList.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import ResultsStrip from "../components/ResultsStrip.astro";
+import RsTile from "../components/RsTile.astro";
 import { r, type Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
 import { services } from "../data/services";
@@ -60,20 +61,31 @@ const homeFaq = faqFor(lang, true);
           <a href={r("contact", lang)} class="btn btn-primary btn-lg" data-magnetic><span class="btn-label">{copy.cta.quote}</span></a>
         </div>
       </div>
+      <!-- Mouse animado (referencia: tamalsen.dev): el contorno se dibuja, un trazo lima da la vuelta,
+           cae dentro como flecha que rebota y todo se recoge. Ciclo de 5 s en CSS (global.css).
+           Va dentro del texto (capa 3 del parallax) para bajar junto con el botón: fuera de la capa, al hacer
+           scroll en el celular el botón se le venía encima (Willder, 2026-11-18) -->
+      <a href="#services" class="scroll-cue" aria-label={copy.common.scroll}>
+        <svg class="mouse" viewBox="0 0 40 64" width="30" height="48" aria-hidden="true">
+          <!-- Degradado arcoíris del contorno del mouse (estilo Resend, skin-resend.css) -->
+          <defs>
+            <linearGradient id="rs-mouse-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="40" y2="64">
+              <stop offset="0" stop-color="#02fcef"></stop>
+              <stop offset="0.5" stop-color="#ffb52b"></stop>
+              <stop offset="1" stop-color="#a02bfe"></stop>
+              <animateTransform attributeName="gradientTransform" type="rotate" from="0 20 32" to="360 20 32" dur="8s" repeatCount="indefinite"></animateTransform>
+            </linearGradient>
+          </defs>
+          <path class="mouse__outline" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
+          <path class="mouse__chase" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
+          <g class="mouse__arrow">
+            <path class="mouse__stem" pathLength="100" d="M20 18v24"></path>
+            <path class="mouse__head" pathLength="100" d="M13.5 35.5 20 42l6.5-6.5"></path>
+          </g>
+        </svg>
+      </a>
     </div>
 
-    <!-- Mouse animado (referencia: tamalsen.dev): el contorno se dibuja, un trazo lima da la vuelta,
-         cae dentro como flecha que rebota y todo se recoge. Ciclo de 5 s en CSS (global.css) -->
-    <a href="#services" class="scroll-cue" aria-label={copy.common.scroll}>
-      <svg class="mouse" viewBox="0 0 40 64" width="30" height="48" aria-hidden="true">
-        <path class="mouse__outline" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
-        <path class="mouse__chase" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
-        <g class="mouse__arrow">
-          <path class="mouse__stem" pathLength="100" d="M20 18v24"></path>
-          <path class="mouse__head" pathLength="100" d="M13.5 35.5 20 42l6.5-6.5"></path>
-        </g>
-      </svg>
-    </a>
   </section>
 
   <!-- MARQUEE de servicios -->
@@ -96,8 +108,9 @@ const homeFaq = faqFor(lang, true);
 
   <!-- SERVICIOS Y PRECIOS -->
   <section id="services" class="wrap py-[clamp(5rem,12vh,9rem)]" aria-labelledby="services-title">
-    <div class="mb-12 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
+    <div class="rs-head mb-12 grid gap-6 lg:grid-cols-[1.1fr_1fr] lg:items-end">
       <div>
+        <RsTile icon="code" />
         <p class="eyebrow mb-4" data-reveal>{h.servicesEyebrow}</p>
         <h2 id="services-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.servicesTitle}</h2>
       </div>
@@ -113,8 +126,9 @@ const homeFaq = faqFor(lang, true);
     <!-- TRABAJO DESTACADO con parallax. En el celular va justo debajo de «What I do» (Willder, 2026-11-16);
          desde 768 px vuelve debajo de «Why WillNet» con md:order-last -->
     <section class="wrap py-[clamp(4rem,10vh,8rem)] md:order-last" aria-labelledby="work-title" data-parallax-root>
-      <div class="mb-12 flex flex-wrap items-end justify-between gap-6">
+      <div class="rs-head mb-12 flex flex-wrap items-end justify-between gap-6">
         <div>
+          <RsTile icon="layers" />
           <p class="eyebrow mb-4" data-reveal>{h.workEyebrow}</p>
           <h2 id="work-title" class="display max-w-[16ch] text-[length:var(--text-step-4)]" data-reveal>{h.workTitle}</h2>
         </div>
@@ -142,8 +156,11 @@ const homeFaq = faqFor(lang, true);
 
     <!-- POR QUÉ WILLNET -->
     <section class="wrap py-[clamp(4rem,10vh,8rem)]" aria-labelledby="why-title">
-      <p class="eyebrow mb-4" data-reveal>{h.whyEyebrow}</p>
-      <h2 id="why-title" class="display mb-12 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{h.whyTitle}</h2>
+      <div class="rs-head">
+        <RsTile icon="spark" />
+        <p class="eyebrow mb-4" data-reveal>{h.whyEyebrow}</p>
+        <h2 id="why-title" class="display mb-12 max-w-[18ch] text-[length:var(--text-step-4)]" data-reveal>{h.whyTitle}</h2>
+      </div>
       <div class="grid border-t border-line md:grid-cols-3">
         {
           h.why.map((w, i) => (
@@ -163,7 +180,8 @@ const homeFaq = faqFor(lang, true);
 
   <!-- PREGUNTAS -->
   <section class="wrap grid gap-10 py-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1fr_1.6fr]" aria-labelledby="faq-title">
-    <div>
+    <div class="rs-head">
+      <RsTile icon="chat" />
       <p class="eyebrow mb-4" data-reveal>{h.faqEyebrow}</p>
       <h2 id="faq-title" class="display text-[length:var(--text-step-4)]" data-reveal>{h.faqTitle}</h2>
       <a href={r("faq", lang)} class="btn mt-8" data-magnetic><span class="btn-label">{h.faqMore} →</span></a>
@@ -225,9 +243,15 @@ const homeFaq = faqFor(lang, true);
     opacity: 0.6;
   }
   /* Capa 4 (frente): la foto */
+  /* Las dos máscaras van en elementos distintos y se multiplican solas: la vertical en la foto y la
+     horizontal en <picture>. Con las dos capas en la misma imagen (mask-composite: intersect), el navegador
+     integrado no las cruzaba y en el tema claro el borde de abajo de la foto dejaba una línea detrás del
+     botón (Willder, 2026-11-18) */
   .hero__pic {
     display: block;
     height: 100%;
+    -webkit-mask-image: linear-gradient(to left, transparent, #000 13%);
+    mask-image: linear-gradient(to left, transparent, #000 13%);
   }
   .hero__pic img {
     display: block;
@@ -236,10 +260,8 @@ const homeFaq = faqFor(lang, true);
     object-fit: contain;
     object-position: bottom center;
     /* Abajo se funde con el fondo; a la derecha, donde la foto corta el hombro, también */
-    -webkit-mask-image: linear-gradient(to top, transparent, #000 18%), linear-gradient(to left, transparent, #000 13%);
-    -webkit-mask-composite: source-in;
-    mask-image: linear-gradient(to top, transparent, #000 18%), linear-gradient(to left, transparent, #000 13%);
-    mask-composite: intersect;
+    -webkit-mask-image: linear-gradient(to top, transparent, #000 18%);
+    mask-image: linear-gradient(to top, transparent, #000 18%);
   }
 
   /* Capa 3: el texto */
@@ -303,8 +325,8 @@ const homeFaq = faqFor(lang, true);
       translate: -50% 0;
     }
     .hero__pic img {
-      -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
-      mask-image: linear-gradient(to top, transparent 4%, #000 38%), linear-gradient(to left, transparent, #000 12%);
+      -webkit-mask-image: linear-gradient(to top, transparent 4%, #000 38%);
+      mask-image: linear-gradient(to top, transparent 4%, #000 38%);
     }
     .hero__deco {
       left: -8%;
@@ -336,7 +358,9 @@ const homeFaq = faqFor(lang, true);
     }
     .hero__content {
       padding-top: calc(var(--vis-h) * 0.72);
-      padding-bottom: 5.75rem;
+      /* El mouse va en el flujo, debajo del botón (ver .scroll-cue más abajo). El parallax baja el texto
+         al hacer scroll; este margen deja que el mouse se vea un rato antes de pasar detrás de la franja */
+      padding-bottom: 3rem;
       gap: 0.9rem;
     }
     .hero__lead,
@@ -346,8 +370,8 @@ const homeFaq = faqFor(lang, true);
     /* Tema claro: el texto es oscuro, así que la camiseta (oscura) se funde con el fondo antes de
        llegar al texto para que se lea bien */
     :global([data-theme="light"]) .hero__pic img {
-      -webkit-mask-image: linear-gradient(to top, transparent 12%, #000 56%), linear-gradient(to left, transparent, #000 12%);
-      mask-image: linear-gradient(to top, transparent 12%, #000 56%), linear-gradient(to left, transparent, #000 12%);
+      -webkit-mask-image: linear-gradient(to top, transparent 12%, #000 56%);
+      mask-image: linear-gradient(to top, transparent 12%, #000 56%);
     }
     .hero__title {
       position: absolute;
@@ -369,6 +393,15 @@ const homeFaq = faqFor(lang, true);
     display: grid;
     place-items: center;
     padding: 0.5rem;
+  }
+  /* Celular: el mouse deja de flotar y va en el flujo, con aire debajo del botón «Get a free quote»;
+     así baja con él al hacer scroll y no se le encima (Willder, 2026-11-18) */
+  @media (max-width: 767px) {
+    .scroll-cue {
+      position: static;
+      translate: none;
+      margin-top: 1.25rem;
+    }
   }
   .why {
     padding: 2rem 0 0;

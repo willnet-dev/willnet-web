@@ -114,6 +114,11 @@ function initMenu() {
   };
 
   listen(btn, "click", () => setOpen(btn.getAttribute("aria-expanded") !== "true"));
+  // «Book a free call» del menú: el menú se cierra y Calendly se abre encima de la página
+  // (si no, al cerrar Calendly el scroll volvía con el menú todavía abierto)
+  listen(menu, "click", (e) => {
+    if ((e.target as Element | null)?.closest("a[data-calendly]")) setOpen(false);
+  });
   listen(document, "keydown", ((e: KeyboardEvent) => {
     if (e.key === "Escape" && btn.getAttribute("aria-expanded") === "true") {
       setOpen(false);
