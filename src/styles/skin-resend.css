@@ -712,15 +712,14 @@ html[data-skin^="resend"] .rs-tile :is(path, circle) {
   html[data-skin^="resend"] .rs-tile.is-in[data-icon="chat"] .rs-d2 { animation-delay: 1.5s; }
   html[data-skin^="resend"] .rs-tile.is-in[data-icon="chat"] .rs-d3 { animation-delay: 1.7s; }
   /* Ruta: el punto viaja por el camino (animateMotion en el SVG); se ve cuando ya se dibujó */
-  html[data-skin^="resend"] .rs-tile[data-icon="route"] .rs-dot { opacity: 0; transition: opacity 0.4s 1.2s; }
-  html[data-skin^="resend"] .rs-tile.is-in[data-icon="route"] .rs-dot { opacity: 1; }
-  /* La bandera ondea desde el mástil */
-  html[data-skin^="resend"] .rs-tile[data-icon="route"] .rs-flag { transform-origin: left center; }
-  html[data-skin^="resend"] .rs-tile.is-in[data-icon="route"] .rs-flag { animation: rsWave 2.4s ease-in-out 1.6s infinite; }
+  /* El punto y el relleno de la meta (SMIL en RsTile.astro) se ven cuando el camino ya se dibujó */
+  html[data-skin^="resend"] .rs-tile[data-icon="route"] :is(.rs-dot, .rs-fill) { opacity: 0; transition: opacity 0.4s 1.2s; }
+  html[data-skin^="resend"] .rs-tile.is-in[data-icon="route"] :is(.rs-dot, .rs-fill) { opacity: 1; }
 }
-/* Con movimiento reducido el punto de la ruta no viaja: se oculta y el ícono queda completo y quieto */
+/* Con movimiento reducido el punto de la ruta no viaja y la meta no se llena: se ocultan (SMIL no obedece a
+   prefers-reduced-motion, display sí) y el ícono queda completo y quieto */
 @media (prefers-reduced-motion: reduce) {
-  .rs-tile .rs-dot {
+  .rs-tile :is(.rs-dot, .rs-fill) {
     display: none;
   }
 }
@@ -750,10 +749,6 @@ html[data-skin^="resend"] .rs-tile :is(path, circle) {
 @keyframes rsTwinkle {
   0%, 100% { rotate: 0deg; scale: 1; }
   50% { rotate: 45deg; scale: 0.88; }
-}
-@keyframes rsWave {
-  30% { transform: skewY(-9deg) scaleX(0.9); }
-  65% { transform: skewY(5deg) scaleX(1.04); }
 }
 @keyframes rsBlink {
   50% { opacity: 0.25; scale: 0.7; }

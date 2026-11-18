@@ -54,15 +54,20 @@ const { icon } = Astro.props;
         <>
           {/* Ruta (How it works; rediseñada el 2026-11-18 a pedido de Willder: la anterior era un trazo corto
               que no llenaba el cuadro). Un camino en curvas que sube del punto de partida (abajo a la
-              izquierda) a la bandera del lanzamiento (arriba a la derecha), como los pasos de la sección */}
-          <circle class="rs-b" cx="4.5" cy="20" r="1.6" />
-          <path id="rs-route-path" class="rs-a" pathLength="100" d="M6.1 20H14.5a3.25 3.25 0 0 0 0-6.5H8.5a3.25 3.25 0 0 1 0-6.5H17.5" />
-          <path class="rs-c" pathLength="100" d="M17.5 7V2.25" />
-          <path class="rs-c rs-flag" pathLength="100" d="M17.5 2.5 21.75 4.4 17.5 6.3Z" />
+              izquierda) a la meta (arriba a la derecha), como los pasos de la sección. El punto de luz recorre
+              el camino y, al llegar, se apaga y el círculo de la meta se llena. El punto y el relleno van con
+              SMIL y el mismo dur/keyTimes, así llegan juntos (con CSS no se podrían sincronizar) */}
+          <circle class="rs-b" cx="4.5" cy="18.5" r="1.6" />
+          <path id="rs-route-path" class="rs-a" pathLength="100" d="M6.1 18.5H14.5a3.25 3.25 0 0 0 0-6.5H8.5a3.25 3.25 0 0 1 0-6.5H17.5" />
+          <circle class="rs-c" cx="19.1" cy="5.5" r="1.6" />
+          <circle class="rs-fill" cx="19.1" cy="5.5" r="0" fill="currentColor" stroke="none">
+            <animate attributeName="r" dur="3.6s" repeatCount="indefinite" values="0;0;1.6;1.6;0" keyTimes="0;0.74;0.8;0.95;1" />
+          </circle>
           <circle class="rs-dot" r="1.25" fill="currentColor" stroke="none">
             <animateMotion dur="3.6s" repeatCount="indefinite" keyPoints="0;1;1" keyTimes="0;0.75;1" calcMode="spline" keySplines="0.45 0 0.35 1;0 0 1 1">
               <mpath href="#rs-route-path" />
             </animateMotion>
+            <animate attributeName="fill-opacity" dur="3.6s" repeatCount="indefinite" values="1;1;0;0;1" keyTimes="0;0.75;0.79;0.98;1" />
           </circle>
         </>
       )
