@@ -103,6 +103,9 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     scroll-padding-top: calc(var(--header-h) + 1rem);
+    /* Reserva siempre el hueco de la barra de desplazamiento clásica (Windows, Mac con mouse): al bloquear el
+       scroll (pantalla de carga, menú, Calendly) la barra se va y la página saltaba unos 15 px de ancho */
+    scrollbar-gutter: stable;
   }
 
   body {
@@ -628,6 +631,12 @@
       opacity: 0;
     }
   }
+}
+
+/* Lenis, al detenerse, pone overflow: clip en <html>, y con clip no se respeta el hueco reservado de la barra
+   (scrollbar-gutter); con hidden sí, así que la página no salta de ancho. Va fuera de las capas para ganar a lenis.css */
+html.lenis:not(.lenis-autoToggle).lenis-stopped {
+  overflow: hidden;
 }
 
 /* Ventana de Calendly (src/scripts/calendly.ts, 2026-11-14). El fondo de Calendly es gris al 40 % y dejaba

@@ -395,7 +395,7 @@ const homeFaq = faqFor(lang, true);
       animation: heroIn 1100ms var(--ease-out-expo) both;
     }
   }
-  /* Mientras está la pantalla de carga (SiteLoader), la entrada del hero espera: arranca cuando el telón sube */
+  /* Mientras está la pantalla de carga (SiteLoader), la entrada del hero espera: arranca cuando la web aparece en la ventana */
   :global(html.is-loading) .hero__in,
   :global(html.is-loading) .hero__pic img {
     animation-play-state: paused;

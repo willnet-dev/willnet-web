@@ -5,15 +5,15 @@
 // Secuencia (site.ts → initLoader):
 //   1. Suben las letras de WILL y NET.
 //   2. Entre las dos se abre una ventana con capturas de proyectos reales que se van quitando una a una.
-//   3. Debajo de la última ya está la web de verdad: la ventana es un hueco en la pantalla de carga (el fondo
-//      oscuro es la sombra de la ventana), así que lo que se ve dentro es la página real.
-//   4. La ventana crece hasta llenar la pantalla, empuja las letras hacia afuera y la web queda a la vista.
+//   3. Debajo de la última ya está la web de verdad, en miniatura: la ventana es un hueco en la pantalla de carga
+//      (el fondo oscuro es la sombra de la ventana) y <body> se escala para llenarla.
+//   4. Tras una pausa corta, la ventana crece hasta llenar la pantalla, la web crece con ella y empuja las letras.
 // Miniaturas: public/img/loader/*.webp, creadas con `npm run loader-images`.
 const extras = ["acl", "imola", "pavlove"];
 ---
 
 <div class="site-loader" data-site-loader aria-hidden="true">
-  <div class="sl__word">
+  <div class="sl__word" data-sl-word>
     <span class="sl__half" data-sl-half="start">
       {[..."WILL"].map((l) => <span class="sl__letter" data-sl-letter>{l}</span>)}
     </span>
@@ -46,6 +46,8 @@ const extras = ["acl", "imola", "pavlove"];
     background: var(--bg);
     color: var(--ink);
   }
+  /* Sin scroll mientras carga. El hueco de la barra de desplazamiento queda reservado (scrollbar-gutter en
+     global.css), así que al quitarlo la página no salta de ancho */
   :global(html.js.is-loading) {
     overflow: hidden;
   }

@@ -288,20 +288,53 @@ function initLoader() {
   let finish!: () => void;
   loaderDone = new Promise((resolve) => (finish = resolve));
   lenis?.stop();
-  const end = () => {
-    root.classList.remove("is-loading");
-    lenis?.start();
-    finish();
-  };
+  // Fuera de <body>: al final se escala <body> (la web en miniatura) y la pantalla de carga no debe escalarse con él
+  root.append(el);
+  const body = document.body;
   const q = <T extends Element>(sel: string) => Array.from(el.querySelectorAll<T>(sel));
   const letters = q<HTMLElement>("[data-sl-letter]");
-  const [start, finishHalf] = [el.querySelector("[data-sl-half='start']"), el.querySelector("[data-sl-half='end']")];
-  const box = el.querySelector("[data-sl-box]");
-  const img = el.querySelector("[data-sl-img]");
+  const word = el.querySelector<HTMLElement>("[data-sl-word]")!;
+  const start = el.querySelector<HTMLElement>("[data-sl-half='start']")!;
+  const finishHalf = el.querySelector<HTMLElement>("[data-sl-half='end']")!;
+  const box = el.querySelector<HTMLElement>("[data-sl-box]")!;
+  const img = el.querySelector<HTMLElement>("[data-sl-img]")!;
   // De arriba abajo: la de encima es la primera que se quita
   const extras = q<HTMLElement>("[data-sl-extra]").reverse();
 
-  const tl = gsap.timeline({ paused: true, defaults: { ease: "expo.inOut" } });
+  // La web en miniatura: <body> se escala y se mueve para llenar justo la ventana (como object-fit: cover).
+  // Se recalcula en cada fotograma con la medida real de la ventana, así siguen juntas mientras crece.
+  // Al terminar la ventana mide toda la pantalla, la escala llega a 1 y el movimiento a 0: no hay salto.
+  let following = false;
+  const follow = () => {
+    if (!following) return;
+    const r = img.getBoundingClientRect();
+    // Ancho real de la página (sin la barra de desplazamiento): documentElement.clientWidth no descuenta el
+    // hueco reservado con scrollbar-gutter mientras el scroll está bloqueado
+    const w = body.offsetWidth;
+    const h = innerHeight;
+    const s = Math.min(1, Math.max(r.width / w, r.height / h));
+    body.style.transformOrigin = `${w / 2}px ${scrollY + h / 2}px`;
+    body.style.transform = `translate(${r.left + r.width / 2 - w / 2}px, ${r.top + r.height / 2 - h / 2}px) scale(${s})`;
+  };
+  const showMini = () => {
+    // <body> se recorta a la pantalla que se está viendo: sin esto, al escalarlo, las secciones de más abajo
+    // entrarían en la pantalla y sus animaciones de entrada (que se activan al verse) se gastarían escondidas
+    Object.assign(body.style, { height: `${scrollY + innerHeight}px`, overflowY: "clip", willChange: "transform" });
+    following = true;
+    follow();
+    // La entrada del hero arranca ya, dentro de la ventana
+    root.classList.remove("is-loading");
+  };
+  const done = () => {
+    following = false;
+    for (const prop of ["transform", "transform-origin", "height", "overflow-y", "will-change"]) body.style.removeProperty(prop);
+    el.remove();
+    lenis?.resize();
+    lenis?.start();
+    ScrollTrigger.refresh();
+  };
+
+  const tl = gsap.timeline({ paused: true, defaults: { ease: "expo.inOut" }, onUpdate: follow, onComplete: done });
   el.classList.add("is-active");
   // 1. Las letras suben
   tl.from(letters, { yPercent: 110, duration: 0.9, stagger: 0.04, ease: "expo.out" });
@@ -310,16 +343,16 @@ function initLoader() {
     .to(img, { width: "100%", duration: 1 }, "<")
     .to(start, { x: "-0.05em", duration: 1 }, "<")
     .to(finishHalf, { x: "0.05em", duration: 1 }, "<");
-  // 3. Las capturas se quitan de una en una; debajo de la última ya se ve la web real por el hueco
+  // 3. Las capturas se quitan de una en una. Debajo de la última ya está la web real, en miniatura
   tl.to(extras, { opacity: 0, duration: 0.05, stagger: 0.35, ease: "none" }, "-=0.1");
-  // 4. La ventana crece hasta llenar la pantalla, empuja las letras hacia los lados y la web queda a la vista.
-  //    La entrada del hero arranca a la vez (end quita .is-loading)
-  tl.add(end, "+=0.15")
+  tl.add(showMini, tl.duration() - 0.05);
+  // 4. Pausa corta con la web pequeña y la ventana crece hasta llenar la pantalla, empujando las letras.
+  //    WILL es más ancho que NET, así que la ventana no está en el centro: la palabra se corre lo justo
+  //    para que la ventana termine centrada y cubra toda la pantalla
+  tl.add(finish, "+=0.6")
     .to(img, { width: "100vw", height: "100dvh", borderRadius: 0, duration: 1.1 }, "<")
-    .to(box, { width: "110vw", duration: 1.1 }, "<");
-  tl.eventCallback("onComplete", () => {
-    el.remove();
-  });
+    .to(box, { width: "110vw", duration: 1.1 }, "<")
+    .to(word, { x: () => (finishHalf.offsetWidth - start.offsetWidth) / 2, duration: 1.1 }, "<");
 
   // Un toque o una tecla la acelera para quien no quiera esperar
   const hurry = () => tl.timeScale(3.5);
