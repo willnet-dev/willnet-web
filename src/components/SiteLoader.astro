@@ -5,8 +5,9 @@
 // Secuencia (site.ts → initLoader):
 //   1. Suben las letras de WILL y NET.
 //   2. Entre las dos se abre una ventana con capturas de proyectos reales que se van quitando una a una.
-//   3. Debajo queda el lima con la W; la ventana crece hasta llenar la pantalla y empuja las letras hacia afuera.
-//   4. El lima sube como el telón de las transiciones entre páginas y descubre la página.
+//   3. Debajo de la última ya está la web de verdad: la ventana es un hueco en la pantalla de carga (el fondo
+//      oscuro es la sombra de la ventana), así que lo que se ve dentro es la página real.
+//   4. La ventana crece hasta llenar la pantalla, empuja las letras hacia afuera y la web queda a la vista.
 // Miniaturas: public/img/loader/*.webp, creadas con `npm run loader-images`.
 const extras = ["acl", "imola", "pavlove"];
 ---
@@ -18,9 +19,6 @@ const extras = ["acl", "imola", "pavlove"];
     </span>
     <span class="sl__box" data-sl-box>
       <span class="sl__img" data-sl-img>
-        <span class="sl__base">
-          <svg viewBox="0 0 416 290" fill="currentColor"><path d="M0 0 96 37 156 203 107 290Z"></path><path d="M416 0 320 37 260 203 309 290Z"></path><path d="M160 64 208 83 256 64 208 174Z"></path></svg>
-        </span>
         {/* La primera de la lista va arriba: se ve primero y es la primera que se quita */}
         {[...extras].reverse().map((slug) => <img class="sl__extra" data-sl-extra src={`/img/loader/${slug}.webp`} width="640" height="480" alt="" decoding="async" />)}
       </span>
@@ -36,7 +34,8 @@ const extras = ["acl", "imola", "pavlove"];
     display: none;
   }
   /* Se ve mientras <html> tiene .js y .is-loading (los pone el script del <head> de Base.astro) y, durante la
-     salida, con .is-active (lo pone site.ts): .is-loading se quita al empezar a subir, para que la página arranque */
+     salida, con .is-active (lo pone site.ts): .is-loading se quita cuando la ventana empieza a crecer, para que
+     la entrada del hero arranque mientras se descubre */
   :global(html.js.is-loading) .site-loader,
   .site-loader.is-active {
     position: fixed;
@@ -50,9 +49,13 @@ const extras = ["acl", "imola", "pavlove"];
   :global(html.js.is-loading) {
     overflow: hidden;
   }
-  /* Hasta que el JavaScript la toma, solo se ve el fondo: así las letras no aparecen y luego saltan abajo */
+  /* Hasta que el JavaScript la toma, solo se ve el fondo: así las letras no aparecen y luego saltan abajo.
+     Cuando la toma, el fondo pasa a ser la sombra de la ventana (abajo, .sl__img) */
   .site-loader:not(.is-active) .sl__word {
     visibility: hidden;
+  }
+  .site-loader.is-active {
+    background: transparent;
   }
   /* Centrado con position + translate (no con la cuadrícula del contenedor): cuando la ventana crece más que la
      pantalla, la palabra sigue centrada y se desborda por igual a los dos lados */
@@ -75,6 +78,8 @@ const extras = ["acl", "imola", "pavlove"];
   /* flex: none en las mitades y la ventana: cuando la ventana crece más que la pantalla, nada se encoge y la fila
      se desborda por igual a los dos lados (las letras salen empujadas hacia afuera) */
   .sl__half {
+    position: relative;
+    z-index: 2;
     flex: none;
     display: flex;
     overflow: hidden;
@@ -101,22 +106,19 @@ const extras = ["acl", "imola", "pavlove"];
     height: 100%;
     overflow: hidden;
     border-radius: 0.06em;
+    /* El hueco: una sombra enorme del color del fondo tapa toda la pantalla menos la ventana, que queda
+       transparente y deja ver la página real. Crece con la ventana sin que haya que mover nada más.
+       El primer anillo (1 px lima) marca el borde: si detrás hay una zona oscura de la página, se sigue leyendo
+       como una ventana y no como un hueco vacío. Al llenar la pantalla queda fuera de la vista */
+    box-shadow:
+      0 0 0 1px var(--accent),
+      0 0 0 200vmax var(--bg);
   }
-  .sl__base,
   .sl__extra {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-  }
-  .sl__base {
-    display: grid;
-    place-items: center;
-    background: var(--accent);
-    color: var(--accent-ink);
-  }
-  .sl__base svg {
-    width: clamp(1.5rem, 26%, 7rem);
   }
   .sl__extra {
     object-fit: cover;

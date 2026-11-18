@@ -310,13 +310,13 @@ function initLoader() {
     .to(img, { width: "100%", duration: 1 }, "<")
     .to(start, { x: "-0.05em", duration: 1 }, "<")
     .to(finishHalf, { x: "0.05em", duration: 1 }, "<");
-  // 3. Las capturas se quitan de una en una y queda el lima con la W
+  // 3. Las capturas se quitan de una en una; debajo de la última ya se ve la web real por el hueco
   tl.to(extras, { opacity: 0, duration: 0.05, stagger: 0.35, ease: "none" }, "-=0.1");
-  // 4. La ventana crece hasta llenar la pantalla y empuja las letras hacia los lados
-  tl.to(img, { width: "100vw", height: "100dvh", borderRadius: 0, duration: 1.1 }, "+=0.2")
+  // 4. La ventana crece hasta llenar la pantalla, empuja las letras hacia los lados y la web queda a la vista.
+  //    La entrada del hero arranca a la vez (end quita .is-loading)
+  tl.add(end, "+=0.15")
+    .to(img, { width: "100vw", height: "100dvh", borderRadius: 0, duration: 1.1 }, "<")
     .to(box, { width: "110vw", duration: 1.1 }, "<");
-  // 5. El lima sube como el telón entre páginas y descubre la página; la entrada del hero arranca a la vez
-  tl.add(end, "-=0.1").to(el, { yPercent: -100, duration: 0.8, ease: "power4.inOut" }, "<");
   tl.eventCallback("onComplete", () => {
     el.remove();
   });
