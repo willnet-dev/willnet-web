@@ -67,6 +67,15 @@ const homeFaq = faqFor(lang, true);
          cae dentro como flecha que rebota y todo se recoge. Ciclo de 5 s en CSS (global.css) -->
     <a href="#services" class="scroll-cue" aria-label={copy.common.scroll}>
       <svg class="mouse" viewBox="0 0 40 64" width="30" height="48" aria-hidden="true">
+        <!-- PRUEBA (rama prueba-resend): degradado arcoíris del contorno; solo se usa con el estilo Resend -->
+        <defs>
+          <linearGradient id="rs-mouse-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="40" y2="64">
+            <stop offset="0" stop-color="#02fcef"></stop>
+            <stop offset="0.5" stop-color="#ffb52b"></stop>
+            <stop offset="1" stop-color="#a02bfe"></stop>
+            <animateTransform attributeName="gradientTransform" type="rotate" from="0 20 32" to="360 20 32" dur="8s" repeatCount="indefinite"></animateTransform>
+          </linearGradient>
+        </defs>
         <path class="mouse__outline" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
         <path class="mouse__chase" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
         <g class="mouse__arrow">

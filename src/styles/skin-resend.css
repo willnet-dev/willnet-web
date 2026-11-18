@@ -43,6 +43,19 @@ html[data-skin^="resend"] section[aria-labelledby="lab-title"] { --rs-c: #baa7ff
 html[data-skin^="resend"] section[aria-labelledby="why-title"] { --rs-c: #0df2c4; }
 html[data-skin^="resend"] section[aria-labelledby="timeline-title"] { --rs-c: #ffca16; }
 html[data-skin^="resend"] section[aria-labelledby="faq-title"] { --rs-c: #3d9eff; }
+/* Las demás páginas, según su contexto: preguntas en azul, proceso en ámbar, cifras en verde,
+   proyectos en morado, habilidades en lavanda y servicios en naranja */
+html[data-skin^="resend"] section:is([aria-labelledby="sfaq-title"], [aria-labelledby="book-title"]) { --rs-c: #3d9eff; }
+html[data-skin^="resend"] section[aria-labelledby="process-title"] { --rs-c: #ffca16; }
+html[data-skin^="resend"] section:is([aria-labelledby="metrics-title"], [aria-labelledby="measure-title"]) { --rs-c: #46fea5; }
+html[data-skin^="resend"] section:is([aria-labelledby="more-title"], [aria-labelledby="related-title"], [aria-labelledby="gallery-title"]) { --rs-c: #9b56fb; }
+html[data-skin^="resend"] section[aria-labelledby="skills-title"] { --rs-c: #baa7ff; }
+
+/* En «Resend puro», dentro de cada sección el acento (relleno de botones al pasar el mouse, línea del
+   proceso, «+» abierto…) toma el color de la sección en vez del blanco (pedido de Willder, 2026-11-18) */
+html[data-skin="resend"][data-theme="dark"] main section[aria-labelledby] {
+  --accent: var(--rs-c, #f0f0f0);
+}
 
 /* Escenario final («Let's work together» y pie): un gris casi negro, para que el telón negro se distinga */
 html[data-skin^="resend"][data-theme="dark"] .stage {
@@ -115,20 +128,33 @@ html[data-skin^="resend"][data-theme="dark"] .hero__deco {
 }
 
 /* ---------- Bordes arcoíris animados (como «What you missed at Resend Forward») ----------
-   La etiqueta del hero y las etiquetas de «How it works» (Free, Clear price, You review, 30 days support) */
+   La etiqueta del hero, las de «How it works» (Free, Clear price, You review, 30 days support) y las de las
+   tarjetas de proyectos (Online store, Bilingual landing page…). --rs-fill es el fondo de adentro. */
 @property --rs-angle {
   syntax: "<angle>";
   initial-value: 23deg;
   inherits: false;
 }
-html[data-skin^="resend"][data-theme="dark"] :is(.hero__role, .tl__tag) {
+html[data-skin^="resend"][data-theme="dark"] :is(.hero__role, .tl__tag, .pcard .tag) {
   border: 1px solid transparent;
   border-radius: 999px;
   background:
-    linear-gradient(#050506, #050506) padding-box,
+    linear-gradient(var(--rs-fill, #050506), var(--rs-fill, #050506)) padding-box,
     linear-gradient(var(--rs-angle), rgb(2 252 239 / 0.55), rgb(255 181 43 / 0.55) 50%, rgb(160 43 254 / 0.55)) border-box;
   color: var(--text);
   animation: rsSpin 8s linear infinite;
+}
+html[data-skin^="resend"][data-theme="dark"] .pcard .tag {
+  --rs-fill: var(--surface);
+}
+/* Desfase para que las etiquetas no giren todas a la vez */
+html[data-skin^="resend"][data-theme="dark"] .pcard .tag + .tag { animation-delay: -3s; }
+html[data-skin^="resend"][data-theme="dark"] :nth-child(2n) > * > .pcard .tag { animation-delay: -5s; }
+
+/* Mouse del hero: el contorno en arcoíris (degradado #rs-mouse-grad del SVG, que gira despacio) */
+html[data-skin^="resend"][data-theme="dark"] .mouse__outline {
+  stroke: url(#rs-mouse-grad);
+  stroke-opacity: 1;
 }
 html[data-skin^="resend"][data-theme="dark"] .hero__role {
   display: inline-flex;
@@ -196,8 +222,9 @@ html[data-skin="resend-lima"][data-theme="dark"] .btn-primary {
   --btn-fill: #f0f0f0;
 }
 
-/* ---------- El lima que se queda (pedido de Willder, 2026-11-18) ----------
-   Centro de la W del logo (--logo-accent, arriba), punto del menú, flecha de «What I do» y «+» de las preguntas */
+/* ---------- El lima queda solo en la cabecera (pedido de Willder, 2026-11-18) ----------
+   Centro de la W del logo (--logo-accent, arriba) y punto del menú. Dentro de las secciones, la flecha de
+   «What I do» y el «+» de las preguntas toman el color de su sección (segunda corrección del mismo día) */
 html[data-skin^="resend"][data-theme="dark"] .nav-link::after {
   background: var(--lime);
   box-shadow: 0 0 8px rgb(212 255 58 / 0.6);
@@ -205,15 +232,15 @@ html[data-skin^="resend"][data-theme="dark"] .nav-link::after {
 @media (hover: hover) {
   html[data-skin^="resend"][data-theme="dark"] .price-row:hover .price-row__arrow,
   html[data-skin^="resend"][data-theme="dark"] .faq__q:hover .faq__icon {
-    background: var(--lime);
-    border-color: var(--lime);
+    background: var(--rs-c, var(--lime));
+    border-color: var(--rs-c, var(--lime));
     color: #000;
-    box-shadow: 0 0 18px -2px rgb(212 255 58 / 0.55);
+    box-shadow: 0 0 18px -2px color-mix(in oklab, var(--rs-c, var(--lime)) 60%, transparent);
   }
 }
 html[data-skin^="resend"][data-theme="dark"] .faq[open] .faq__icon {
-  background: var(--lime);
-  border-color: var(--lime);
+  background: var(--rs-c, var(--lime));
+  border-color: var(--rs-c, var(--lime));
   color: #000;
 }
 
@@ -405,6 +432,125 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
 @keyframes rsType {
   0%, 100% { opacity: 0.25; translate: 0 0; }
   40% { opacity: 1; translate: 0 -1.5px; }
+}
+
+/* ---------- Luz que recorre las líneas divisoras (pedido de Willder, 2026-11-18) ----------
+   Un destello del color de la sección (--rs-c; blanco fuera de las secciones) viaja por cada línea.
+   Cómo: un degradado de 1 px pintado debajo del borde (background-origin: border-box); el borde es
+   casi transparente y deja ver la luz. Así no hace falta tocar el HTML ni los ::before/::after de cada
+   componente. Cada ciclo: la luz cruza en la primera mitad y descansa en la segunda; el desfase
+   (--rs-trace-delay) evita que todas las líneas se enciendan a la vez. Sin movimiento: no hay luz. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Líneas de arriba: listas de servicios, cifras, 3D, «Why», preguntas, y los border-t del resto de la web */
+  html[data-skin^="resend"][data-theme="dark"] :is(main, .stage) :is(.border-t.border-line, .results, .lab__list) {
+    background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+    background-size: 28% 1px;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    animation: rsTraceTop 7s ease-in-out var(--rs-trace-delay, 0s) infinite;
+  }
+  /* Líneas de abajo: cada pregunta, cada cifra, cada efecto 3D (en columna) y cada servicio (escritorio) */
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item) {
+    background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+    background-size: 28% 1px;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    animation: rsTraceBottom 7s ease-in-out var(--rs-trace-delay, 0s) infinite;
+  }
+  /* Franja del marquee (arriba y abajo, en sentidos contrarios) */
+  html[data-skin^="resend"][data-theme="dark"] main > .border-y.border-line,
+  html[data-skin^="resend"][data-theme="dark"] main section.border-y.border-line {
+    background-image:
+      linear-gradient(90deg, transparent, rgb(255 255 255 / 0.8), transparent),
+      linear-gradient(90deg, transparent, rgb(255 255 255 / 0.8), transparent);
+    background-size: 22% 1px, 22% 1px;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    animation: rsTraceBoth 9s linear infinite;
+  }
+  /* Desfase: cada elemento de una lista empieza un poco después que el anterior */
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(2) { --rs-trace-delay: 0.6s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(3) { --rs-trace-delay: 1.2s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(4) { --rs-trace-delay: 1.8s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item):nth-child(5) { --rs-trace-delay: 2.4s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item):nth-child(6) { --rs-trace-delay: 3s; }
+
+  /* Escritorio: las columnas de «Why» y de 3D se separan con líneas verticales; la luz baja por ellas */
+  @media (min-width: 768px) {
+    html[data-skin^="resend"][data-theme="dark"] main .why + .why {
+      background-image: linear-gradient(180deg, transparent, var(--rs-c, #fff), transparent);
+      background-size: 1px 35%;
+      background-repeat: no-repeat;
+      background-origin: border-box;
+      animation: rsTraceLeft 7s ease-in-out var(--rs-trace-delay, 0s) infinite;
+    }
+    /* Servicios: la línea de cada fila la dibuja su ::after; la luz va en el borde (transparente) de abajo */
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li {
+      background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+      background-size: 22% 1px;
+      background-repeat: no-repeat;
+      background-origin: border-box;
+      animation: rsTraceBottom 8s ease-in-out var(--rs-trace-delay, 0s) infinite;
+    }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(2n) { --rs-trace-delay: 1s; }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(3n) { --rs-trace-delay: 2s; }
+  }
+  @media (min-width: 1100px) {
+    html[data-skin^="resend"][data-theme="dark"] main .lab__item + .lab__item {
+      background-image: linear-gradient(180deg, transparent, var(--rs-c, #fff), transparent);
+      background-size: 1px 35%;
+      animation-name: rsTraceLeft;
+    }
+    html[data-skin^="resend"][data-theme="dark"] main .lab__item:first-child {
+      background-image: none;
+    }
+  }
+
+  /* Teléfono: la lista de servicios y el pie no tienen línea arriba (border-top: 0), así que tampoco luz */
+  @media (max-width: 767px) {
+    html[data-skin^="resend"][data-theme="dark"] :is(.price-list, footer.border-t) {
+      background-image: none;
+    }
+  }
+
+  /* Línea del proceso: además de llenarse con el scroll, un destello la recorre */
+  html[data-skin^="resend"][data-theme="dark"] .tl__rail {
+    background-image: linear-gradient(180deg, transparent, var(--rs-c, #fff), transparent);
+    background-size: 100% 20%;
+    background-repeat: no-repeat;
+    animation: rsTraceRail 5s ease-in-out infinite;
+  }
+  @media (min-width: 1024px) {
+    html[data-skin^="resend"][data-theme="dark"] .tl__rail {
+      background-image: linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+      background-size: 20% 100%;
+      animation-name: rsTraceRailX;
+    }
+  }
+}
+@keyframes rsTraceTop {
+  0% { background-position: -45% 0; }
+  50%, 100% { background-position: 145% 0; }
+}
+@keyframes rsTraceBottom {
+  0% { background-position: -45% 100%; }
+  50%, 100% { background-position: 145% 100%; }
+}
+@keyframes rsTraceLeft {
+  0% { background-position: 0 -60%; }
+  50%, 100% { background-position: 0 160%; }
+}
+@keyframes rsTraceBoth {
+  from { background-position: -40% 0, 140% 100%; }
+  to { background-position: 140% 0, -40% 100%; }
+}
+@keyframes rsTraceRail {
+  0% { background-position: 0 -30%; }
+  60%, 100% { background-position: 0 130%; }
+}
+@keyframes rsTraceRailX {
+  0% { background-position: -30% 0; }
+  60%, 100% { background-position: 130% 0; }
 }
 
 /* ---------- Cabeceras centradas en el teléfono (como resend.com; decisión de Willder, 2026-11-18) ----------
