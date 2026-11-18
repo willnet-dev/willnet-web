@@ -61,29 +61,31 @@ const homeFaq = faqFor(lang, true);
           <a href={r("contact", lang)} class="btn btn-primary btn-lg" data-magnetic><span class="btn-label">{copy.cta.quote}</span></a>
         </div>
       </div>
+      <!-- Mouse animado (referencia: tamalsen.dev): el contorno se dibuja, un trazo lima da la vuelta,
+           cae dentro como flecha que rebota y todo se recoge. Ciclo de 5 s en CSS (global.css).
+           Va dentro del texto (capa 3 del parallax) para bajar junto con el botón: fuera de la capa, al hacer
+           scroll en el celular el botón se le venía encima (Willder, 2026-11-18) -->
+      <a href="#services" class="scroll-cue" aria-label={copy.common.scroll}>
+        <svg class="mouse" viewBox="0 0 40 64" width="30" height="48" aria-hidden="true">
+          <!-- PRUEBA (rama prueba-resend): degradado arcoíris del contorno; solo se usa con el estilo Resend -->
+          <defs>
+            <linearGradient id="rs-mouse-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="40" y2="64">
+              <stop offset="0" stop-color="#02fcef"></stop>
+              <stop offset="0.5" stop-color="#ffb52b"></stop>
+              <stop offset="1" stop-color="#a02bfe"></stop>
+              <animateTransform attributeName="gradientTransform" type="rotate" from="0 20 32" to="360 20 32" dur="8s" repeatCount="indefinite"></animateTransform>
+            </linearGradient>
+          </defs>
+          <path class="mouse__outline" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
+          <path class="mouse__chase" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
+          <g class="mouse__arrow">
+            <path class="mouse__stem" pathLength="100" d="M20 18v24"></path>
+            <path class="mouse__head" pathLength="100" d="M13.5 35.5 20 42l6.5-6.5"></path>
+          </g>
+        </svg>
+      </a>
     </div>
 
-    <!-- Mouse animado (referencia: tamalsen.dev): el contorno se dibuja, un trazo lima da la vuelta,
-         cae dentro como flecha que rebota y todo se recoge. Ciclo de 5 s en CSS (global.css) -->
-    <a href="#services" class="scroll-cue" aria-label={copy.common.scroll}>
-      <svg class="mouse" viewBox="0 0 40 64" width="30" height="48" aria-hidden="true">
-        <!-- PRUEBA (rama prueba-resend): degradado arcoíris del contorno; solo se usa con el estilo Resend -->
-        <defs>
-          <linearGradient id="rs-mouse-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="40" y2="64">
-            <stop offset="0" stop-color="#02fcef"></stop>
-            <stop offset="0.5" stop-color="#ffb52b"></stop>
-            <stop offset="1" stop-color="#a02bfe"></stop>
-            <animateTransform attributeName="gradientTransform" type="rotate" from="0 20 32" to="360 20 32" dur="8s" repeatCount="indefinite"></animateTransform>
-          </linearGradient>
-        </defs>
-        <path class="mouse__outline" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
-        <path class="mouse__chase" pathLength="100" d="M20 2C10 2 2 10 2 20v24c0 10 8 18 18 18s18-8 18-18V20C38 10 30 2 20 2Z"></path>
-        <g class="mouse__arrow">
-          <path class="mouse__stem" pathLength="100" d="M20 18v24"></path>
-          <path class="mouse__head" pathLength="100" d="M13.5 35.5 20 42l6.5-6.5"></path>
-        </g>
-      </svg>
-    </a>
   </section>
 
   <!-- MARQUEE de servicios -->
@@ -352,7 +354,9 @@ const homeFaq = faqFor(lang, true);
     }
     .hero__content {
       padding-top: calc(var(--vis-h) * 0.72);
-      padding-bottom: 5.75rem;
+      /* El mouse va en el flujo, debajo del botón (ver .scroll-cue más abajo). El parallax baja el texto
+         al hacer scroll; este margen deja que el mouse se vea un rato antes de pasar detrás de la franja */
+      padding-bottom: 3rem;
       gap: 0.9rem;
     }
     .hero__lead,
@@ -385,6 +389,15 @@ const homeFaq = faqFor(lang, true);
     display: grid;
     place-items: center;
     padding: 0.5rem;
+  }
+  /* Celular: el mouse deja de flotar y va en el flujo, con aire debajo del botón «Get a free quote»;
+     así baja con él al hacer scroll y no se le encima (Willder, 2026-11-18) */
+  @media (max-width: 767px) {
+    .scroll-cue {
+      position: static;
+      translate: none;
+      margin-top: 1.25rem;
+    }
   }
   .why {
     padding: 2rem 0 0;

@@ -54,7 +54,7 @@ const year = new Date().getFullYear();
         {
           socials.map((s) => (
             <li>
-              <a href={s.href} target="_blank" rel="noopener" class="inline-flex items-center gap-2">
+              <a href={s.href} target="_blank" rel="noopener" class="inline-flex items-center gap-2" data-brand={s.icon}>
                 <Icon name={s.icon} size={18} />
                 {/* En el pie de escritorio X se llama «Twitter»; el ícono sigue siendo la X (Willder, 2026-11-08) */}
                 {s.icon === "x" ? "Twitter" : s.name}

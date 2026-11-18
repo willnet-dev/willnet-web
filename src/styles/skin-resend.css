@@ -274,6 +274,38 @@ html[data-skin^="resend"] .social-icon[data-brand="tiktok"] {
   }
 }
 
+/* Pie de escritorio (lista de redes con nombre): el ícono toma el color de su marca y el texto se aclara */
+html[data-skin^="resend"] .footer-list a[data-brand="linkedin"] { --brand-c: #0a66c2; }
+html[data-skin^="resend"] .footer-list a[data-brand="instagram"] { --brand-c: #ff0069; }
+html[data-skin^="resend"] .footer-list a[data-brand="facebook"] { --brand-c: #0866ff; }
+html[data-skin^="resend"] .footer-list a:is([data-brand="github"], [data-brand="x"], [data-brand="tiktok"]) { --brand-c: var(--text); }
+@media (hover: hover) {
+  html[data-skin^="resend"] .footer-list a[data-brand]:hover {
+    color: var(--text);
+  }
+  html[data-skin^="resend"] .footer-list a[data-brand]:hover svg {
+    color: var(--brand-c);
+    filter: drop-shadow(0 0 8px color-mix(in oklab, var(--brand-c) 55%, transparent));
+    transition: color var(--dur-fast), filter var(--dur-fast);
+  }
+  html[data-skin^="resend"] .footer-list a[data-brand="tiktok"]:hover svg {
+    filter: drop-shadow(-1.5px -1px 0 #25f4ee) drop-shadow(1.5px 1px 0 #fe2c55);
+  }
+}
+
+/* ---------- Tarjetas de «What I do» en el teléfono: borde arcoíris animado (pedido de Willder, 2026-11-18) ---------- */
+@media (max-width: 767px) {
+  html[data-skin^="resend"][data-theme="dark"] .price-list > li {
+    border-color: transparent;
+    background:
+      linear-gradient(var(--surface), var(--surface)) padding-box,
+      linear-gradient(var(--rs-angle), rgb(2 252 239 / 0.5), rgb(255 181 43 / 0.5) 50%, rgb(160 43 254 / 0.5)) border-box;
+    animation: rsSpin 8s linear infinite;
+  }
+  html[data-skin^="resend"][data-theme="dark"] .price-list > li:nth-child(2n) { animation-delay: -2.5s; }
+  html[data-skin^="resend"][data-theme="dark"] .price-list > li:nth-child(3n) { animation-delay: -5s; }
+}
+
 /* ---------- WhatsApp flotante: siempre con el verde de WhatsApp (pedido de Willder, 2026-11-18) ---------- */
 html[data-skin^="resend"] .wa-fab {
   background: #25d366;
@@ -438,7 +470,7 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
    Un destello del color de la sección (--rs-c; blanco fuera de las secciones) viaja por cada línea.
    Cómo: un degradado de 1 px pintado debajo del borde (background-origin: border-box); el borde es
    casi transparente y deja ver la luz. Así no hace falta tocar el HTML ni los ::before/::after de cada
-   componente. Cada ciclo: la luz cruza en la primera mitad y descansa en la segunda; el desfase
+   componente. Cada ciclo (4,5 s): la luz cruza en los primeros 3/4 y descansa un momento; el desfase
    (--rs-trace-delay) evita que todas las líneas se enciendan a la vez. Sin movimiento: no hay luz. */
 @media (prefers-reduced-motion: no-preference) {
   /* Líneas de arriba: listas de servicios, cifras, 3D, «Why», preguntas, y los border-t del resto de la web */
@@ -447,7 +479,7 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
     background-size: 28% 1px;
     background-repeat: no-repeat;
     background-origin: border-box;
-    animation: rsTraceTop 7s ease-in-out var(--rs-trace-delay, 0s) infinite;
+    animation: rsTraceTop 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
   }
   /* Líneas de abajo: cada pregunta, cada cifra, cada efecto 3D (en columna) y cada servicio (escritorio) */
   html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item) {
@@ -455,7 +487,7 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
     background-size: 28% 1px;
     background-repeat: no-repeat;
     background-origin: border-box;
-    animation: rsTraceBottom 7s ease-in-out var(--rs-trace-delay, 0s) infinite;
+    animation: rsTraceBottom 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
   }
   /* Franja del marquee (arriba y abajo, en sentidos contrarios) */
   html[data-skin^="resend"][data-theme="dark"] main > .border-y.border-line,
@@ -466,14 +498,14 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
     background-size: 22% 1px, 22% 1px;
     background-repeat: no-repeat;
     background-origin: border-box;
-    animation: rsTraceBoth 9s linear infinite;
+    animation: rsTraceBoth 6s linear infinite;
   }
   /* Desfase: cada elemento de una lista empieza un poco después que el anterior */
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(2) { --rs-trace-delay: 0.6s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(3) { --rs-trace-delay: 1.2s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(4) { --rs-trace-delay: 1.8s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item):nth-child(5) { --rs-trace-delay: 2.4s; }
-  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item):nth-child(6) { --rs-trace-delay: 3s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(2) { --rs-trace-delay: 0.3s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(3) { --rs-trace-delay: 0.6s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item, .why):nth-child(4) { --rs-trace-delay: 0.9s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item):nth-child(5) { --rs-trace-delay: 1.2s; }
+  html[data-skin^="resend"][data-theme="dark"] main :is(.faq, .result, .lab__item):nth-child(6) { --rs-trace-delay: 1.5s; }
 
   /* Escritorio: las columnas de «Why» y de 3D se separan con líneas verticales; la luz baja por ellas */
   @media (min-width: 768px) {
@@ -482,7 +514,7 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
       background-size: 1px 35%;
       background-repeat: no-repeat;
       background-origin: border-box;
-      animation: rsTraceLeft 7s ease-in-out var(--rs-trace-delay, 0s) infinite;
+      animation: rsTraceLeft 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
     }
     /* Servicios: la línea de cada fila la dibuja su ::after; la luz va en el borde (transparente) de abajo */
     html[data-skin^="resend"][data-theme="dark"] main .price-list > li {
@@ -490,10 +522,10 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
       background-size: 22% 1px;
       background-repeat: no-repeat;
       background-origin: border-box;
-      animation: rsTraceBottom 8s ease-in-out var(--rs-trace-delay, 0s) infinite;
+      animation: rsTraceBottom 5s ease-in-out var(--rs-trace-delay, 0s) infinite;
     }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(2n) { --rs-trace-delay: 1s; }
-    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(3n) { --rs-trace-delay: 2s; }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(2n) { --rs-trace-delay: 0.4s; }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(3n) { --rs-trace-delay: 0.8s; }
   }
   @media (min-width: 1100px) {
     html[data-skin^="resend"][data-theme="dark"] main .lab__item + .lab__item {
@@ -518,7 +550,7 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
     background-image: linear-gradient(180deg, transparent, var(--rs-c, #fff), transparent);
     background-size: 100% 20%;
     background-repeat: no-repeat;
-    animation: rsTraceRail 5s ease-in-out infinite;
+    animation: rsTraceRail 3.5s ease-in-out infinite;
   }
   @media (min-width: 1024px) {
     html[data-skin^="resend"][data-theme="dark"] .tl__rail {
@@ -529,16 +561,16 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
   }
 }
 @keyframes rsTraceTop {
-  0% { background-position: -45% 0; }
-  50%, 100% { background-position: 145% 0; }
+  0% { background-position: -40% 0; }
+  75%, 100% { background-position: 140% 0; }
 }
 @keyframes rsTraceBottom {
-  0% { background-position: -45% 100%; }
-  50%, 100% { background-position: 145% 100%; }
+  0% { background-position: -40% 100%; }
+  75%, 100% { background-position: 140% 100%; }
 }
 @keyframes rsTraceLeft {
-  0% { background-position: 0 -60%; }
-  50%, 100% { background-position: 0 160%; }
+  0% { background-position: 0 -55%; }
+  75%, 100% { background-position: 0 155%; }
 }
 @keyframes rsTraceBoth {
   from { background-position: -40% 0, 140% 100%; }

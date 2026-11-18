@@ -6,7 +6,7 @@
 // muestra el idioma actual y el texto rueda hacia el otro (sube en inglés, baja en español).
 import Logo from "./Logo.astro";
 import { altPath, r, type Lang } from "../i18n/routes";
-import { site, t, whatsappHref } from "../i18n/ui";
+import { calendlyHref, site, t, whatsappHref } from "../i18n/ui";
 import SocialIcons from "./SocialIcons.astro";
 
 interface Props {
@@ -95,6 +95,9 @@ const isActive = (href: string) => path === href || path.startsWith(href + "/");
       </nav>
       <div class="mt-10 flex flex-col gap-3">
         <a href={r("contact", lang)} class="btn btn-primary btn-lg w-full"><span class="btn-label">{copy.cta.quote}</span></a>
+        <!-- Llamada gratis en Calendly (pedido de Willder, 2026-11-18). Se abre en una ventana encima
+             (src/scripts/calendly.ts) y el menú se cierra al tocarlo (site.ts → initMenu) -->
+        <a href={calendlyHref("intro", "menu")} class="btn w-full" target="_blank" rel="noopener" data-calendly><span class="btn-label">{copy.cta.bookCall}</span></a>
         <a href={whatsappHref(lang)} class="btn w-full" target="_blank" rel="noopener"><span class="btn-label">{copy.cta.whatsapp}</span></a>
         <div class="mt-6">
           <p class="eyebrow mb-3 text-center">{copy.footer.socials}</p>
