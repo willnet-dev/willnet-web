@@ -4,7 +4,7 @@
 import sharp from "sharp";
 import fs from "node:fs";
 
-const src = process.argv[2] ?? "originales/about/willder-about-04-estudio-pecho-v2.jpg";
+const src = process.argv[2] ?? "originales/about/willder-about-07-exterior-hora-dorada.jpg";
 const dest = "public/img";
 // Calidades elegidas midiendo contra el original (PSNR ≈ 45–46 dB: sin diferencia visible)
 const formats = [
