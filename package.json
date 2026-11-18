@@ -13,7 +13,8 @@
     "preview": "astro preview --port 5500",
     "check": "astro check",
     "images": "node scripts/optimize-images.mjs",
-    "about-photo": "node scripts/about-photo.mjs"
+    "about-photo": "node scripts/about-photo.mjs",
+    "loader-images": "node scripts/loader-images.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^7.1.1",

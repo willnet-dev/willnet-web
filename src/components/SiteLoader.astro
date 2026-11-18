@@ -1,0 +1,124 @@
+---
+// Pantalla de carga de la web (idea de osmo.supply, «Willem Loading Animation», escrita desde cero).
+// Sale solo la primera vez que se abre el sitio en la pestaña (sessionStorage «loader-seen», ver Base.astro),
+// nunca al cambiar de página, ni con «reducir movimiento» ni sin JavaScript.
+// Secuencia (site.ts → initLoader):
+//   1. Suben las letras de WILL y NET.
+//   2. Entre las dos se abre una ventana con capturas de proyectos reales que se van quitando una a una.
+//   3. Debajo queda el lima con la W; la ventana crece hasta llenar la pantalla y empuja las letras hacia afuera.
+//   4. El lima sube como el telón de las transiciones entre páginas y descubre la página.
+// Miniaturas: public/img/loader/*.webp, creadas con `npm run loader-images`.
+const extras = ["acl", "imola", "pavlove"];
+---
+
+<div class="site-loader" data-site-loader aria-hidden="true">
+  <div class="sl__word">
+    <span class="sl__half" data-sl-half="start">
+      {[..."WILL"].map((l) => <span class="sl__letter" data-sl-letter>{l}</span>)}
+    </span>
+    <span class="sl__box" data-sl-box>
+      <span class="sl__img" data-sl-img>
+        <span class="sl__base">
+          <svg viewBox="0 0 416 290" fill="currentColor"><path d="M0 0 96 37 156 203 107 290Z"></path><path d="M416 0 320 37 260 203 309 290Z"></path><path d="M160 64 208 83 256 64 208 174Z"></path></svg>
+        </span>
+        {/* La primera de la lista va arriba: se ve primero y es la primera que se quita */}
+        {[...extras].reverse().map((slug) => <img class="sl__extra" data-sl-extra src={`/img/loader/${slug}.webp`} width="640" height="480" alt="" decoding="async" />)}
+      </span>
+    </span>
+    <span class="sl__half" data-sl-half="end">
+      {[..."NET"].map((l) => <span class="sl__letter" data-sl-letter>{l}</span>)}
+    </span>
+  </div>
+</div>
+
+<style>
+  .site-loader {
+    display: none;
+  }
+  /* Se ve mientras <html> tiene .js y .is-loading (los pone el script del <head> de Base.astro) y, durante la
+     salida, con .is-active (lo pone site.ts): .is-loading se quita al empezar a subir, para que la página arranque */
+  :global(html.js.is-loading) .site-loader,
+  .site-loader.is-active {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: block;
+    overflow: hidden;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  :global(html.js.is-loading) {
+    overflow: hidden;
+  }
+  /* Hasta que el JavaScript la toma, solo se ve el fondo: así las letras no aparecen y luego saltan abajo */
+  .site-loader:not(.is-active) .sl__word {
+    visibility: hidden;
+  }
+  /* Centrado con position + translate (no con la cuadrícula del contenedor): cuando la ventana crece más que la
+     pantalla, la palabra sigue centrada y se desborda por igual a los dos lados */
+  .sl__word {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(2.5rem, 11vw, 10rem);
+    line-height: 0.8;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+  /* Cada mitad recorta sus letras: suben desde abajo de la línea */
+  /* flex: none en las mitades y la ventana: cuando la ventana crece más que la pantalla, nada se encoge y la fila
+     se desborda por igual a los dos lados (las letras salen empujadas hacia afuera) */
+  .sl__half {
+    flex: none;
+    display: flex;
+    overflow: hidden;
+    padding-block: 0.06em;
+  }
+  .sl__letter {
+    display: block;
+  }
+  /* La ventana entre WILL y NET: empieza sin ancho y crece; lo de dentro se centra para crecer hacia los lados */
+  .sl__box {
+    flex: none;
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0;
+    height: 0.8em;
+  }
+  .sl__img {
+    position: relative;
+    flex: none;
+    width: 0%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: 0.06em;
+  }
+  .sl__base,
+  .sl__extra {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .sl__base {
+    display: grid;
+    place-items: center;
+    background: var(--accent);
+    color: var(--accent-ink);
+  }
+  .sl__base svg {
+    width: clamp(1.5rem, 26%, 7rem);
+  }
+  .sl__extra {
+    object-fit: cover;
+  }
+</style>

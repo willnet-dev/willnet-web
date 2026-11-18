@@ -277,6 +277,59 @@ function initTilt() {
   });
 }
 
+/* ---------- Pantalla de carga (SiteLoader.astro; idea de osmo.supply, «Willem Loading Animation») ---------- */
+// Solo corre si el script del <head> puso .is-loading en <html> (primera visita de la pestaña). Otras entradas
+// (la foto pixelada de About) esperan a `loaderDone` para no animarse debajo de la pantalla de carga.
+let loaderDone: Promise<void> = Promise.resolve();
+function initLoader() {
+  const root = document.documentElement;
+  const el = document.querySelector<HTMLElement>("[data-site-loader]");
+  if (!root.classList.contains("is-loading") || !el) return;
+  let finish!: () => void;
+  loaderDone = new Promise((resolve) => (finish = resolve));
+  lenis?.stop();
+  const end = () => {
+    root.classList.remove("is-loading");
+    lenis?.start();
+    finish();
+  };
+  const q = <T extends Element>(sel: string) => Array.from(el.querySelectorAll<T>(sel));
+  const letters = q<HTMLElement>("[data-sl-letter]");
+  const [start, finishHalf] = [el.querySelector("[data-sl-half='start']"), el.querySelector("[data-sl-half='end']")];
+  const box = el.querySelector("[data-sl-box]");
+  const img = el.querySelector("[data-sl-img]");
+  // De arriba abajo: la de encima es la primera que se quita
+  const extras = q<HTMLElement>("[data-sl-extra]").reverse();
+
+  const tl = gsap.timeline({ paused: true, defaults: { ease: "expo.inOut" } });
+  el.classList.add("is-active");
+  // 1. Las letras suben
+  tl.from(letters, { yPercent: 110, duration: 0.9, stagger: 0.04, ease: "expo.out" });
+  // 2. Se abre la ventana entre WILL y NET y las mitades se separan un poco
+  tl.to(box, { width: "1em", duration: 1 }, 0.55)
+    .to(img, { width: "100%", duration: 1 }, "<")
+    .to(start, { x: "-0.05em", duration: 1 }, "<")
+    .to(finishHalf, { x: "0.05em", duration: 1 }, "<");
+  // 3. Las capturas se quitan de una en una y queda el lima con la W
+  tl.to(extras, { opacity: 0, duration: 0.05, stagger: 0.35, ease: "none" }, "-=0.1");
+  // 4. La ventana crece hasta llenar la pantalla y empuja las letras hacia los lados
+  tl.to(img, { width: "100vw", height: "100dvh", borderRadius: 0, duration: 1.1 }, "+=0.2")
+    .to(box, { width: "110vw", duration: 1.1 }, "<");
+  // 5. El lima sube como el telón entre páginas y descubre la página; la entrada del hero arranca a la vez
+  tl.add(end, "-=0.1").to(el, { yPercent: -100, duration: 0.8, ease: "power4.inOut" }, "<");
+  tl.eventCallback("onComplete", () => {
+    el.remove();
+  });
+
+  // Un toque o una tecla la acelera para quien no quiera esperar
+  const hurry = () => tl.timeScale(3.5);
+  addEventListener("pointerdown", hurry, { once: true });
+  addEventListener("keydown", hurry, { once: true });
+
+  // Empieza cuando la letra del título está lista (máx. 0.8 s de espera)
+  Promise.race([document.fonts?.ready, new Promise((r) => setTimeout(r, 800))]).then(() => tl.play());
+}
+
 /* ---------- Foto de About: aparece pixelada (idea de osmo.supply, «Pixelated Image Reveal») ---------- */
 // Al cargar la página, la primera vez que el marco se ve: los bloques lima tapan el marco en orden aleatorio,
 // la foto se muestra debajo y los bloques se apagan también al azar. En la demo de Osmo pasa al pasar el mouse
@@ -295,6 +348,7 @@ function initPixelReveal() {
     const STEP = 0.45; // segundos que tardan los bloques en tapar el marco, y otros tantos en apagarse
     let tl: gsap.core.Timeline | null = null;
     const play = async () => {
+      await loaderDone;
       // La foto tiene que estar decodificada antes de quitar los bloques; si falla, se sigue igual
       const ready = img.decode().catch(() => undefined);
       tl = gsap.timeline();
@@ -648,6 +702,7 @@ export function initSite() {
   (window as Window & { __wnReady?: boolean }).__wnReady = true;
   bindCurtain();
   bindSmoothScroll();
+  initLoader();
   document.addEventListener("astro:page-load", () => {
     // Astro ya movió el scroll de la página nueva: Lenis toma esa posición y las nuevas medidas
     lenis?.resize();

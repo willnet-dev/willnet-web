@@ -395,6 +395,11 @@ const homeFaq = faqFor(lang, true);
       animation: heroIn 1100ms var(--ease-out-expo) both;
     }
   }
+  /* Mientras está la pantalla de carga (SiteLoader), la entrada del hero espera: arranca cuando el telón sube */
+  :global(html.is-loading) .hero__in,
+  :global(html.is-loading) .hero__pic img {
+    animation-play-state: paused;
+  }
   @keyframes heroIn {
     from {
       transform: translateY(24px);

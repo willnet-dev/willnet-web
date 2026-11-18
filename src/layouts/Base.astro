@@ -7,6 +7,7 @@ import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import WorkTogether from "../components/WorkTogether.astro";
 import WhatsAppFab from "../components/WhatsAppFab.astro";
+import SiteLoader from "../components/SiteLoader.astro";
 import { altPath, type Lang } from "../i18n/routes";
 import { site, socials, t } from "../i18n/ui";
 // Fuentes del primer pantallazo (título y texto): se precargan para que el H1 no cambie de letra al cargar
@@ -109,6 +110,15 @@ const org = {
           try { if (sessionStorage.getItem("wa-seen")) doc.documentElement.classList.add("wa-seen"); } catch {}
         };
         apply(document);
+        // Pantalla de carga (SiteLoader): solo al abrir el sitio por primera vez en la pestaña y sin «reducir
+        // movimiento». No se repite al recargar ni al cambiar de página. Si algo falla, a los 7 s se quita sola
+        try {
+          if (!matchMedia("(prefers-reduced-motion: reduce)").matches && !sessionStorage.getItem("loader-seen")) {
+            document.documentElement.classList.add("is-loading");
+            sessionStorage.setItem("loader-seen", "1");
+            setTimeout(() => document.documentElement.classList.remove("is-loading"), 7000);
+          }
+        } catch {}
         // Seguro: si el JavaScript principal no arranca, se quita la clase .js y todo el contenido se ve
         setTimeout(() => {
           if (!window.__wnReady) document.documentElement.classList.remove("js");
@@ -122,6 +132,7 @@ const org = {
     <ClientRouter />
   </head>
   <body class="bg-bg text-ink">
+    <SiteLoader />
     <a class="skip-link" href="#main">{copy.nav.skip}</a>
     <Header lang={lang} path={path} />
     <main id="main">
