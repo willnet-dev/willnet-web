@@ -1,10 +1,11 @@
 ---
 // Portafolio. Arriba, los casos de estudio en un slider por capas (LayeredSlider.astro; reemplazó a los
-// dispositivos 3D el 2026-11-16, pedido de Willder). Abajo, el resto de proyectos con filtros.
+// dispositivos 3D el 2026-11-16, pedido de Willder). Abajo, el resto de proyectos con filtros en una fila
+// arrastrable sin fin (WorkCarousel.astro, 2026-11-17).
 import { getCollection } from "astro:content";
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
-import ProjectCard from "../components/ProjectCard.astro";
+import WorkCarousel from "../components/WorkCarousel.astro";
 import LayeredSlider from "../components/LayeredSlider.astro";
 import { r, workPath, type Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
@@ -62,18 +63,17 @@ const sliderItems = cases.map((c) => ({
     <LayeredSlider lang={lang} items={sliderItems} />
   </div>
 
-  <section class="wrap pb-[clamp(4rem,10vh,8rem)]" aria-labelledby="more-title">
-    <div class="mb-10 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-12">
+  <!-- «All work»: fila arrastrable sin fin (WorkCarousel.astro, pedido de Willder, 2026-11-17; antes era una cuadrícula) -->
+  <section class="pb-[clamp(4rem,10vh,8rem)]" aria-labelledby="more-title">
+    <div class="wrap mb-8 flex flex-wrap items-end justify-between gap-6 border-t border-line pt-12">
       <h2 id="more-title" class="display text-[length:var(--text-step-3)]">{copy.common.allWork}</h2>
       <div class="flex flex-wrap gap-2" role="group" aria-label={copy.common.allWork} data-filters>
         <button type="button" class="filter" data-filter="all" aria-pressed="true">{p.filters.all}</button>
         {restCats.map((cat) => <button type="button" class="filter" data-filter={cat} aria-pressed="false">{p.filters[cat]}</button>)}
       </div>
     </div>
-    <div class="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-      {rest.map((x) => <ProjectCard project={x} lang={lang} />)}
-    </div>
-    <p class="eyebrow mt-10" data-learning-note>{p.learningNote}</p>
+    <WorkCarousel lang={lang} projects={rest} />
+    <p class="wrap eyebrow mt-10" data-learning-note>{p.learningNote}</p>
   </section>
 </Base>
 
