@@ -8,6 +8,13 @@
 const WIDGET_JS = "https://assets.calendly.com/assets/external/widget.js";
 const WIDGET_CSS = "https://assets.calendly.com/assets/external/widget.css";
 const LIGHT = { background_color: "f1f3f4", text_color: "1c1d20", primary_color: "3d5500" };
+// PRUEBA (rama prueba-resend): con el estilo Resend, la ventana usa el color neutro de los botones de la web
+// (el relleno al pasar el mouse) en vez del lima u oliva: negro en claro y blanco en oscuro, sobre el gris de
+// las tarjetas de cada tema (pedido de Willder, 2026-11-18). Calendly elige solo el texto de sus botones.
+const RESEND = {
+  light: { background_color: "f2f1ed", text_color: "111113", primary_color: "111113" },
+  dark: { background_color: "0b0b0c", text_color: "f0f0f0", primary_color: "f0f0f0" },
+};
 
 type CalendlyApi = { initPopupWidget: (opts: { url: string }) => void };
 declare global {
@@ -48,9 +55,10 @@ function loadCalendly(): Promise<CalendlyApi> {
 
 function themedUrl(href: string) {
   const url = new URL(href);
-  if (document.documentElement.dataset.theme === "light") {
-    for (const [k, v] of Object.entries(LIGHT)) url.searchParams.set(k, v);
-  }
+  const { theme, skin } = document.documentElement.dataset;
+  const light = theme === "light";
+  const colors = skin?.startsWith("resend") ? RESEND[light ? "light" : "dark"] : light ? LIGHT : null;
+  if (colors) for (const [k, v] of Object.entries(colors)) url.searchParams.set(k, v);
   return url.toString();
 }
 
