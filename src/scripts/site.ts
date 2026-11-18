@@ -277,6 +277,51 @@ function initTilt() {
   });
 }
 
+/* ---------- Foto de About: aparece pixelada (idea de osmo.supply, «Pixelated Image Reveal») ---------- */
+// Al cargar la página, la primera vez que el marco se ve: los bloques lima tapan el marco en orden aleatorio,
+// la foto se muestra debajo y los bloques se apagan también al azar. En la demo de Osmo pasa al pasar el mouse
+// y cambia entre dos fotos; aquí es una sola entrada y va un poco más lenta para que se aprecie.
+// Sin JavaScript o con movimiento reducido no hay bloques y la foto se ve desde el principio (CSS en AboutView).
+function initPixelReveal() {
+  document.querySelectorAll<HTMLElement>("[data-pixel-reveal]").forEach((frame) => {
+    const blocks = frame.querySelectorAll<HTMLElement>(".px-grid span");
+    const img = frame.querySelector<HTMLImageElement>("[data-pixel-target] img");
+    if (!blocks.length || !img) return;
+    if (reducedMotion() || !("IntersectionObserver" in window)) {
+      frame.classList.add("is-pixel-done");
+      return;
+    }
+    frame.classList.add("is-pixel-running");
+    const STEP = 0.45; // segundos que tardan los bloques en tapar el marco, y otros tantos en apagarse
+    let tl: gsap.core.Timeline | null = null;
+    const play = async () => {
+      // La foto tiene que estar decodificada antes de quitar los bloques; si falla, se sigue igual
+      const ready = img.decode().catch(() => undefined);
+      tl = gsap.timeline();
+      tl.to(blocks, { opacity: 1, duration: 0.01, stagger: { each: STEP / blocks.length, from: "random" } });
+      await Promise.all([ready, tl.then()]);
+      frame.classList.add("is-pixel-done");
+      tl = gsap.timeline();
+      tl.to(blocks, { opacity: 0, duration: 0.01, stagger: { each: STEP / blocks.length, from: "random" } }, 0.08);
+      // La foto se asienta un poco mientras se descubre (escala 1.08 → 1)
+      tl.fromTo(img, { scale: 1.08 }, { scale: 1, duration: 1.4, ease: "expo.out", clearProps: "scale" }, 0);
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        play();
+      },
+      { threshold: 0.2 },
+    );
+    io.observe(frame);
+    onCleanup(() => {
+      io.disconnect();
+      tl?.kill();
+    });
+  });
+}
+
 /* ---------- Cifras que cuentan al entrar en pantalla: data-count="6" (y data-count-from="36" para bajar) ---------- */
 // El HTML ya trae el número final: sin JavaScript o con movimiento reducido se ve tal cual
 function initCounters() {
@@ -426,6 +471,16 @@ function initScroll() {
         el,
         { yPercent: -speed * 50 },
         { yPercent: speed * 50, ease: "none", scrollTrigger: { trigger: el.closest("[data-parallax-root]") ?? el, start: "top bottom", end: "bottom top", scrub: true } },
+      );
+    });
+
+    // Parallax de una foto dentro de su marco (About): la foto, más grande que el marco, baja más despacio que
+    // la página, como la del hero del inicio. yPercent es relativo a la foto (114 % del marco): ±6 ≈ ±7 % del marco
+    gsap.utils.toArray<HTMLElement>("[data-img-parallax]").forEach((el) => {
+      gsap.fromTo(
+        el,
+        { yPercent: -6 },
+        { yPercent: 6, ease: "none", scrollTrigger: { trigger: el.parentElement ?? el, start: "top bottom", end: "bottom top", scrub: true } },
       );
     });
 
@@ -604,6 +659,7 @@ export function initSite() {
     initServicePreview();
     initBento();
     initTilt();
+    initPixelReveal();
     initCounters();
     initReveal();
     initTypewriter();

@@ -1,5 +1,5 @@
 ---
-// Sobre mí: historia de Willder, su foto (entra con un telón lima y se inclina en 3D con el mouse), cifras verificables que cuentan al aparecer, presentación con la atención al detalle resaltada, habilidades (replegables en el celular) y herramientas.
+// Sobre mí: historia de Willder, su foto (aparece con una cuadrícula de bloques lima, se mueve dentro del marco con el scroll y se inclina en 3D con el mouse), cifras verificables que cuentan al aparecer, presentación con la atención al detalle resaltada, habilidades (replegables en el celular) y herramientas.
 // FOTO: public/img/willder-{720,1136}.{avif,webp} + willder.jpg de respaldo, generadas con `npm run about-photo`
 // desde el original de Canva (1136×1408). Original y alternativas en originales/about/ (fuera del repo).
 import { getCollection } from "astro:content";
@@ -17,6 +17,9 @@ const { lang } = Astro.props;
 const copy = t(lang);
 const a = copy.about;
 const hasPhoto = true;
+// Entrada de la foto: cuadrícula de 8 × 10 bloques (4:5, como el marco) → bloques cuadrados. site.ts → initPixelReveal
+const PX_COLS = 8;
+const PX_ROWS = 10;
 const realProjects = (await getCollection("work")).filter((p) => p.data.category !== "learning").length;
 // Cifras verificables; cuentan desde 0 al entrar en pantalla (site.ts → data-count)
 const stats = [
@@ -66,14 +69,22 @@ const person = {
     <div class="about-photo" data-speed="-0.08">
       <!-- La inclinación 3D va en un elemento propio: el parallax ya mueve .about-photo con transform -->
       <div class="about-photo__tilt" data-tilt>
-        <div class="about-photo__frame" data-reveal>
+        <div class="about-photo__frame" data-pixel-reveal>
           {
             hasPhoto ? (
-              <picture class="block h-full w-full">
-                <source type="image/avif" srcset="/img/willder-720.avif 720w, /img/willder-1136.avif 1136w" sizes="(min-width: 768px) 520px, 92vw" />
-                <source type="image/webp" srcset="/img/willder-720.webp 720w, /img/willder-1136.webp 1136w" sizes="(min-width: 768px) 520px, 92vw" />
-                <img src="/img/willder.jpg" alt={a.photoAlt} width="1136" height="1408" class="h-full w-full object-cover" />
-              </picture>
+              <>
+                {/* La foto es más alta que el marco para poder moverse dentro con el scroll (site.ts → data-img-parallax) */}
+                <div class="about-photo__move" data-img-parallax>
+                  <picture class="about-photo__pic" data-pixel-target>
+                    <source type="image/avif" srcset="/img/willder-720.avif 720w, /img/willder-1136.avif 1136w" sizes="(min-width: 768px) 520px, 92vw" />
+                    <source type="image/webp" srcset="/img/willder-720.webp 720w, /img/willder-1136.webp 1136w" sizes="(min-width: 768px) 520px, 92vw" />
+                    <img src="/img/willder.jpg" alt={a.photoAlt} width="1136" height="1408" class="h-full w-full object-cover" fetchpriority="high" />
+                  </picture>
+                </div>
+                <div class="px-grid" style={`--cols:${PX_COLS};--rows:${PX_ROWS}`} aria-hidden="true">
+                  {Array.from({ length: PX_COLS * PX_ROWS }, () => <span />)}
+                </div>
+              </>
             ) : (
               <div class="about-photo__empty">
                 <svg viewBox="0 0 416 290" width="96" fill="currentColor" aria-hidden="true"><path d="M0 0 96 37 156 203 107 290Z" /><path d="M416 0 320 37 260 203 309 290Z" /><path d="M160 64 208 83 256 64 208 174Z" /></svg>
@@ -202,33 +213,56 @@ const person = {
       opacity: 1;
     }
   }
-  /* Entrada: un telón lima con la curva de los botones sube y descubre la foto, que se asienta (escala 1.15 → 1).
-     Solo con JavaScript y sin «reducir movimiento»; si no, la foto se ve desde el principio */
+  /* Parallax dentro del marco: la foto mide un 14 % más que el marco (alto y ancho, para no cambiar su proporción)
+     y GSAP la desplaza con el scroll; el marco recorta lo que sobra */
+  .about-photo__move {
+    position: absolute;
+    inset: -7%;
+  }
+  .about-photo__pic {
+    display: block;
+    height: 100%;
+  }
+  /* Entrada (idea de osmo.supply, «Pixelated Image Reveal»): una cuadrícula de bloques lima tapa el marco en orden
+     aleatorio y luego se apaga también al azar, descubriendo la foto. Los bloques los anima site.ts → initPixelReveal.
+     Sin JavaScript o con «reducir movimiento», la foto se ve desde el principio y los bloques no existen */
+  .px-grid {
+    position: absolute;
+    inset: -1px;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    grid-template-rows: repeat(var(--rows), 1fr);
+    pointer-events: none;
+  }
+  .px-grid span {
+    background: var(--accent);
+    opacity: 0;
+    /* 0.5 px de más por lado: sin esto se ven líneas finas entre bloques en pantallas de alta densidad */
+    margin: -0.5px;
+  }
   @media (prefers-reduced-motion: no-preference) {
-    :global(.js) .about-photo__frame[data-reveal] {
-      opacity: 1;
-      transform: none;
+    /* La foto empieza oculta. Si el JavaScript no llega a correr (error de red, por ejemplo), aparece sola
+       a los 3 s gracias a la animación de respaldo: nunca se queda el marco vacío */
+    :global(.js) .about-photo__frame[data-pixel-reveal] .about-photo__pic {
+      visibility: hidden;
+      animation: px-failsafe 0s 3s forwards;
     }
-    :global(.js) .about-photo__frame::after {
-      content: "";
-      position: absolute;
-      inset: -1px;
-      z-index: 2;
-      background: var(--accent);
-      transition:
-        transform 1.2s var(--ease-out-expo) 0.15s,
-        border-radius 1.2s var(--ease-out-expo) 0.15s;
+    :global(.js) .about-photo__frame[data-pixel-reveal].is-pixel-running .about-photo__pic {
+      animation: none;
     }
-    :global(.js) .about-photo__frame.is-in::after {
-      transform: translateY(-101%);
-      border-radius: 0 0 50% 50% / 0 0 35% 35%;
+    :global(.js) .about-photo__frame[data-pixel-reveal].is-pixel-done .about-photo__pic {
+      visibility: visible;
     }
-    :global(.js) .about-photo__frame picture {
-      scale: 1.15;
-      transition: scale 1.8s var(--ease-out-expo) 0.15s;
+  }
+  @keyframes px-failsafe {
+    to {
+      visibility: visible;
     }
-    :global(.js) .about-photo__frame.is-in picture {
-      scale: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .px-grid {
+      display: none;
     }
   }
   /* Tarjetas replegables de «Con qué trabajo» (solo celular). Mismo ícono que las preguntas frecuentes (FaqList):
