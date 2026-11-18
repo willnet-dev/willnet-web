@@ -288,6 +288,17 @@ html[data-skin^="resend"] section[aria-labelledby="skills-title"] { --rs-c: #baa
 html[data-skin="resend"] main section[aria-labelledby] {
   --accent: var(--rs-c, #f0f0f0);
 }
+/* Excepción: las tarjetas de Contacto que abren Calendly. Con el azul de su sección parecían botones de
+   Calendly; al pasar el mouse toman el relleno neutro de los demás botones de la web (pedido de Willder,
+   2026-11-18) */
+html[data-skin^="resend"] .contact-card[data-calendly] {
+  --card-fill: #f0f0f0;
+  --card-fill-fg: #000000;
+}
+html[data-skin^="resend"][data-theme="light"] .contact-card[data-calendly] {
+  --card-fill: #111113;
+  --card-fill-fg: #ffffff;
+}
 
 /* Escenario final («Let's work together» y pie): un gris casi negro, para que el telón negro se distinga */
 html[data-skin^="resend"][data-theme="dark"] .stage {
