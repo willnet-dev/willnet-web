@@ -8,7 +8,7 @@ import PriceList from "../components/PriceList.astro";
 import FaqList from "../components/FaqList.astro";
 import ProjectCard from "../components/ProjectCard.astro";
 import ResultsStrip from "../components/ResultsStrip.astro";
-import RsTile from "../components/dev/RsTile.astro";
+import RsTile from "../components/RsTile.astro";
 import { r, type Lang } from "../i18n/routes";
 import { t } from "../i18n/ui";
 import { services } from "../data/services";
@@ -67,7 +67,7 @@ const homeFaq = faqFor(lang, true);
            scroll en el celular el botón se le venía encima (Willder, 2026-11-18) -->
       <a href="#services" class="scroll-cue" aria-label={copy.common.scroll}>
         <svg class="mouse" viewBox="0 0 40 64" width="30" height="48" aria-hidden="true">
-          <!-- PRUEBA (rama prueba-resend): degradado arcoíris del contorno; solo se usa con el estilo Resend -->
+          <!-- Degradado arcoíris del contorno del mouse (estilo Resend, skin-resend.css) -->
           <defs>
             <linearGradient id="rs-mouse-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="40" y2="64">
               <stop offset="0" stop-color="#02fcef"></stop>

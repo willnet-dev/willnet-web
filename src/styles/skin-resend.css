@@ -1,9 +1,10 @@
 /* ==========================================================================
-   PRUEBA (rama prueba-resend, 2026-11-18): estilo inspirado en resend.com
-   Solo se activa con data-skin en <html>, en los dos temas: los efectos son los mismos y los colores salen
-   de tokens (--rs-*) que cada tema define. Con data-skin="actual" la web queda igual que en producción. Variantes:
-     - resend       → negro puro, blancos y grises fríos; el acento pasa a blanco (ELEGIDA por Willder)
-     - resend-lima  → la misma luz y los mismos efectos, pero con el lima de WillNet como acento
+   Estilo de la web inspirado en resend.com: «Resend puro», elegido por Willder el 2026-11-18 entre tres
+   variantes (la actual, esta y una con acento lima; se probaron en la rama prueba-resend).
+   Va encima de global.css y se activa con data-skin="resend", que <html> lleva fijo (Base.astro); los
+   selectores conservan ese atributo para no reescribir la hoja. En los dos temas los efectos son los mismos y
+   los colores salen de tokens (--rs-*) que cada tema define. Tabla de colores de la marca:
+   Marca WillNet/01 Logo/paleta-willnet-2026-11.png (fuera del repo).
    Lo que se toma de Resend: negro profundo (#000), bordes de luz casi transparentes, títulos con
    degradado blanco, botones de cristal, bordes arcoíris, luz que cae desde arriba, íconos «de app» con
    brillo de color y entradas con desenfoque. Encargo completo: docs/prompt-ronda-resend.md (fuera del repo).
@@ -460,9 +461,6 @@ html[data-skin^="resend"][data-theme="dark"] .btn-primary {
   --btn-fill: #d6d8da;
   --btn-fill-fg: #000000;
   box-shadow: 0 0 0 1px rgb(255 255 255 / 0.1), 0 8px 30px -6px color-mix(in oklab, var(--accent) 45%, transparent);
-}
-html[data-skin="resend-lima"][data-theme="dark"] .btn-primary {
-  --btn-fill: #f0f0f0;
 }
 
 /* ---------- El lima queda solo en la cabecera (pedido de Willder, 2026-11-18) ----------
@@ -955,7 +953,7 @@ html[data-skin^="resend"] :is(.bento, .stack) { --rs-c: #ff7e29; }
   }
 }
 
-/* ---------- Tarjetas con luz que sigue al puntero (SkinSwitch.astro marca las tarjetas con .rs-glow) ---------- */
+/* ---------- Tarjetas con luz que sigue al puntero (CardGlow.astro marca las tarjetas con .rs-glow) ---------- */
 html[data-skin^="resend"] .rs-glow {
   background-image: radial-gradient(480px circle at var(--mx, 50%) var(--my, -30%), var(--rs-glow-c), transparent 45%);
 }

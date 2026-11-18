@@ -36,9 +36,9 @@ export const site = {
 // Sin JavaScript abre Calendly en otra pestaña; con JavaScript, src/scripts/calendly.ts lo abre en una ventana encima.
 export function calendlyHref(kind: keyof typeof site.calendly, campaign: string) {
   const params = new URLSearchParams({
-    background_color: "161719",
-    text_color: "f4f5f6",
-    primary_color: "d4ff3a",
+    background_color: "0b0b0c",
+    text_color: "f0f0f0",
+    primary_color: "f0f0f0",
     utm_source: "willnet.dev",
     utm_medium: "website",
     utm_campaign: campaign,

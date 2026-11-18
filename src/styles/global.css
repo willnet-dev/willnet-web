@@ -6,7 +6,9 @@
 /* El tema se elige con data-theme en <html> (script en Base.astro). Oscuro por defecto. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* ---------- Tokens de color: «Tormenta + lima» (Willder, 2026-11-13) ----------
+/* ---------- Tokens de color base: «Tormenta + lima» (Willder, 2026-11-13) ----------
+   Desde el 2026-11-18 los colores que se ven los pone skin-resend.css («Resend puro»), encima de estos;
+   estos quedan de base para lo que esa hoja no redefine.
    Regla 60-30-10: 60 % fondo (Negro Mate / Blanco Polar), 30 % tarjetas y estructura (grises Tormenta),
    10 % acento lima. Se eligió con el probador de paletas (rama prueba-paleta); antes, negro #0a0a0b + lima.
    --logo-accent: centro de la W (lima sobre oscuro, oliva sobre claro). --logo-accent-inverse: el de un

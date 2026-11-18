@@ -1,0 +1,37 @@
+---
+// Tarjetas «iluminadas» del estilo Resend: una luz suave sigue al puntero dentro de cada tarjeta.
+// Marca con .rs-glow las tarjetas que usan la sombra de tarjeta (filo de luz arriba) o el fondo de tarjeta,
+// sin imagen de fondo propia; el degradado está en skin-resend.css (.rs-glow).
+// Venía de la botonera de prueba (SkinSwitch); quedó solo al elegir «Resend puro» (Willder, 2026-11-18).
+---
+
+<script>
+  function toRgb(hex: string) {
+    const m = hex.replace("#", "");
+    if (m.length !== 6) return "";
+    const n = parseInt(m, 16);
+    return `rgb(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255})`;
+  }
+
+  function markCards() {
+    const surface = getComputedStyle(document.documentElement).getPropertyValue("--surface").trim();
+    document.querySelectorAll<HTMLElement>("main *, .stage *").forEach((el) => {
+      if (el.classList.contains("rs-glow")) return;
+      const s = getComputedStyle(el);
+      const isCard = s.boxShadow.includes("inset") || (surface && s.backgroundColor === toRgb(surface));
+      if (isCard && s.backgroundImage === "none" && parseFloat(s.borderTopLeftRadius) >= 8 && el.offsetWidth > 120) {
+        el.classList.add("rs-glow");
+      }
+    });
+  }
+
+  document.addEventListener("pointermove", (e) => {
+    const card = (e.target as HTMLElement).closest?.<HTMLElement>(".rs-glow");
+    if (!card) return;
+    const r = card.getBoundingClientRect();
+    card.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    card.style.setProperty("--my", `${e.clientY - r.top}px`);
+  });
+
+  document.addEventListener("astro:page-load", () => requestAnimationFrame(markCards));
+</script>
