@@ -535,6 +535,20 @@ html[data-skin^="resend"] .curtain {
   color: #f0f0f0;
   border-top: 1px solid rgb(255 255 255 / 0.12);
 }
+/* En el tema claro, el telón también es claro (pedido de Willder, 2026-11-18): un porcelana más claro que el
+   fondo (#F2F1ED sobre #E4E3DE), para que se distinga al subir, con una línea fina y una sombra cálida en el
+   borde de arriba. El texto va en negro y el punto en Toupe Seta. */
+html[data-skin^="resend"][data-theme="light"] .curtain {
+  background:
+    radial-gradient(ellipse 50% 35% at 50% 0%, rgb(255 255 255 / 0.85), transparent 70%),
+    #f2f1ed;
+  color: #111113;
+  border-top-color: rgb(30 26 22 / 0.14);
+  box-shadow: 0 -24px 60px -12px rgb(30 26 22 / 0.18);
+}
+html[data-skin^="resend"][data-theme="light"] .curtain__label::before {
+  background: #8b7e71;
+}
 
 /* ---------- WhatsApp flotante: siempre con el verde de WhatsApp (pedido de Willder, 2026-11-18) ---------- */
 html[data-skin^="resend"] .wa-fab {
