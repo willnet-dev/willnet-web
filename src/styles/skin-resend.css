@@ -592,6 +592,51 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
   60%, 100% { background-position: 130% 0; }
 }
 
+/* ---------- Página de servicios (pedido de Willder, 2026-11-18) ----------
+   La sección no tiene título propio (aria-label), así que el color de servicios se pone aquí */
+html[data-skin^="resend"] :is(.bento, .stack) { --rs-c: #ff7e29; }
+/* Al pasar el mouse, el mosaico se rellena con el acento (blanco en «Resend», lima en «Resend + lima»);
+   el título llevaba el degradado blanco de los h2 y casi desaparecía: pasa a tinta oscura */
+@media (hover: hover) {
+  html[data-skin^="resend"][data-theme="dark"] .bento__link:hover h2.display {
+    background-image: none;
+    color: var(--accent-ink);
+  }
+}
+/* Luz que recorre el borde de cada tarjeta: arriba de izquierda a derecha y abajo de vuelta */
+@media (prefers-reduced-motion: no-preference) {
+  /* Escritorio y tableta (bento): el borde es el padding de 1 px del mosaico; se suman dos capas de luz
+     a su fondo, sin quitar el brillo que sigue al mouse */
+  html[data-skin^="resend"][data-theme="dark"] .bento__tile {
+    background:
+      linear-gradient(90deg, transparent, var(--rs-c), transparent) no-repeat,
+      linear-gradient(90deg, transparent, var(--rs-c), transparent) no-repeat,
+      radial-gradient(260px circle at var(--mx, -999px) var(--my, -999px), var(--accent), transparent 70%),
+      var(--line);
+    background-size: 35% 1px, 35% 1px, 100% 100%;
+    animation: rsTraceTile 5s ease-in-out var(--rs-trace-delay, 0s) infinite;
+  }
+  /* Teléfono (tarjetas apiladas): la luz va debajo del borde semitransparente */
+  html[data-skin^="resend"][data-theme="dark"] .stack__card {
+    background-image:
+      linear-gradient(90deg, transparent, var(--rs-c), transparent),
+      linear-gradient(90deg, transparent, var(--rs-c), transparent);
+    background-size: 45% 1px, 45% 1px;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    animation: rsTraceCard 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
+  }
+  html[data-skin^="resend"] :is(.bento__tile, .stack__item):nth-child(2) { --rs-trace-delay: 0.4s; }
+  html[data-skin^="resend"] :is(.bento__tile, .stack__item):nth-child(3) { --rs-trace-delay: 0.8s; }
+  html[data-skin^="resend"] :is(.bento__tile, .stack__item):nth-child(4) { --rs-trace-delay: 1.2s; }
+  html[data-skin^="resend"] :is(.bento__tile, .stack__item):nth-child(5) { --rs-trace-delay: 1.6s; }
+  html[data-skin^="resend"] :is(.bento__tile, .stack__item):nth-child(6) { --rs-trace-delay: 2s; }
+}
+@keyframes rsTraceTile {
+  0% { background-position: -50% 0, 150% 100%, 0 0; }
+  75%, 100% { background-position: 150% 0, -50% 100%, 0 0; }
+}
+
 /* ---------- Cabeceras centradas en el teléfono (como resend.com; decisión de Willder, 2026-11-18) ----------
    Ícono, etiqueta, título, introducción y botón al centro; tarjetas, listas y preguntas siguen a la izquierda */
 @media (max-width: 767px) {

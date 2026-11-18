@@ -154,7 +154,7 @@ const person = {
   <section class="border-y border-line py-6" aria-label={a.toolsTitle}>
     <p class="wrap eyebrow mb-4">// {a.toolsTitle}</p>
     <!-- Logos de las herramientas (src/data/tools.ts): gris y con el color de la marca al pasar el mouse;
-         la franja se detiene mientras el mouse está encima (pedido de Willder, 2026-11-18) -->
+         la franja nunca se detiene, ni con el mouse encima (pedido de Willder, 2026-11-18) -->
     <div class="marquee tools-marquee" aria-hidden="true">
       {
         [0, 1].map(() => (
@@ -202,9 +202,6 @@ const person = {
     letter-spacing: -0.03em;
   }
   @media (hover: hover) {
-    .tools-marquee:hover :global(.marquee__track) {
-      animation-play-state: paused;
-    }
     .tool:hover {
       color: var(--tool-c);
       transform: translateY(-3px) scale(1.08);
