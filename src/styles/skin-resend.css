@@ -34,6 +34,9 @@ html[data-skin^="resend"][data-theme="dark"] {
   --rs-beam: rgb(255 255 255 / 0.045);
   --rs-beam-2: rgb(255 255 255 / 0.015);
   --rs-tag-fill: #050506;
+  /* Relleno neutro de botones y detalles que no toman el color de su sección (Willder, 2026-11-18) */
+  --rs-neutral: #f0f0f0;
+  --rs-neutral-ink: #000000;
   --rs-line-mix: rgb(255 255 255 / 0.35);
   --rs-glow-pct: 9%;
   --rs-spark: rgb(255 255 255 / 0.8);
@@ -79,6 +82,8 @@ html[data-skin^="resend"][data-theme="light"] {
   --rs-beam: rgb(255 255 255 / 0.7);
   --rs-beam-2: rgb(255 255 255 / 0.25);
   --rs-tag-fill: #f2f1ed;
+  --rs-neutral: #111113;
+  --rs-neutral-ink: #ffffff;
   --rs-line-mix: rgb(9 9 11 / 0.12);
   --rs-glow-pct: 10%;
   --rs-spark: rgb(9 9 11 / 0.45);
@@ -300,16 +305,31 @@ html[data-skin^="resend"][data-theme="light"] .contact-card[data-calendly] {
   --card-fill: #111113;
   --card-fill-fg: #ffffff;
 }
-/* Excepción: botones con relleno neutro al pasar el mouse (blanco en oscuro, negro en claro) en vez del
-   color de su sección. Se marcan con la clase btn--neutral; por ahora, «All work» de «Selected work» en el
-   inicio (pedido de Willder, 2026-11-18) */
+/* Excepciones con el color neutro (--rs-neutral: blanco en oscuro, negro en claro) en vez del color de su
+   sección (pedidos de Willder, 2026-11-18):
+   - botones marcados con btn--neutral: «All work» de «Selected work» y «See all questions» en el inicio;
+   - flechas de las filas arrastrables (Selected work y All work) y del slider de Work;
+   - la línea de progreso de «How it works». */
 html[data-skin^="resend"] .btn--neutral {
-  --btn-fill: #f0f0f0;
-  --btn-fill-fg: #000000;
+  --btn-fill: var(--rs-neutral);
+  --btn-fill-fg: var(--rs-neutral-ink);
 }
-html[data-skin^="resend"][data-theme="light"] .btn--neutral {
-  --btn-fill: #111113;
-  --btn-fill-fg: #ffffff;
+@media (hover: hover) {
+  html[data-skin^="resend"] .wc__btn:not(:disabled):hover {
+    background: var(--rs-neutral);
+    border-color: var(--rs-neutral);
+    color: var(--rs-neutral-ink);
+  }
+  /* El slider de Work es oscuro en los dos temas (fotos debajo): sus botones siempre en blanco */
+  html[data-skin^="resend"] .ls__btn:hover {
+    background: #f0f0f0;
+    border-color: #f0f0f0;
+    color: #000000;
+  }
+}
+html[data-skin^="resend"] .tl__fill,
+html[data-skin^="resend"][data-theme="light"] .tl__fill {
+  background: var(--rs-neutral);
 }
 
 /* Escenario final («Let's work together» y pie): un gris casi negro, para que el telón negro se distinga */
@@ -390,7 +410,7 @@ html[data-skin^="resend"] .hero__deco {
   initial-value: 23deg;
   inherits: false;
 }
-html[data-skin^="resend"] :is(.hero__role, .tl__tag, .pcard .tag) {
+html[data-skin^="resend"] :is(.hero__role, .tl__tag, .pcard .tag, .wc__tag) {
   border: 1px solid transparent;
   border-radius: 999px;
   background:
@@ -402,6 +422,13 @@ html[data-skin^="resend"] :is(.hero__role, .tl__tag, .pcard .tag) {
 html[data-skin^="resend"] .pcard .tag {
   --rs-fill: var(--surface);
 }
+/* Etiquetas de las filas arrastrables (Selected work y All work), sobre el fondo de la página (Willder, 2026-11-18) */
+html[data-skin^="resend"] .wc__tag {
+  --rs-fill: var(--bg);
+}
+html[data-skin^="resend"] .wc__tag + .wc__tag { animation-delay: -3s; }
+html[data-skin^="resend"] .wc__slide:nth-child(2n) .wc__tag { animation-delay: -5s; }
+html[data-skin^="resend"] .wc__slide:nth-child(2n) .wc__tag + .wc__tag { animation-delay: -1s; }
 /* Desfase para que las etiquetas no giren todas a la vez */
 html[data-skin^="resend"] .pcard .tag + .tag { animation-delay: -3s; }
 html[data-skin^="resend"] :nth-child(2n) > * > .pcard .tag { animation-delay: -5s; }
