@@ -4,7 +4,7 @@
    Va encima de global.css y se activa con data-skin="resend", que <html> lleva fijo (Base.astro); los
    selectores conservan ese atributo para no reescribir la hoja. En los dos temas los efectos son los mismos y
    los colores salen de tokens (--rs-*) que cada tema define. Tabla de colores de la marca:
-   Marca WillNet/01 Logo/paleta-willnet-2026-11.png (fuera del repo).
+   Marca WillNet/10 Colores/paleta-willnet.png (fuera del repo).
    Lo que se toma de Resend: negro profundo (#000), bordes de luz casi transparentes, títulos con
    degradado blanco, botones de cristal, bordes arcoíris, luz que cae desde arriba, íconos «de app» con
    brillo de color y entradas con desenfoque. Encargo completo: docs/prompt-ronda-resend.md (fuera del repo).
