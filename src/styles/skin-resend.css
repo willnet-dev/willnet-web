@@ -133,6 +133,103 @@ html[data-skin^="resend"][data-theme="light"] .stage::before {
   pointer-events: none;
   background: radial-gradient(ellipse 35% 45% at 50% 0%, color-mix(in oklab, var(--rs-c) 10%, transparent), transparent 70%);
 }
+/* Hero en claro: la foto en una tarjeta oscura (elegido por Willder, 2026-11-18).
+   La foto está recortada para fondo oscuro: sobre el porcelana se notaban los bordes del recorte, la camisa
+   negra se desvanecía en una niebla gris y la W se veía a través. Dentro de la tarjeta negra todo eso se funde
+   como en el tema oscuro, y la W va dentro, detrás de la foto.
+   Aquí va lo común; la forma y el lugar de la tarjeta cambian con el ancho (más abajo).
+   La tarjeta es el ::before de .hero__visual; .hero__visual, que no se mueve, la recorta con clip-path, así la
+   foto y la W conservan su parallax. La sombra va en [data-hero]::after (en claro no lleva el haz de luz),
+   porque dentro de .hero__visual quedaría recortada. */
+html[data-skin^="resend"][data-theme="light"] .hero__visual::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: 28px;
+  background:
+    radial-gradient(ellipse 80% 55% at 50% 0%, rgb(255 255 255 / 0.14), transparent 70%),
+    linear-gradient(180deg, #232427, #0b0b0c 70%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12);
+}
+html[data-skin^="resend"][data-theme="light"] [data-hero]::after {
+  inset: auto;
+  border-radius: 28px;
+  background: none;
+  box-shadow:
+    0 0 0 1px rgb(30 26 22 / 0.12),
+    0 30px 60px -28px rgb(30 26 22 / 0.55);
+  animation: none;
+}
+/* La W en blanco tenue, como en el tema oscuro; se desvanece antes de los hombros para no cruzar la camisa */
+html[data-skin^="resend"][data-theme="light"] .hero__deco {
+  stroke: rgb(255 255 255 / 0.35);
+  opacity: 1;
+  -webkit-mask-image: linear-gradient(to bottom, #000 40%, transparent 72%);
+  mask-image: linear-gradient(to bottom, #000 40%, transparent 72%);
+}
+html[data-skin^="resend"][data-theme="light"] .hero__halo {
+  display: none;
+}
+/* Dentro de la tarjeta la foto llega hasta los bordes, sin el desvanecido de la derecha */
+html[data-skin^="resend"][data-theme="light"] .hero__pic {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* Escritorio: la tarjeta envuelve la foto en la columna derecha y deja un margen abajo (6 % del alto) para
+   no pegarse al borde de la pantalla. La camisa se funde con el negro justo antes de ese borde. */
+@media (min-width: 1100px) {
+  html[data-skin^="resend"][data-theme="light"] .hero {
+    --rs-vis-w: calc(var(--vis-h) * 1136 / 1408);
+  }
+  html[data-skin^="resend"][data-theme="light"] .hero__visual::before {
+    inset: 4% 3% 6%;
+  }
+  html[data-skin^="resend"][data-theme="light"] .hero__visual {
+    clip-path: inset(4% 3% 6% round 28px);
+  }
+  html[data-skin^="resend"][data-theme="light"] [data-hero]::after {
+    right: calc(clamp(0px, 3vw, 4rem) + var(--rs-vis-w) * 0.03);
+    bottom: calc(var(--vis-h) * 0.06);
+    width: calc(var(--rs-vis-w) * 0.94);
+    height: calc(var(--vis-h) * 0.9);
+  }
+  html[data-skin^="resend"][data-theme="light"] .hero__pic img {
+    -webkit-mask-image: linear-gradient(to top, transparent 6%, #000 14%);
+    mask-image: linear-gradient(to top, transparent 6%, #000 14%);
+  }
+}
+
+/* Teléfono y tableta: la tarjeta arriba al centro y el texto debajo. La tarjeta termina en el 68 % del
+   alto de la foto; el texto empieza en el 72 %. */
+@media (max-width: 1099px) {
+  html[data-skin^="resend"][data-theme="light"] .hero {
+    --rs-card-w: min(calc(100vw - 2rem), 26rem);
+  }
+  html[data-skin^="resend"][data-theme="light"] .hero__visual::before {
+    top: 3%;
+    height: 65%;
+    left: 50%;
+    width: var(--rs-card-w);
+    translate: -50% 0;
+  }
+  html[data-skin^="resend"][data-theme="light"] [data-hero]::after {
+    top: calc(var(--header-h) + var(--vis-h) * 0.03);
+    left: 50%;
+    width: var(--rs-card-w);
+    height: calc(var(--vis-h) * 0.65);
+    translate: -50% 0;
+  }
+  /* Fuera de la tarjeta se recorta todo (las puntas de la W asomaban debajo y se veían raras) */
+  html[data-skin^="resend"][data-theme="light"] .hero__visual {
+    clip-path: inset(3% calc((100% - var(--rs-card-w)) / 2) 32% round 28px);
+  }
+  /* La camisa se funde con el negro de la tarjeta antes de su borde de abajo */
+  html[data-skin^="resend"][data-theme="light"] .hero__pic img {
+    -webkit-mask-image: linear-gradient(to top, transparent 32%, #000 39%);
+    mask-image: linear-gradient(to top, transparent 32%, #000 39%);
+  }
+}
 /* Botones: blancos con borde fino; el principal negro, y al pasar el mouse un gris oscuro */
 html[data-skin^="resend"][data-theme="light"] .btn:not(.btn-primary) {
   border-color: rgb(9 9 11 / 0.12);
