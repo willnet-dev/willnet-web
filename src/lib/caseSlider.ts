@@ -1,5 +1,6 @@
-// Casos de estudio del slider por capas (LayeredSlider.astro). Los usan Work y el inicio («Selected work»),
-// así los dos muestran siempre los mismos casos y en el mismo orden (pedido de Willder, 2026-11-18).
+// Casos de estudio de la vitrina. Los usan el slider por capas de Work (LayeredSlider.astro) y la fila
+// arrastrable de «Selected work» en el inicio (WorkCarousel.astro), así los dos muestran siempre los mismos
+// casos y en el mismo orden (pedido de Willder, 2026-11-18).
 // Entra un proyecto con página de caso (hasCase) que no esté sacado de la vitrina (inShowcase: false, como
 // Mastermind). Con `!== false`, un proyecto sin el campo entra, como antes.
 import { getCollection, type CollectionEntry } from "astro:content";
@@ -23,6 +24,7 @@ export function sliderItems(cases: CollectionEntry<"work">[], lang: Lang): Slide
   }));
 }
 
-export async function showcaseSliderItems(lang: Lang) {
-  return sliderItems((await allWork()).filter(inShowcase), lang);
+// Los casos de la vitrina, en orden: los usa «Selected work» del inicio (WorkCarousel.astro)
+export async function showcaseCases() {
+  return (await allWork()).filter(inShowcase);
 }
