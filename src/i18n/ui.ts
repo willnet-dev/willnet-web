@@ -328,6 +328,7 @@ const en = {
     notConnected:
       "The form isn't connected yet on this preview. Write to me by email or WhatsApp instead.",
     honeypot: "Leave this field empty",
+    verifyPending: "One moment: we're checking you're not a robot. Try again in a few seconds.",
   },
   privacy: {
     title: "Privacy policy — WillNet",
@@ -611,6 +612,7 @@ const es: typeof en = {
     privacyLink: "Política de privacidad",
     notConnected: "El formulario todavía no está conectado en esta vista previa. Escríbeme por correo o WhatsApp.",
     honeypot: "Deja este campo vacío",
+    verifyPending: "Un momento: estamos comprobando que no eres un robot. Inténtalo otra vez en unos segundos.",
   },
   privacy: {
     title: "Política de privacidad — WillNet",

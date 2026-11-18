@@ -13,19 +13,21 @@ const extras = ["acl", "imola", "pavlove"];
 ---
 
 <div class="site-loader" data-site-loader aria-hidden="true">
-  <div class="sl__word" data-sl-word>
-    <span class="sl__half" data-sl-half="start">
-      {[..."WILL"].map((l) => <span class="sl__letter" data-sl-letter>{l}</span>)}
-    </span>
-    <span class="sl__box" data-sl-box>
-      <span class="sl__img" data-sl-img>
-        {/* La primera de la lista va arriba: se ve primero y es la primera que se quita */}
-        {[...extras].reverse().map((slug) => <img class="sl__extra" data-sl-extra src={`/img/loader/${slug}.webp`} width="640" height="480" alt="" decoding="async" />)}
+  <div class="sl__word">
+    <div class="sl__row" data-sl-row>
+      <span class="sl__half" data-sl-half="start">
+        {[..."WILL"].map((l) => <span class="sl__letter" data-sl-letter>{l}</span>)}
       </span>
-    </span>
-    <span class="sl__half" data-sl-half="end">
-      {[..."NET"].map((l) => <span class="sl__letter" data-sl-letter>{l}</span>)}
-    </span>
+      <span class="sl__box" data-sl-box>
+        <span class="sl__img" data-sl-img>
+          {/* La primera de la lista va arriba: se ve primero y es la primera que se quita */}
+          {[...extras].reverse().map((slug) => <img class="sl__extra" data-sl-extra src={`/img/loader/${slug}.webp`} width="640" height="480" alt="" decoding="async" />)}
+        </span>
+      </span>
+      <span class="sl__half" data-sl-half="end">
+        {[..."NET"].map((l) => <span class="sl__letter" data-sl-letter>{l}</span>)}
+      </span>
+    </div>
   </div>
 </div>
 
@@ -75,6 +77,14 @@ const extras = ["acl", "imola", "pavlove"];
     line-height: 0.8;
     letter-spacing: -0.04em;
     white-space: nowrap;
+  }
+  /* La fila que se mueve de lado (site.ts la corre para centrar la ventana). Va dentro de .sl__word y no en
+     .sl__word misma: GSAP, al animar x en un elemento que ya tiene la propiedad CSS translate, la absorbe y la
+     pasa a píxeles, y la palabra se iba unos 380 px a la derecha (2026-11-18) */
+  .sl__row {
+    flex: none;
+    display: flex;
+    align-items: center;
   }
   /* Cada mitad recorta sus letras: suben desde abajo de la línea */
   /* flex: none en las mitades y la ventana: cuando la ventana crece más que la pantalla, nada se encoge y la fila

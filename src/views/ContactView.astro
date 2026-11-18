@@ -1,7 +1,8 @@
 ---
 // Contacto: formulario corto de presupuesto (acción principal), llamadas en Calendly + correo y teléfono (WhatsApp: el botón flotante).
-// El formulario envía a Web3Forms con la clave pública PUBLIC_WEB3FORMS_KEY (archivo .env, ver README).
-// Sin clave, muestra el aviso de «formulario sin conectar» y deja correo y WhatsApp como alternativa.
+// El formulario envía al servicio propio de WillNet (forms.willnet.dev: Worker + D1 + Turnstile + Resend,
+// proyecto ../willnet-forms; plan en docs/plan-formularios-propios.md). Antes usaba Web3Forms (hasta 2026-11).
+// En `npm run dev` apunta al Worker local (localhost:8787) y usa la clave de PRUEBA de Turnstile, que siempre aprueba.
 import Base from "../layouts/Base.astro";
 import PageHead from "../components/PageHead.astro";
 import Icon from "../components/Icon.astro";
@@ -18,7 +19,12 @@ const { lang } = Astro.props;
 const copy = t(lang);
 const p = copy.contactPage;
 const f = copy.form;
-const key = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? "";
+const FORM_ID = "willnet-contacto";
+const formsEndpoint = import.meta.env.DEV
+  ? `http://localhost:8787/v1/f/${FORM_ID}`
+  : `https://forms.willnet.dev/v1/f/${FORM_ID}`;
+// Site key de Turnstile (widget «willnet-forms»): es pública por diseño, va en el HTML de la página.
+const turnstileSitekey = import.meta.env.DEV ? "1x00000000000000000000AA" : "0x4AAAAAAGHfQO5Fl3c9S8rK";
 const b = p.booking;
 const calls = [
   { href: calendlyHref("intro", "contact"), name: b.introName, meta: b.introMeta, text: b.introText },
@@ -54,11 +60,16 @@ const calls = [
        lector de pantalla sigan lo que se ve en la pantalla principal. Desde 768 px Calendly vuelve arriba
        (md:order-first) y en escritorio ocupa las dos columnas, como antes (Willder, 2026-11-16). -->
   <div class="wrap grid gap-12 pb-[clamp(4rem,10vh,8rem)] lg:grid-cols-[1.5fr_1fr]">
-    <form class="qform" data-quote-form data-key={key} data-lang={lang} novalidate>
-      {!key && <p class="qform__notice" role="note">{f.notConnected}</p>}
-
-      <input type="hidden" name="subject" value={lang === "es" ? "Nueva solicitud de presupuesto — willnet.dev" : "New quote request — willnet.dev"} />
-      <input type="hidden" name="from_name" value="willnet.dev" />
+    <form
+      class="qform"
+      data-quote-form
+      data-endpoint={formsEndpoint}
+      data-sitekey={turnstileSitekey}
+      data-lang={lang}
+      action={formsEndpoint}
+      method="post"
+      novalidate
+    >
       <input type="hidden" name="language" value={lang} />
       <div class="sr-only" aria-hidden="true">
         <label for="botcheck">{f.honeypot}</label>
@@ -118,15 +129,18 @@ const calls = [
         </div>
       </div>
 
-      <div class="mt-8 flex flex-wrap items-center gap-5">
-        <button type="submit" class="btn btn-primary btn-lg" data-submit data-label={f.submit} data-sending={f.sending} disabled={!key}>
+      <!-- Turnstile (antispam de Cloudflare): se dibuja aquí con JavaScript y agrega el campo cf-turnstile-response. -->
+      <div class="qform__turnstile mt-8" data-turnstile></div>
+
+      <div class="mt-6 flex flex-wrap items-center gap-5">
+        <button type="submit" class="btn btn-primary btn-lg" data-submit data-label={f.submit} data-sending={f.sending}>
           <span class="btn-label">{f.submit}</span>
         </button>
         <p class="text-sm text-muted">
           {f.privacy} <a href={r("privacy", lang)} class="text-link underline underline-offset-4">{f.privacyLink}</a>
         </p>
       </div>
-      <p class="qform__status" data-status role="status" aria-live="polite" data-success={f.success} data-error={f.error}></p>
+      <p class="qform__status" data-status role="status" aria-live="polite" data-success={f.success} data-error={f.error} data-verify={f.verifyPending}></p>
     </form>
 
     <!-- Llamadas gratis en Calendly. Se abren en una ventana encima de la página: src/scripts/calendly.ts
@@ -182,15 +196,58 @@ const calls = [
 </Base>
 
 <script>
-  // Envío del formulario a Web3Forms. Solo muestra éxito si el servicio responde success: true.
+  // Envío del formulario al servicio propio (forms.willnet.dev). Solo muestra éxito si responde { ok: true }.
+
+  type Turnstile = {
+    render: (el: HTMLElement, opts: Record<string, unknown>) => string;
+    reset: (id?: string) => void;
+    remove: (id: string) => void;
+  };
+  const tsWindow = window as Window & { turnstile?: Turnstile };
+
+  // Carga el script de Turnstile una sola vez (modo explícito, para que funcione con las transiciones de Astro).
+  let turnstileLoading: Promise<Turnstile> | null = null;
+  const loadTurnstile = () =>
+    (turnstileLoading ??= new Promise<Turnstile>((resolve, reject) => {
+      if (tsWindow.turnstile) return resolve(tsWindow.turnstile);
+      const s = document.createElement("script");
+      s.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      s.async = true;
+      s.onload = () => (tsWindow.turnstile ? resolve(tsWindow.turnstile) : reject(new Error("turnstile")));
+      s.onerror = () => {
+        turnstileLoading = null;
+        reject(new Error("turnstile"));
+      };
+      document.head.appendChild(s);
+    }));
+
   document.addEventListener("astro:page-load", () => {
     const form = document.querySelector<HTMLFormElement>("[data-quote-form]");
     if (!form) return;
-    const key = form.dataset.key;
+    const endpoint = form.dataset.endpoint!;
     const status = form.querySelector<HTMLElement>("[data-status]")!;
     const submit = form.querySelector<HTMLButtonElement>("[data-submit]")!;
     const label = submit.querySelector<HTMLElement>(".btn-label")!;
     const siteWrap = form.querySelector<HTMLElement>("[data-site-url]")!;
+    const widgetBox = form.querySelector<HTMLElement>("[data-turnstile]")!;
+
+    let widgetId: string | undefined;
+    loadTurnstile()
+      .then((ts) => {
+        if (!widgetBox.isConnected) return;
+        widgetId = ts.render(widgetBox, {
+          sitekey: form.dataset.sitekey,
+          theme: document.documentElement.dataset.theme === "light" ? "light" : "dark",
+          language: form.dataset.lang,
+          // En teléfonos muy angostos (320 px) el tamaño normal (300 px) no cabe.
+          size: widgetBox.clientWidth < 300 ? "compact" : "flexible",
+          action: "contact",
+        });
+      })
+      .catch(() => {
+        /* Sin Turnstile el servidor rechaza el envío y se muestra el mensaje de error con correo y WhatsApp. */
+      });
+    document.addEventListener("astro:before-swap", () => widgetId && tsWindow.turnstile?.remove(widgetId), { once: true });
 
     form.querySelectorAll<HTMLInputElement>('input[name="has_website"]').forEach((radio) =>
       radio.addEventListener("change", () => {
@@ -234,30 +291,38 @@ const calls = [
       e.preventDefault();
       status.textContent = "";
       status.dataset.state = "";
-      if (!key || !validate()) return;
+      if (!validate()) return;
+      const token = form.querySelector<HTMLInputElement>('[name="cf-turnstile-response"]')?.value;
+      if (!token) {
+        status.textContent = status.dataset.verify!;
+        status.dataset.state = "error";
+        return;
+      }
 
       submit.disabled = true;
       label.textContent = submit.dataset.sending!;
       try {
         const data = Object.fromEntries(new FormData(form).entries());
-        const res = await fetch("https://api.web3forms.com/submit", {
+        const res = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify({ ...data, access_key: key }),
+          body: JSON.stringify(data),
         });
         const json = await res.json().catch(() => ({}));
-        if (res.ok && json.success) {
+        if (res.ok && json.ok) {
           form.reset();
           siteWrap.hidden = true;
           status.textContent = status.dataset.success!;
           status.dataset.state = "success";
         } else {
-          throw new Error(json.message || res.statusText);
+          throw new Error(json.error || res.statusText);
         }
       } catch {
         status.textContent = status.dataset.error!;
         status.dataset.state = "error";
       } finally {
+        // Cada token de Turnstile sirve una sola vez: se pide otro para el siguiente envío.
+        if (widgetId) tsWindow.turnstile?.reset(widgetId);
         submit.disabled = false;
         label.textContent = submit.dataset.label!;
       }

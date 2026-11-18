@@ -293,7 +293,8 @@ function initLoader() {
   const body = document.body;
   const q = <T extends Element>(sel: string) => Array.from(el.querySelectorAll<T>(sel));
   const letters = q<HTMLElement>("[data-sl-letter]");
-  const word = el.querySelector<HTMLElement>("[data-sl-word]")!;
+  // La fila de letras y ventana (no .sl__word, que se centra con la propiedad CSS translate; ver SiteLoader.astro)
+  const row = el.querySelector<HTMLElement>("[data-sl-row]")!;
   const start = el.querySelector<HTMLElement>("[data-sl-half='start']")!;
   const finishHalf = el.querySelector<HTMLElement>("[data-sl-half='end']")!;
   const box = el.querySelector<HTMLElement>("[data-sl-box]")!;
@@ -338,21 +339,22 @@ function initLoader() {
   el.classList.add("is-active");
   // 1. Las letras suben
   tl.from(letters, { yPercent: 110, duration: 0.9, stagger: 0.04, ease: "expo.out" });
-  // 2. Se abre la ventana entre WILL y NET y las mitades se separan un poco
+  // 2. Se abre la ventana entre WILL y NET y las mitades se separan un poco. WILL es más ancho que NET, así que
+  //    la ventana quedaría a la derecha del centro (≈ 47 px en escritorio) y la web, al aparecer y crecer, se
+  //    deslizaba de la derecha al centro. Mientras se abre, la palabra se corre lo justo para que la ventana
+  //    quede en el centro exacto de la pantalla: desde ahí la web solo crece, sin moverse de lado
   tl.to(box, { width: "1em", duration: 1 }, 0.55)
     .to(img, { width: "100%", duration: 1 }, "<")
     .to(start, { x: "-0.05em", duration: 1 }, "<")
-    .to(finishHalf, { x: "0.05em", duration: 1 }, "<");
+    .to(finishHalf, { x: "0.05em", duration: 1 }, "<")
+    .to(row, { x: () => (finishHalf.offsetWidth - start.offsetWidth) / 2, duration: 1 }, "<");
   // 3. Las capturas se quitan de una en una. Debajo de la última ya está la web real, en miniatura
   tl.to(extras, { opacity: 0, duration: 0.05, stagger: 0.35, ease: "none" }, "-=0.1");
   tl.add(showMini, tl.duration() - 0.05);
-  // 4. Pausa corta con la web pequeña y la ventana crece hasta llenar la pantalla, empujando las letras.
-  //    WILL es más ancho que NET, así que la ventana no está en el centro: la palabra se corre lo justo
-  //    para que la ventana termine centrada y cubra toda la pantalla
+  // 4. Pausa corta con la web pequeña y la ventana crece desde el centro hasta llenar la pantalla, empujando las letras
   tl.add(finish, "+=0.6")
     .to(img, { width: "100vw", height: "100dvh", borderRadius: 0, duration: 1.1 }, "<")
-    .to(box, { width: "110vw", duration: 1.1 }, "<")
-    .to(word, { x: () => (finishHalf.offsetWidth - start.offsetWidth) / 2, duration: 1.1 }, "<");
+    .to(box, { width: "110vw", duration: 1.1 }, "<");
 
   // Un toque o una tecla la acelera para quien no quiera esperar
   const hurry = () => tl.timeScale(3.5);
