@@ -180,6 +180,12 @@ const person = {
 
 <style>
   /* ---------- Franja de herramientas con logos ---------- */
+  /* La franja recorta lo que se sale (overflow: hidden del marquee): sin este margen, el logo que crece y
+     sube al pasar el mouse, y su sombra, se cortaban arriba y abajo. El margen negativo conserva el alto */
+  .tools-marquee {
+    padding-block: 1.5rem;
+    margin-block: -1.5rem;
+  }
   .tool {
     display: inline-grid;
     place-items: center;
