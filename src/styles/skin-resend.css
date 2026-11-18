@@ -293,19 +293,6 @@ html[data-skin^="resend"] .footer-list a:is([data-brand="github"], [data-brand="
   }
 }
 
-/* ---------- Tarjetas de «What I do» en el teléfono: borde arcoíris animado (pedido de Willder, 2026-11-18) ---------- */
-@media (max-width: 767px) {
-  html[data-skin^="resend"][data-theme="dark"] .price-list > li {
-    border-color: transparent;
-    background:
-      linear-gradient(var(--surface), var(--surface)) padding-box,
-      linear-gradient(var(--rs-angle), rgb(2 252 239 / 0.5), rgb(255 181 43 / 0.5) 50%, rgb(160 43 254 / 0.5)) border-box;
-    animation: rsSpin 8s linear infinite;
-  }
-  html[data-skin^="resend"][data-theme="dark"] .price-list > li:nth-child(2n) { animation-delay: -2.5s; }
-  html[data-skin^="resend"][data-theme="dark"] .price-list > li:nth-child(3n) { animation-delay: -5s; }
-}
-
 /* ---------- WhatsApp flotante: siempre con el verde de WhatsApp (pedido de Willder, 2026-11-18) ---------- */
 html[data-skin^="resend"] .wa-fab {
   background: #25d366;
@@ -543,6 +530,22 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
     html[data-skin^="resend"][data-theme="dark"] :is(.price-list, footer.border-t) {
       background-image: none;
     }
+    /* Tarjetas de «What I do»: una luz cruza el borde de arriba y otra vuelve por el de abajo
+       (Willder prefirió esto al borde arcoíris, 2026-11-18) */
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li {
+      background-image:
+        linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent),
+        linear-gradient(90deg, transparent, var(--rs-c, #fff), transparent);
+      background-size: 45% 1px, 45% 1px;
+      background-repeat: no-repeat;
+      background-origin: border-box;
+      animation: rsTraceCard 4.5s ease-in-out var(--rs-trace-delay, 0s) infinite;
+    }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(2) { --rs-trace-delay: 0.3s; }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(3) { --rs-trace-delay: 0.6s; }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(4) { --rs-trace-delay: 0.9s; }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(5) { --rs-trace-delay: 1.2s; }
+    html[data-skin^="resend"][data-theme="dark"] main .price-list > li:nth-child(6) { --rs-trace-delay: 1.5s; }
   }
 
   /* Línea del proceso: además de llenarse con el scroll, un destello la recorre */
@@ -575,6 +578,10 @@ html[data-skin^="resend"][data-theme="dark"] .rs-tile :is(path, circle) {
 @keyframes rsTraceBoth {
   from { background-position: -40% 0, 140% 100%; }
   to { background-position: 140% 0, -40% 100%; }
+}
+@keyframes rsTraceCard {
+  0% { background-position: -60% 0, 160% 100%; }
+  75%, 100% { background-position: 160% 0, -60% 100%; }
 }
 @keyframes rsTraceRail {
   0% { background-position: 0 -30%; }
