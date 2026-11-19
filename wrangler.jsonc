@@ -6,12 +6,14 @@
   "name": "willnet-v2",
   "compatibility_date": "2026-10-01",
   // Código propio solo para la cuenta regresiva del lanzamiento (worker/index.ts, 2026-11-16).
-  // run_worker_first: cada visita pasa por el Worker antes que por los archivos.
+  // run_worker_first en false desde el 2026-11-18 (después del lanzamiento): los archivos se sirven directo, sin
+  // pasar por el Worker, y así no cuentan para el límite de 100 000 pedidos al día del plan gratis (cada visita
+  // pide de 15 a 25 archivos). Para volver a usar la cuenta regresiva hay que ponerlo en true otra vez.
   "main": "worker/index.ts",
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",
-    "run_worker_first": true,
+    "run_worker_first": false,
     // /about sirve about.html (build.format: "file") y las rutas que no existen muestran 404.html
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "404-page"
