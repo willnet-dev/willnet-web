@@ -59,7 +59,7 @@ export const socials = [
 
 const en = {
   meta: {
-    ogAlt: "WillNet: modern websites, built directly with you. Screens of websites made for clients: Macías Counseling, Pavlove and ACL.",
+    ogAlt: "WillNet: modern websites, built directly with you. Screens of the willnet.dev website on a laptop and a phone.",
     siteDescription:
       "WillNet builds modern websites, landing pages and online stores for small businesses across the US and Latin America. Direct work with the developer, in English or Spanish. Free consultation.",
   },
@@ -346,7 +346,7 @@ const en = {
 
 const es: typeof en = {
   meta: {
-    ogAlt: "WillNet: webs modernas, hechas directamente contigo. Pantallas de webs hechas para clientes: Macías Counseling, Pavlove y ACL.",
+    ogAlt: "WillNet: webs modernas, hechas directamente contigo. Pantallas de la web willnet.dev en computadora y teléfono.",
     siteDescription:
       "WillNet crea páginas web modernas, landing pages y tiendas en línea para negocios en EE. UU. y Latinoamérica. Trato directo con el desarrollador, en inglés o español. Consulta gratis.",
   },

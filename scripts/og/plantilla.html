@@ -1,9 +1,12 @@
 <!doctype html>
 <!--
   Imagen para compartir el enlace (Open Graph, 1200 × 630). No es una captura del hero: es una pieza propia
-  con el estilo Resend de la web (negro, luz desde arriba, título con degradado) y capturas de proyectos reales.
-  Se abre con ?lang=en o ?lang=es. La genera scripts/og-image.mjs → public/og-willnet-en.jpg y -es.jpg
-  (2026-11-18, pedido de Willder: la anterior era una captura vieja del hero con la paleta lima).
+  con el estilo Resend de la web (negro, luz desde arriba, título con degradado) y la propia willnet.dev en la
+  escena inclinada (inicio, Work y el inicio en el teléfono; capturas en scripts/og/capturas/, tomadas de producción
+  en tema oscuro y sin botones flotantes; si la web cambia mucho, se vuelven a sacar).
+  Se abre con ?lang=en o ?lang=es. La genera captura-og.mjs --plantilla (skill sitio-web-willnet) → public/og-willnet-en.jpg y -es.jpg
+  (2026-11-18, pedido de Willder: la anterior era una captura vieja del hero con la paleta lima; eligió esta
+  composición entre 4 propuestas y pidió que la escena mostrara willnet.dev).
 -->
 <html>
   <head>
@@ -107,7 +110,7 @@
         border-radius: 50%;
         background: #4b4e50;
       }
-      /* Los proyectos: un navegador detrás, otro delante y un teléfono, con la misma inclinación */
+      /* willnet.dev: Work detrás, el inicio delante y en el teléfono, con la misma inclinación */
       .stage {
         position: absolute;
         left: 650px;
@@ -221,20 +224,20 @@
           h1: "Modern websites — built directly with you.",
           sub: "Websites, landing pages and online stores. In English or Spanish.",
           place: "West Palm Beach, FL",
-          img: { back: "acl-en", front: "web-macias-en", phone: "pavlove-movil-en" },
+          img: { back: "willnet-work-en", front: "willnet-inicio-en", phone: "willnet-inicio-movil-en" },
         },
         es: {
           h1: "Webs modernas, hechas directamente contigo.",
           sub: "Sitios web, landing pages y tiendas online. En español o inglés.",
           place: "West Palm Beach, FL",
-          img: { back: "acl", front: "web-macias", phone: "pavlove-movil" },
+          img: { back: "willnet-work-es", front: "willnet-inicio-es", phone: "willnet-inicio-movil-es" },
         },
       };
       const lang = new URLSearchParams(location.search).get("lang") === "es" ? "es" : "en";
       const t = T[lang];
       document.documentElement.lang = lang;
       document.querySelectorAll("[data-t]").forEach((el) => (el.textContent = t[el.dataset.t]));
-      document.querySelectorAll("[data-img]").forEach((el) => (el.src = `../../public/img/work/${t.img[el.dataset.img]}.webp`));
+      document.querySelectorAll("[data-img]").forEach((el) => (el.src = `capturas/${t.img[el.dataset.img]}.webp`));
     </script>
   </body>
 </html>
