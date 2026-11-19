@@ -9,6 +9,16 @@
     { "id": "best-practices", "after": 100, "unit": "/100", "en": "best practices", "es": "de buenas prácticas" },
     { "id": "seo", "after": 100, "unit": "/100", "en": "SEO", "es": "de SEO" }
   ],
+  "testimonial": {
+    "author": "Denis Gallego",
+    "role": {
+      "en": "Owner of Macias Counseling",
+      "es": "Dueña de Macias Counseling"
+    },
+    "es": "Crearme completamente desde cero el website de denismacias.com fue una de las mejores inversiones que he hecho en mis negocios. Me sorprendió muchísimo la rapidez, la profesionalidad y la calidad de tu trabajo. Al punto que tengo a mi esposo convencido de que haga el suyo contigo también, jajaja. ¡Gracias por todo de corazón!",
+    "en": "Building the denismacias.com website for me completely from scratch was one of the best investments I've made in my businesses. I was so surprised by the speed, the professionalism and the quality of your work. So much so that I've convinced my husband to have his built with you too, haha. Thank you for everything, from the bottom of my heart!",
+    "original": "es"
+  },
   "en": {
     "title": "Macias Counseling", "type": "Bilingual website",
     "summary": "34-page bilingual website for a psychological evaluation practice in Florida: immigration evaluations (asylum, VAWA, U visa, extreme hardship), bariatric evaluations, clear prices and online requests.",

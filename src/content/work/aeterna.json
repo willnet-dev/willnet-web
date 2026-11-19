@@ -9,6 +9,16 @@
     { "id": "webp", "after": 338, "en": "images converted to WebP", "es": "imágenes pasadas a WebP" },
     { "id": "links", "after": 0, "en": "broken links across 16 pages", "es": "enlaces rotos en 16 páginas" }
   ],
+  "testimonial": {
+    "author": "Denis Gallego",
+    "role": {
+      "en": "Co-owner of AETERNA Art Wellness & Spa",
+      "es": "Socia de AETERNA Art Wellness & Spa"
+    },
+    "es": "¡Estoy súper impresionada con el trabajo que hiciste! El mejorar el SEO, GEO, actualizar y mejorar el rendimiento de la web de Aeterna, súper recomendado.",
+    "en": "I'm super impressed with the work you did! Improving the SEO and GEO, and updating and speeding up Aeterna's website: highly recommended.",
+    "original": "es"
+  },
   "en": {
     "title": "AETERNA Art Wellness & Spa", "type": "Website fixes",
     "summary": "Med spa in West Palm Beach: I fixed, updated and sped up the WordPress site it already had, without starting over.",
