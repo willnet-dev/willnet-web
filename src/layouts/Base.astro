@@ -36,9 +36,10 @@ const enHref = new URL(altPath(path, "en"), site.url).href;
 const esHref = new URL(altPath(path, "es"), site.url).href;
 const isProduction = import.meta.env.SITE_IS_PRODUCTION;
 // La imagen para compartir se sirve desde el sitio donde está publicada la web (en la vista previa,
-// willnet.dev todavía es la landing y la imagen daría 404). Es una captura del hero en cada idioma.
+// willnet.dev todavía es la landing y la imagen daría 404). Es una pieza propia por idioma, no una captura del hero:
+// scripts/og/plantilla.html → public/og-willnet-en.jpg y -es.jpg (cómo regenerarla en el README).
 const shareBase = isProduction ? site.url : "https://v2.willnet.dev";
-const ogImage = new URL(image ?? (lang === "es" ? "/og-es.jpg" : "/og-en.jpg"), shareBase).href;
+const ogImage = new URL(image ?? (lang === "es" ? "/og-willnet-es.jpg" : "/og-willnet-en.jpg"), shareBase).href;
 
 const org = {
   "@context": "https://schema.org",
@@ -47,7 +48,7 @@ const org = {
   name: site.name,
   url: site.url,
   logo: `${site.url}/icon-512.png`,
-  image: `${site.url}/og-en.jpg`,
+  image: `${site.url}/og-willnet-en.jpg`,
   description: copy.meta.siteDescription,
   email: site.email,
   telephone: "+1-786-557-5568",

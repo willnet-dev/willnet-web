@@ -1,0 +1,240 @@
+<!doctype html>
+<!--
+  Imagen para compartir el enlace (Open Graph, 1200 × 630). No es una captura del hero: es una pieza propia
+  con el estilo Resend de la web (negro, luz desde arriba, título con degradado) y capturas de proyectos reales.
+  Se abre con ?lang=en o ?lang=es. La genera scripts/og-image.mjs → public/og-willnet-en.jpg y -es.jpg
+  (2026-11-18, pedido de Willder: la anterior era una captura vieja del hero con la paleta lima).
+-->
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      @font-face {
+        font-family: "Unbounded";
+        src: url("../../node_modules/@fontsource-variable/unbounded/files/unbounded-latin-wght-normal.woff2") format("woff2");
+        font-weight: 200 900;
+      }
+      @font-face {
+        font-family: "Geist";
+        src: url("../../node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2") format("woff2");
+        font-weight: 100 900;
+      }
+      @font-face {
+        font-family: "Geist Mono";
+        src: url("../../node_modules/@fontsource-variable/geist-mono/files/geist-mono-latin-wght-normal.woff2") format("woff2");
+        font-weight: 100 900;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      html,
+      body {
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background: #000;
+        color: #fff;
+        font-family: "Geist", system-ui, sans-serif;
+      }
+      /* La luz del hero (skin-resend.css): un foco desde arriba a la izquierda, otro frío a la derecha y un haz */
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+        background:
+          radial-gradient(ellipse 70% 60% at 28% -14%, rgb(255 255 255 / 0.15), transparent 70%),
+          radial-gradient(ellipse 45% 50% at 88% 6%, rgb(214 235 253 / 0.08), transparent 70%),
+          linear-gradient(118deg, transparent 40%, rgb(255 255 255 / 0.045) 48%, rgb(255 255 255 / 0.015) 54%, transparent 62%),
+          #000;
+      }
+      .copy {
+        position: absolute;
+        left: 72px;
+        top: 64px;
+        bottom: 60px;
+        width: 560px;
+        display: flex;
+        flex-direction: column;
+        z-index: 2;
+      }
+      .logo {
+        height: 34px;
+        width: auto;
+        align-self: flex-start;
+      }
+      h1 {
+        margin-top: 56px;
+        font-family: "Unbounded", sans-serif;
+        font-weight: 600;
+        font-size: 58px;
+        line-height: 1.04;
+        letter-spacing: -0.045em;
+        background: linear-gradient(to right bottom, #ffffff 30%, rgb(255 255 255 / 0.5));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-wrap: balance;
+      }
+      /* En español el título es más largo: un poco más chico para que quepa en 4 líneas */
+      html[lang="es"] h1 {
+        font-size: 50px;
+      }
+      .sub {
+        margin-top: 26px;
+        font-size: 24px;
+        line-height: 1.35;
+        color: #a1a4a5;
+        max-width: 470px;
+      }
+      .foot {
+        margin-top: auto;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-family: "Geist Mono", monospace;
+        font-size: 20px;
+        color: #a1a4a5;
+      }
+      .foot strong {
+        color: #fff;
+        font-weight: 500;
+      }
+      .foot i {
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #4b4e50;
+      }
+      /* Los proyectos: un navegador detrás, otro delante y un teléfono, con la misma inclinación */
+      .stage {
+        position: absolute;
+        left: 650px;
+        top: 70px;
+        width: 760px;
+        height: 560px;
+        perspective: 1700px;
+      }
+      .tilt {
+        position: absolute;
+        inset: 0;
+        transform: rotateY(-20deg) rotateX(8deg) rotateZ(-2deg);
+        transform-origin: 0 50%;
+        transform-style: preserve-3d;
+      }
+      .browser {
+        position: absolute;
+        width: 600px;
+        border-radius: 14px;
+        overflow: hidden;
+        background: #0b0b0c;
+        border: 1px solid rgb(255 255 255 / 0.14);
+        box-shadow: 0 40px 80px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(0 0 0 / 0.6);
+      }
+      .browser .bar {
+        height: 30px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding-inline: 14px;
+        background: #141516;
+        border-bottom: 1px solid rgb(255 255 255 / 0.08);
+      }
+      .browser .bar span {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #3a3c3e;
+      }
+      .browser img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        object-position: top;
+      }
+      .back {
+        left: 120px;
+        top: 0;
+        opacity: 0.55;
+        transform: translateZ(-60px);
+      }
+      .front {
+        left: 40px;
+        top: 150px;
+      }
+      .phone {
+        position: absolute;
+        left: -40px;
+        top: 250px;
+        width: 150px;
+        aspect-ratio: 585 / 1266;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 5px solid #1b1c1e;
+        outline: 1px solid rgb(255 255 255 / 0.16);
+        box-shadow: 0 30px 60px rgb(0 0 0 / 0.7);
+        transform: translateZ(40px);
+      }
+      .phone img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        display: block;
+      }
+      /* Las capturas se funden con el negro hacia abajo y a la derecha, para que no compitan con el texto */
+      .fade {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          linear-gradient(to bottom, transparent 70%, #000 100%),
+          linear-gradient(to right, transparent 88%, rgb(0 0 0 / 0.7) 100%);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="stage" aria-hidden="true">
+        <div class="tilt">
+          <div class="browser back"><div class="bar"><span></span><span></span><span></span></div><img data-img="back" alt="" /></div>
+          <div class="browser front"><div class="bar"><span></span><span></span><span></span></div><img data-img="front" alt="" /></div>
+          <div class="phone"><img data-img="phone" alt="" /></div>
+        </div>
+      </div>
+      <div class="fade"></div>
+      <div class="copy">
+        <!-- Logotipo blanco con la flecha central en lima (en el estilo Resend, el lima solo queda en el logo) -->
+        <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1164.8 290" role="img" aria-label="WillNet"><g fill="#FFFFFF"><path d="M0 0 96 37 156 203 107 290Z"/><path d="M416 0 320 37 260 203 309 290Z"/><path fill="#D4FF3A" d="M160 64 208 83 256 64 208 174Z"/><path d="M650.66 83H667.85Q669.56 83 670.27 84.02Q670.97 85.03 670.27 86.75L620.89 203Q619.56 206.05 617.34 206.05Q615.11 206.05 613.86 203L583.31 124.72L552.77 203Q551.52 206.05 549.29 206.05Q547.06 206.05 545.74 203L496.36 86.75Q495.66 85.03 496.32 84.02Q496.99 83 498.78 83H515.97Q517.22 83 518.2 83.59Q519.17 84.17 519.64 85.5L549.25 160.5L579.33 83.47Q579.64 82.77 580.39 81.87Q581.13 80.97 583 80.97Q584.56 80.97 585.46 81.75Q586.36 82.53 586.67 83.47L617.38 160.42L646.99 85.5Q647.92 83 650.66 83ZM703.78 203H688.24Q685.03 203 685.03 199.8V86.2Q685.03 83 688.24 83H703.78Q706.99 83 706.99 86.2V199.8Q706.99 203 703.78 203ZM788.47 203H733.94Q730.74 203 730.74 199.8V86.2Q730.74 83 733.94 83H749.49Q752.69 83 752.69 86.2V183.55H788.47Q791.67 183.55 791.67 186.75V199.8Q791.67 203 788.47 203ZM863.86 203H809.33Q806.13 203 806.13 199.8V86.2Q806.13 83 809.33 83H824.88Q828.08 83 828.08 86.2V183.55H863.86Q867.06 183.55 867.06 186.75V199.8Q867.06 203 863.86 203ZM899.88 203H884.88Q881.67 203 881.67 199.8V85.73Q881.67 81.44 884.06 80.5Q886.44 79.56 889.49 82.61L957.92 153.7V86.2Q957.92 83 961.13 83H976.21Q979.41 83 979.41 86.2V200.19Q979.41 204.48 976.91 205.34Q974.41 206.2 971.13 203L903.08 130.42V199.8Q903.08 203 899.88 203ZM1071.28 203H1006.6Q1003.39 203 1003.39 199.8V86.2Q1003.39 83 1006.6 83H1071.28Q1074.49 83 1074.49 86.2V99.25Q1074.49 102.45 1071.28 102.45H1025.35V144.88H1065.03Q1068.24 144.88 1068.24 148.08V160.27Q1068.24 163.47 1065.03 163.47H1025.35V183.55H1071.28Q1074.49 183.55 1074.49 186.75V199.8Q1074.49 203 1071.28 203ZM1132.38 203H1116.67Q1113.47 203 1113.47 199.8V102.45H1087.53Q1084.33 102.45 1084.33 99.25V86.2Q1084.33 83 1087.53 83H1161.6Q1164.8 83 1164.8 86.2V99.25Q1164.8 102.45 1161.6 102.45H1135.58V199.8Q1135.58 203 1132.38 203Z"/></g></svg>
+        <h1 data-t="h1"></h1>
+        <p class="sub" data-t="sub"></p>
+        <p class="foot"><strong>willnet.dev</strong><i></i><span data-t="place"></span></p>
+      </div>
+    </div>
+    <script>
+      // Textos e imágenes por idioma. El título es el mismo del hero (src/i18n/ui.ts)
+      const T = {
+        en: {
+          h1: "Modern websites — built directly with you.",
+          sub: "Websites, landing pages and online stores. In English or Spanish.",
+          place: "West Palm Beach, FL",
+          img: { back: "acl-en", front: "web-macias-en", phone: "pavlove-movil-en" },
+        },
+        es: {
+          h1: "Webs modernas, hechas directamente contigo.",
+          sub: "Sitios web, landing pages y tiendas online. En español o inglés.",
+          place: "West Palm Beach, FL",
+          img: { back: "acl", front: "web-macias", phone: "pavlove-movil" },
+        },
+      };
+      const lang = new URLSearchParams(location.search).get("lang") === "es" ? "es" : "en";
+      const t = T[lang];
+      document.documentElement.lang = lang;
+      document.querySelectorAll("[data-t]").forEach((el) => (el.textContent = t[el.dataset.t]));
+      document.querySelectorAll("[data-img]").forEach((el) => (el.src = `../../public/img/work/${t.img[el.dataset.img]}.webp`));
+    </script>
+  </body>
+</html>
