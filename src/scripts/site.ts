@@ -304,6 +304,7 @@ function initLoader() {
   const finishHalf = el.querySelector<HTMLElement>("[data-sl-half='end']")!;
   const box = el.querySelector<HTMLElement>("[data-sl-box]")!;
   const img = el.querySelector<HTMLElement>("[data-sl-img]")!;
+  const mask = el.querySelector<HTMLElement>("[data-sl-mask]")!;
   // De arriba abajo: la de encima es la primera que se quita
   const extras = q<HTMLElement>("[data-sl-extra]").reverse();
   const light = el.querySelector<HTMLElement>("[data-sl-light]");
@@ -311,10 +312,40 @@ function initLoader() {
   // La web en miniatura: <body> se escala y se mueve para llenar justo la ventana (como object-fit: cover).
   // Se recalcula en cada fotograma con la medida real de la ventana, así siguen juntas mientras crece.
   // Al terminar la ventana mide toda la pantalla, la escala llega a 1 y el movimiento a 0: no hay salto.
+  // La ventana (SiteLoader.astro): nada cambia de tamaño, solo se recorta. Su rectángulo sale del hueco entre
+  // las letras (box), que sí crece: en el paso 2 la ventana mide open × el ancho del hueco (las dos van de 0 a 1
+  // con la misma curva, como cuando la captura crecía al 100 % de un hueco que también crecía) y en el paso 4
+  // pasa de la medida abierta (1 em × 0,8 em) a la pantalla entera según grow. Siempre centrada en el hueco
+  const win = { open: 0, grow: 0 };
+  const em = parseFloat(getComputedStyle(box).fontSize);
+  const windowRect = () => {
+    const b = box.getBoundingClientRect();
+    const W = mask.clientWidth;
+    const H = mask.clientHeight;
+    const w = win.grow > 0 ? em + (W - em) * win.grow : win.open * b.width;
+    const h = b.height + (H - b.height) * win.grow;
+    return { left: b.left + b.width / 2 - w / 2, top: b.top + b.height / 2 - h / 2, width: w, height: h, W, H, b };
+  };
+  const drawWindow = () => {
+    const { left: x, top: y, width: w, height: h, W, H, b } = windowRect();
+    const r = Math.max(0, Math.min(0.06 * em * (1 - win.grow), w / 2, h / 2));
+    const arc = (ex: number, ey: number) => `A${r} ${r} 0 0 1 ${ex} ${ey}`;
+    // El fondo con el hueco: el rectángulo de la pantalla y, dentro, la ventana con esquinas redondeadas
+    mask.style.clipPath =
+      `path(evenodd, "M0 0H${W}V${H}H0Z` +
+      `M${x + r} ${y}H${x + w - r}${arc(x + w, y + r)}V${y + h - r}${arc(x + w - r, y + h)}` +
+      `H${x + r}${arc(x, y + h - r)}V${y + r}${arc(x + r, y)}Z")`;
+    // Las capturas: centradas en el hueco y recortadas al ancho de la ventana
+    const side = Math.max(0, (em - w) / 2);
+    img.style.transform = `translateX(${b.width / 2 - em / 2}px)`;
+    img.style.clipPath = `inset(0 ${side}px round ${r}px)`;
+  };
+
   let following = false;
   const follow = () => {
+    drawWindow();
     if (!following) return;
-    const r = img.getBoundingClientRect();
+    const r = windowRect();
     // Ancho real de la página (sin la barra de desplazamiento): documentElement.clientWidth no descuenta el
     // hueco reservado con scrollbar-gutter mientras el scroll está bloqueado
     const w = body.offsetWidth;
@@ -345,6 +376,11 @@ function initLoader() {
   el.classList.add("is-active");
   // El degradado de las letras abarca WILL y NET juntas, como si fueran una sola palabra (ver SiteLoader.astro)
   el.style.setProperty("--sl-word", `${start.offsetWidth + finishHalf.offsetWidth}px`);
+  // Cada letra toma su tramo del degradado: su distancia al inicio de WILL (NET empieza donde termina WILL)
+  for (const l of letters) {
+    const before = l.parentElement === finishHalf ? start.offsetWidth : 0;
+    l.style.setProperty("--sl-x", `${before + l.offsetLeft}px`);
+  }
   // 1. Las letras suben y la luz de arriba se enciende
   tl.from(letters, { yPercent: 110, duration: 0.9, stagger: 0.04, ease: "expo.out" });
   if (light) tl.from(light, { opacity: 0, duration: 1.2, ease: "power2.out" }, 0);
@@ -353,7 +389,7 @@ function initLoader() {
   //    deslizaba de la derecha al centro. Mientras se abre, la palabra se corre lo justo para que la ventana
   //    quede en el centro exacto de la pantalla: desde ahí la web solo crece, sin moverse de lado
   tl.to(box, { width: "1em", duration: 1 }, 0.55)
-    .to(img, { width: "100%", duration: 1 }, "<")
+    .to(win, { open: 1, duration: 1 }, "<")
     .to(start, { x: "-0.05em", duration: 1 }, "<")
     .to(finishHalf, { x: "0.05em", duration: 1 }, "<")
     .to(row, { x: () => (finishHalf.offsetWidth - start.offsetWidth) / 2, duration: 1 }, "<");
@@ -362,7 +398,7 @@ function initLoader() {
   tl.add(showMini, tl.duration() - 0.05);
   // 4. Pausa corta con la web pequeña y la ventana crece desde el centro hasta llenar la pantalla, empujando las letras
   tl.add(finish, "+=0.6")
-    .to(img, { width: "100vw", height: "100dvh", borderRadius: 0, duration: 1.1 }, "<")
+    .to(win, { grow: 1, duration: 1.1 }, "<")
     .to(box, { width: "110vw", duration: 1.1 }, "<");
   // La luz se apaga mientras la ventana crece: el hero ya tiene la suya en el mismo sitio y se sumarían
   if (light) tl.to(light, { opacity: 0, duration: 0.8, ease: "power2.inOut" }, "<");

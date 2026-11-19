@@ -398,6 +398,9 @@ const pad = (x: number) => String(x).padStart(2, "0");
     list-style: none;
     column-gap: clamp(1rem, 2vw, 1.75rem);
     overflow: hidden;
+    /* Sin esto, Chrome contaba como un salto de 0,47 (CLS) el paso de la fila sin JavaScript a la arrastrable,
+       aunque pasa fuera de la pantalla (Lighthouse en producción, 2026-11-18). Recorta igual que overflow: hidden */
+    contain: paint;
     cursor: grab;
     touch-action: pan-y;
     user-select: none;

@@ -16,6 +16,8 @@ const extras = ["acl", "imola", "pavlove"];
 ---
 
 <div class="site-loader" data-site-loader aria-hidden="true">
+  {/* El fondo de la pantalla de carga, con la ventana recortada (clip-path, lo dibuja site.ts) */}
+  <span class="sl__mask" data-sl-mask></span>
   <div class="sl__word">
     <div class="sl__row" data-sl-row>
       <span class="sl__half" data-sl-half="start">
@@ -58,7 +60,7 @@ const extras = ["acl", "imola", "pavlove"];
     overflow: hidden;
   }
   /* Hasta que el JavaScript la toma, solo se ve el fondo: así las letras no aparecen y luego saltan abajo.
-     Cuando la toma, el fondo pasa a ser la sombra de la ventana (abajo, .sl__img) */
+     Cuando la toma, el fondo pasa a ser la capa .sl__mask, con la ventana recortada */
   .site-loader:not(.is-active) :is(.sl__word, .sl__light) {
     visibility: hidden;
   }
@@ -100,23 +102,25 @@ const extras = ["acl", "imola", "pavlove"];
     display: flex;
     overflow: hidden;
     padding-block: 0.06em;
-    /* Degradado de los títulos (blanco → 50 % en oscuro; negro → Toupe Seta en claro), recortado a las letras.
-       Mide lo que WILL y NET juntas (--sl-word, lo pone site.ts) y NET toma la parte derecha: se lee como un
-       solo degradado aunque la ventana las separe */
+  }
+  /* Degradado de los títulos (blanco → 50 % en oscuro; negro → Toupe Seta en claro), recortado a las letras.
+     Mide lo que WILL y NET juntas (--sl-word) y cada letra toma su tramo (--sl-x, su distancia al inicio de WILL;
+     los dos los pone site.ts): se lee como un solo degradado aunque la ventana las separe.
+     Va en cada letra y no en la mitad: en Safari (iPhone), background-clip: text en un padre no pinta los hijos
+     que se mueven con transform, y las letras no se veían (2026-11-18). El alto suma el padding de la mitad
+     (0,06 em arriba y abajo) para que el degradado caiga igual que antes */
+  .sl__letter {
+    display: block;
     background-image: var(--rs-title, linear-gradient(var(--text), var(--text)));
-    background-size: var(--sl-word, 100%) 100%;
+    background-size: var(--sl-word, 100%) calc(100% + 0.12em);
+    background-position: calc(-1 * var(--sl-x, 0px)) -0.06em;
     background-repeat: no-repeat;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-  .sl__half[data-sl-half="end"] {
-    background-position: right top;
-  }
-  .sl__letter {
-    display: block;
-  }
-  /* La ventana entre WILL y NET: empieza sin ancho y crece; lo de dentro se centra para crecer hacia los lados */
+  /* El hueco entre WILL y NET: empieza sin ancho y crece, y así separa (y al final empuja) las letras. La ventana
+     se dibuja centrada en él (site.ts, a partir de su medida en cada fotograma) */
   .sl__box {
     flex: none;
     position: relative;
@@ -127,17 +131,26 @@ const extras = ["acl", "imola", "pavlove"];
     width: 0;
     height: 0.8em;
   }
+  /* La ventana no cambia de ancho ni de alto: se dibuja recortando (clip-path), que no mueve nada en la página.
+     Antes crecía con width/height y Chrome lo contaba como saltos de la página (CLS ≈ 0,45 en Lighthouse,
+     2026-11-18). Dos piezas, las dos con medidas fijas:
+     - .sl__mask: el fondo a pantalla completa con un hueco del tamaño de la ventana (clip-path: path, evenodd).
+     - .sl__img: las capturas, con el tamaño final de la ventana abierta (1 em × 0,8 em), centradas en la caja
+       con transform y recortadas al ancho de la ventana (clip-path: inset). Con object-fit: cover la captura
+       mide lo mismo que cuando la ventana crecía de verdad: se ve igual.
+     Sin borde: Willder prefirió la ventana limpia (2026-11-18) */
+  .sl__mask {
+    position: absolute;
+    inset: 0;
+    background: var(--bg);
+  }
   .sl__img {
-    position: relative;
-    flex: none;
-    width: 0%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 1em;
     height: 100%;
-    overflow: hidden;
-    border-radius: 0.06em;
-    /* El hueco: una sombra enorme del color del fondo tapa toda la pantalla menos la ventana, que queda
-       transparente y deja ver la página real. Crece con la ventana sin que haya que mover nada más.
-       Sin borde: Willder prefirió la ventana limpia (2026-11-18) */
-    box-shadow: 0 0 0 200vmax var(--bg);
+    clip-path: inset(0 50%);
   }
   .sl__extra {
     position: absolute;
